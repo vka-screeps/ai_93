@@ -372,9 +372,40 @@ str_do_smth = function( cr, where, what )
     if(cr.carry.energy >= cr.carryCapacity && cr.carryCapacity>0)
 	cr.memory.step='working';
 
-    // may be go to flag
-    if(cr.carryCapacity>0) {
-	if(cr.memory.step=='loading') {
+    if(cr.memory.step=='loading') {
+	
+	if (cr.memory.my_target) {
+	    cr.memory.my_target = null;
+	}
+
+	var target = null;
+	
+	if(cr.carryCapacity>0) {
+
+
+	    if( cr.memory.f_from && cr.memory.f_from == 'stay_put' ) {
+
+		target = Game.getObjectById(cr.memory.tgt);
+		
+		if(!target) {
+		    console.log( cr.name + ' - target not found');
+		    return;
+		}
+
+		if (cr.pos.getRangeTo(target.pos) > 0) {
+		    cr.moveTo(target);
+		    return;
+		}
+		
+		var target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=1; } });
+		if(target) {
+		    cr.pickup(target);
+		} else {
+		    cr.memory.step = 'working';
+		}
+	    }
+
+	    // may be go to flag
 	    if(!cr.memory.flag) {
 		if(!cr.memory.flag1) {
 		    if( cr.memory.f_from )
@@ -393,33 +424,7 @@ str_do_smth = function( cr, where, what )
 		}
 		return;
 	    }
-	}
-	else {
-	    cr.memory.flag=0;
-	    cr.memory.flag1 = null;
-	}
-    }
 
-
-    if(cr.memory.step=='loading') {
-	if (cr.memory.my_target) {
-	    cr.memory.my_target = null;
-	}
-
-	/*
-	  var src = rm.find(FIND_MY_SPAWNS)[0];
-
-	  cr.moveTo(src);
-
-	  if(Memory.rooms['E9S8'].spawning != 0) {
-	  console.log(cr.name + ' - waiting');
-	  return;
-	  }
-
-	  src.transferEnergy(cr);
-	*/
-	var target = null;
-	if(cr.carryCapacity>0) {
 	    target = cr.pos.findClosest(FIND_DROPPED_ENERGY, 
 					{ filter: function(o) { return o.energy>50 &&
 								cr.pos.getRangeTo(o.pos)<10; } });
@@ -445,6 +450,9 @@ str_do_smth = function( cr, where, what )
 	}
     }
     else {
+	cr.memory.flag=0;
+	cr.memory.flag1 = null;
+	
 	var target = where(cr, rm);
 	if(target) {
 	    cr.memory.my_target = target.id;
