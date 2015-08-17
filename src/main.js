@@ -1,4 +1,4 @@
-var harvester = require('harvester');
+var harvester = require('harvest');
 var cr = require('cr');
 var myroom = require('myroom');
 var u = require('utils');
