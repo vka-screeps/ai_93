@@ -385,7 +385,6 @@ str_do_smth = function( cr, where, what )
 
 
 	    if( cr.memory.f_from && cr.memory.f_from == 'stay_put' ) {
-		console.log( cr.name + ' - stay put');
 		
 		target = Game.getObjectById(cr.memory.tgt);
 		
@@ -394,17 +393,15 @@ str_do_smth = function( cr, where, what )
 		    return;
 		}
 
-		if (cr.pos.getRangeTo(target.pos) > 0) {
+		if (cr.pos.getRangeTo(target.pos) > 1) {
 		    cr.moveTo(target);
 		    return;
 		}
 		
 		var target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
 		if(target) {
-		    console.log( 'energy - ' + target );
 		    cr.pickup(target);
 		} else {
-		    console.log( 'no energy ' );
 		    cr.memory.step = 'working';
 		}
 	    }
