@@ -113,7 +113,8 @@ module.exports = {
 	var maxLen = 1000;
 
 	targets = rm.find(FIND_STRUCTURES, {filter: function(o) {
-		    return (o.structureType==STRUCTURE_WALL)||(o.structureType==STRUCTURE_ROAD) || (o.owner && o.owner.username=='ai_93'); } } );
+	    return (o.structureType!=STRUCTURE_CONTROLLER) &&
+		( (o.structureType==STRUCTURE_WALL)||(o.structureType==STRUCTURE_ROAD) || (o.owner && o.owner.username=='ai_93') ); } } );
 			  
 	for(var ti in targets) {
 	    var tgt = targets[ti];
