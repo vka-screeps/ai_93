@@ -25,6 +25,9 @@ Memory.rooms['E9S8'].strategy_data =[
 		    is_consumer: 1 } } 
 ];
 
+if(!Memory.next_creep_id)
+    Memory.next_creep_id = 1;
+
 //u.init();
 
 myroom();

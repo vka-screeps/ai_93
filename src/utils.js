@@ -33,7 +33,8 @@ module.exports = {
 	for(var ic in  creeps)
 	{
 	    var c = creeps[ic];
-	    var cr = c.memory.role + (c.memory.role_id ? c.memory.role_id : '');
+	    // var cr = c.memory.role + (c.memory.role_id ? c.memory.role_id : '');
+	    var cr = genNamePrefix(c.memory);
 	    // console.log( 'found ' + c.name + ' : ' + cr );
 	    if(!roles[cr])
 		roles[cr] = [c];
@@ -47,7 +48,8 @@ module.exports = {
 	    //	    printObjectFnc(lst[it]);
 	    //	    console.log('role: ' + it['role']);
 
-	    var it_name = it.role + (it.role_id ? it.role_id : '');
+	    // var it_name = it.role + (it.role_id ? it.role_id : '');
+	    var it_name = genNamePrefix(it);
 
 	    var curCount = 0;
 	    if(roles[it_name] && roles[it_name] == 'del') {
@@ -72,9 +74,9 @@ module.exports = {
 		    if(it.role_id)
 			props.role_id = it.role_id;
 
-		    var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, undefined, props );
+		    var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
 		    if(newName != -6)
-			console.log('spawning ' + props.role + ' - ' + newName);
+			console.log('spawning ' + ' - ' + newName);
 		    
 		    
 		    created = 1;
@@ -525,3 +527,25 @@ function print_r(printthis, returnoutput) {
         console.log(output);
     }
 }
+
+
+var genNamePrefix = function (creep, id) {
+    var newName = creep.role + ':' + creep.role_id;
+    if(id)
+	newName += '_' + id;
+
+    return newName;
+}
+
+/*
+var CCreep = function (creep) {
+    this.id = creep.id;
+    this.role = creep.memory.role;
+};
+
+CCreep.prototype.isConsumer() {
+    return false;
+}
+
+*/
+
