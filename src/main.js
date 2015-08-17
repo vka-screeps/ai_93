@@ -18,9 +18,10 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'c3', role : 'carry', count : 4, body : [ CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
 	, props : { f_from : 'f1',
 		    pos_to : { x : 8, y : 28, d : 3}}}
-    , { role_id : 'c4', role : 'carry', count : 4, body : [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE ]
+    , { role_id : 'c4', role : 'carry', count : 0, body : [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE ]
 	, props : { f_from : 'res1',
-		    pos_to : { x : 21, y : 22, d : 0}}} 
+		    pos_to : { x : 21, y : 22, d : 0},
+		    is_consumer: 1 } } 
 ];
 
 //u.init();
