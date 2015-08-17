@@ -16,7 +16,31 @@ printStat_ = function() {
 	    esum = esum + e.energy
 	}
 	console.log('energy dropped: ' + esum + ', ' + rm.memory.energyDropped + ', ' + rm.memory.buildersBallance +' / ' +  rm.memory.buildersBallanceOrig
-		   + ' / ' + rm.memory.buildersWaiting);
+		    + ' / ' + rm.memory.buildersWaiting);
+
+	var creeps = rm.find(FIND_MY_CREEPS);	
+	var roles = [];
+	for(var ic in  creeps)
+	{
+	    var c = creeps[ic];
+	    var cr = c.memory.role + (c.memory.role_id ? c.memory.role_id : '');
+	    // console.log( 'found ' + c.name + ' : ' + cr );
+	    if(!roles[cr])
+		roles[cr] = [c];
+	    else
+		roles[cr].push(c);
+	}
+
+	for(ic in roles) {
+	    var rl = roles[ic];
+	    var str = ' ' + ic + ' : ';
+
+	    for(var iic in rl) {
+		str += rl[iic].name + ' ';
+	    }
+
+	    console.log(str);
+	}
     }
 };
 

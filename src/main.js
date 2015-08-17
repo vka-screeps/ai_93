@@ -3,6 +3,26 @@ var cr = require('cr');
 var myroom = require('myroom');
 var u = require('utils');
 
+
+Memory.rooms['E9S8'].strategy_data_2 =[
+    { role : 'harvester', count : 3, body : [ CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
+    ,  { role_id : 'h3', role : 'harv', count : 3, body : [ WORK, WORK, WORK, MOVE]
+	 , props : { src : '55c34a6b5be41a0a6e80bd5d', role : 'harv', role_id : 'h3'}}
+    , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
+	, props : { src : '55c34a6b5be41a0a6e80bd5b', role : 'harv', role_id : 'h4'}}
+
+    , { role_id : 'c1', role : 'workonly', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
+	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
+
+    , { role : 'builder', count : 3, body : [ WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
+    , { role_id : 'c3', role : 'carry', count : 4, body : [ CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+	, props : { f_from : 'f1',
+		    pos_to : { x : 8, y : 28, d : 3}}}
+    , { role_id : 'c4', role : 'carry', count : 0, body : [ CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE ]
+	, props : { f_from : 'res1',
+		    pos_to : { x : 21, y : 22, d : 0}}} 
+];
+
 //u.init();
 
 myroom();
