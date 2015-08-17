@@ -385,7 +385,8 @@ str_do_smth = function( cr, where, what )
 
 
 	    if( cr.memory.f_from && cr.memory.f_from == 'stay_put' ) {
-
+		console.log( cr.name + ' - stay put');
+		
 		target = Game.getObjectById(cr.memory.tgt);
 		
 		if(!target) {
