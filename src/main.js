@@ -6,7 +6,7 @@ var u = require('utils');
 
 Memory.rooms['E9S8'].strategy_data =[
     { role : 'harvester', count : 3, body : [ CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
-    ,  { role_id : 'h3', role : 'harv', count : 3, body : [ WORK, WORK, WORK, MOVE]
+    ,  { role_id : 'h3', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, MOVE]
 	 , props : { src : '55c34a6b5be41a0a6e80bd5d', role : 'harv', role_id : 'h3'}}
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80bd5b', role : 'harv', role_id : 'h4'}}
