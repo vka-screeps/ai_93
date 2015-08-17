@@ -248,6 +248,13 @@ module.exports = {
 			   } );
     },
 
+    util_get_res_class : function (cr)  {
+	if(cr.memory.res_class)
+	    return res_class;
+	if(cr.memory.role == 'builder')
+	    return 'res_builder';
+    },
+
     crstr_do_build : function(cr) {
 	return str_do_smth(cr, 
 			   function( cr1, rm1 ) { 
@@ -357,7 +364,7 @@ str_do_smth = function( cr, where, what )
 	    return;
 	}
 
-	if( cr.memory.role == 'builder' ) {
+	if( cr.memory.role == 'builder' || cr.memory.is_consumer ) {
 	    if(rm.memory.buildersBallance < 0) {
 		// console.log(cr.name + ' - waiting');
 		rm.memory.buildersWaiting++;
