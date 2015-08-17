@@ -404,6 +404,7 @@ str_do_smth = function( cr, where, what )
 		} else {
 		    cr.memory.step = 'working';
 		}
+		return;
 	    }
 
 	    // may be go to flag
