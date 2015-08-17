@@ -242,7 +242,7 @@ module.exports = {
 			       return null;
 			   },
 			   function( cr1, o ) { 
-			       var dist = cr1.memory.pos_to.d ? cr1.memory.pos_to.d : 4;
+			       var dist = cr1.memory.pos_to.d ? cr1.memory.pos_to.d : 0;
 			       if(cr1.pos.getRangeTo(o.x,o.y) <= dist)
 				   cr1.dropEnergy();
 			   } );
