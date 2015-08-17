@@ -530,7 +530,7 @@ function print_r(printthis, returnoutput) {
 
 
 var genNamePrefix = function (creep, id) {
-    var newName = creep.role + (creep.role_id ? (':' + creep.role_id) : '');
+    var newName = creep.role + (creep.role_id ? ('_' + creep.role_id) : '');
     if(id)
 	newName += '_' + id;
 
