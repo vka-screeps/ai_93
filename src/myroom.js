@@ -8,6 +8,9 @@ module.exports = function () {
 	var room = Game.rooms[name];
 	var room_data = Memory.rooms[name]
 
+	if(!room_data.NZ)
+	    continue;
+
 	// Accumulate energy
 	room_data.NZ++;
 	
