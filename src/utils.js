@@ -498,8 +498,11 @@ str_do_smth = function( cr, where, what )
 	    if(!cr.memory.flag) {
 		if(!cr.memory.flag1) {
 		    var flg = null;
-		    if( cr.memory.f_from )
+		    if( cr.memory.f_from ) {
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name == cr.memory.f_from; } } );
+			if(!flg)
+			    flg = Game.flags[cr.memory.f_from];
+		    }
 		    else
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
 
@@ -508,6 +511,15 @@ str_do_smth = function( cr, where, what )
 		}
 
 		if(cr.memory.flag1) {
+
+		    if(cr.memory.flag1.pos.roomName != cr.pos.roomName) {
+			//console.log(flg.pos.roomName + ' ' + cr.pos.roomName);
+			var exitDir = cr.room.findExitTo(cr.memory.flag1.room);
+			var exit = cr.pos.findClosest(exitDir);
+			cr.moveTo(exit);
+			return;
+		    }
+		    
 		    if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
 			//console.log('retarget');
 			cr.memory.flag=1;
@@ -517,16 +529,7 @@ str_do_smth = function( cr, where, what )
 		    }
 		    return;
 		} else {
-		    if(cr.memory.f_from)
-			var flg = Game.flags[cr.memory.f_from];
-		    if(flg) {
-			console.log(flg.pos.roomName + ' ' + cr.pos.roomName);
-			var exitDir = cr.room.findExitTo(flg.room);
-			var exit = cr.pos.findClosest(exitDir);
-			cr.moveTo(exit);
-			return;
-		    }
-		    console.log('flag not found - ' + cr.memory.f_from);
+		    console.log(cr.name + '- flag not found');
 		    return;
 		}
 	    }
