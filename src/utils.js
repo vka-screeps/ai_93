@@ -533,6 +533,13 @@ str_do_smth = function( cr, where, what )
 	else {
 	    if(cr.memory.src) {
 		target = Game.getObjectById(cr.memory.src);
+
+		if(target.room != cr.room) {
+		    var exitDir = cr.room.findExitTo(target.room);
+		    var exit = cr.pos.findClosest(exitDir);
+		    target = exit;
+		}
+		    
 		// console.log('target - ' + target.energy );
 		// printObjectFnc(target);
 	    }
