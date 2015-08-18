@@ -23,7 +23,7 @@ module.exports = function () {
 	    esum = esum + e.energy
 	}
 
-	var el = rm.find(FIND_MY_STRUCTURES,
+	var el = room.find(FIND_MY_STRUCTURES,
 			 {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
 
 	for(var i in el) {
