@@ -466,15 +466,17 @@ str_do_smth = function( cr, where, what )
 					{ filter: function(o) { return o.energy>50 &&
 								cr.pos.getRangeTo(o.pos)<10; } });
 
-	    if(!target) {
-		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
-						    {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
-
-	    }
 	    if(target) {
 		cr.moveTo(target);
 		cr.pickup(target);
+	    } else {
+		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
+						    {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
+
+		cr.moveTo(target);
+		target.transferEnergy(cr);
 	    }
+
 	}
 	else {
 	    if(cr.memory.src) {
