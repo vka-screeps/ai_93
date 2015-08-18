@@ -520,6 +520,7 @@ str_do_smth = function( cr, where, what )
 		    if(cr.memory.f_from)
 			var flg = Game.flags[cr.memory.f_from];
 		    if(flg) {
+			console.log(flg.pos.roomName + ' ' + cr.pos.roomName);
 			var exitDir = cr.room.findExitTo(flg.room);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
