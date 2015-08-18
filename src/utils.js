@@ -517,7 +517,15 @@ str_do_smth = function( cr, where, what )
 		    }
 		    return;
 		} else {
+		    if(cr.memory.f_from)
+			var flg = Game.flags[cr.memory.f_from];
+		    if(flg && flg.room != cr.room) {
+			var exitDir = cr.room.findExitTo(flg.room);
+			var exit = cr.pos.findClosest(exitDir);
+			cr.moveTo(exit);
+		    }
 		    console.log('flag not found - ' + cr.memory.f_from);
+		    return;
 		}
 	    }
 
