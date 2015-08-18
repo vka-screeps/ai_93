@@ -14,6 +14,18 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 
+    // defence
+    , { role_id : 'a5', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { isMilitary:1,  pos_to : { x : 8, y : 6, d : 0}, stay_put:1 }}
+
+    , { role_id : 'a4', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
+
+    , { role_id : 'free', role : 'archer', count : 2, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { isMilitary:1 }
+	, autoExpand: 1}
+    
+    
     , { role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80c19f' }}
 
@@ -27,16 +39,6 @@ Memory.rooms['E9S8'].strategy_data =[
 
     // , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE ]
     // 	, props : { isMilitary:1,  pos_to : { x : 16, y : 45, d : 0} }}
-    
-    , { role_id : 'a5', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
-	, props : { isMilitary:1,  pos_to : { x : 8, y : 6, d : 0}, stay_put:1 }}
-
-    , { role_id : 'a4', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
-	, props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
-
-    , { role_id : 'free', role : 'archer', count : 2, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
-	, props : { isMilitary:1 }
-	, autoExpand: 1}
     
     , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
