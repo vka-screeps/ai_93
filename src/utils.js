@@ -406,7 +406,7 @@ module.exports = {
 			       if(targets.length)
 				   return targets[0];
 
-			       var targets = rm1.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+			       var targets = cr1.pos.findClosestByRange(FIND_MY_STRUCTURES, {
 				       filter: function(o) { 
 					   return (o.structureType == STRUCTURE_EXTENSION) && o.energy < o.energyCapacity; } } );
 
