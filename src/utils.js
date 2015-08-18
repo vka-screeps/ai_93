@@ -497,21 +497,28 @@ str_do_smth = function( cr, where, what )
 	    // may be go to flag
 	    if(!cr.memory.flag) {
 		if(!cr.memory.flag1) {
+		    var flg = null;
 		    if( cr.memory.f_from )
-			cr.memory.flag1 = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name == cr.memory.f_from; } } ).pos;
+			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name == cr.memory.f_from; } } );
 		    else
-			cr.memory.flag1 = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } ).pos;
+			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
+
+		    if(flg)
+			cr.memory.flag1 = flg.pos;
 		}
 
-
-		if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
-		    //console.log('retarget');
-		    cr.memory.flag=1;
+		if(cr.memory.flag1) {
+		    if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
+			//console.log('retarget');
+			cr.memory.flag=1;
+		    } else {
+			var ret = cr.moveTo(cr.memory.flag1.x, cr.memory.flag1.y);
+			// console.log('mt='+ret + ','+cr.memory.flag1.x);
+		    }
+		    return;
 		} else {
-		    var ret = cr.moveTo(cr.memory.flag1.x, cr.memory.flag1.y);
-		    // console.log('mt='+ret + ','+cr.memory.flag1.x);
+		    console.log('flag not found - ' + cr.memory.f_from);
 		}
-		return;
 	    }
 
 	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
