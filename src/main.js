@@ -17,6 +17,9 @@ Memory.rooms['E9S8'].strategy_data =[
 
     , { role_id : 'a4', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
 	, props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
+
+    , { role_id : 'free', role : 'archer', count : 2, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { isMilitary:1 }}
     
     , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
