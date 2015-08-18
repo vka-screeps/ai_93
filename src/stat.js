@@ -15,6 +15,7 @@ printStat_ = function() {
 	    var e = el[i];
 	    esum = esum + e.energy
 	}
+
 	console.log('energy dropped: ' + esum + ', ' + rm.memory.energyDropped + ', ' + rm.memory.buildersBallance +' / ' +  rm.memory.buildersBallanceOrig
 		    + ' / ' + rm.memory.buildersWaiting);
 

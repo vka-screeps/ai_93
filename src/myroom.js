@@ -23,6 +23,14 @@ module.exports = function () {
 	    esum = esum + e.energy
 	}
 
+	var el = rm.find(FIND_MY_STRUCTURES,
+			 {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
+
+	for(var i in el) {
+	    var e = el[i];
+	    esum = esum + e.storage.energy
+	}	
+
 	room_data.energyDropped = esum;
 	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3;
 	room_data.buildersBallanceOrig = room_data.buildersBallance;
