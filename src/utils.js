@@ -263,21 +263,26 @@ module.exports = {
 
     crstr_do_archer : function(cr) {
 	return str_do_smth(cr, 
-			   function( cr1, rm1 ) { 
-			       if(cr1.memory.pos_to)
+			   function( cr1, rm1 ) {
+			       
+			       if(cr1.memory.pos_to && cr1.memory.stay_put)
 				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
-			       else
-				   return cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
+			       else {
+				   var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+				   if(target) {
+				       if(cr1.pos.getRangeTo(target.pos) <= 3)
+					   return cr1.pos;
+				       else
+					   return target;
+				   }
+				   else if(cr1.memory.pos_to)
+				       return rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
+			       }
 			       return null;
 			   },
 			   function( cr1, o ) {
-			       if(cr1.memory.pos_to) {
-				   var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
-
-				   if(target) {
-				       cr1.rangedAttack(target);
-				   }
-			       } else {
+			       var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+			       if(target) {
 				   cr1.rangedAttack(target);
 			       }
 			   } );
