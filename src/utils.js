@@ -325,9 +325,24 @@ module.exports = {
     },
 
     crstr_do_harv : function(cr) {
-	return str_do_smth(cr, 
-			   function( cr1, rm1 ) { return null; },
-			   function( cr1, o ) { return; } );
+	return str_do_smth(cr,
+			   function( cr1, rm1 ) { 
+			       if(cr1.memory.tgt) {
+				   var target = null;
+				   target = Game.getObjectById(cr1.memory.tgt);
+				   if(!target)
+				       console.log('target not found');
+				   return target;
+			       }
+			       return null;
+			   },
+			   function( cr1, o ) {
+				   cr1.transferEnergy(o);
+			   }
+			   
+			   // function( cr1, rm1 ) { return null; },
+			   // function( cr1, o ) { return; }
+			  );
     },
 
     crstr_do_harvest : function(cr) {

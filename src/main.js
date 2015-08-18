@@ -7,10 +7,10 @@ u.init();
 
 Memory.rooms['E9S8'].strategy_data =[
     { role : 'harvester', count : 3, body : [ CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
-    ,  { role_id : 'h3', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, MOVE]
-	 , props : { src : '55c34a6b5be41a0a6e80bd5d', role : 'harv', role_id : 'h3'}}
+    ,  { role_id : 'h5', role : 'harv', count : 2, body : [ WORK, WORK, WORK, CARRY, WORK, MOVE]
+	 , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
-	, props : { src : '55c34a6b5be41a0a6e80bd5b', role : 'harv', role_id : 'h4'}}
+	, props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 
     , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
