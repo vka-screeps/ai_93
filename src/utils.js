@@ -60,8 +60,9 @@ module.exports = {
 	    curCount = roles[it_name] ? roles[it_name].length : 0;
 
 	    // console.log(it.role + ', ' + it.count + ', ' + curCount);
+	    var autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
 	    
-	    if( it.count > curCount )
+	    if( (it.count + autoExpand) > curCount )
 		{
 		    roles[it_name] = 'del';
 		    Memory.rooms['E9S8'].spawning=1;
@@ -77,7 +78,6 @@ module.exports = {
 		    var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
 		    if(newName != -6)
 			console.log('spawning ' + ' - ' + newName);
-		    
 		    
 		    created = 1;
 		    //break;

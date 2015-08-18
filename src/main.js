@@ -17,7 +17,7 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80c19f' }}
 
-    , { role_id : 'c6', role : 'carry', count : 4, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7'}}
+    , { role_id : 'c6', role : 'carry', count : 5, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7'}}
 
     , { role_id : 'h7', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80c1a0' }}
@@ -35,7 +35,8 @@ Memory.rooms['E9S8'].strategy_data =[
 	, props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
 
     , { role_id : 'free', role : 'archer', count : 2, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
-	, props : { isMilitary:1 }}
+	, props : { isMilitary:1 }
+	, autoExpand: 1}
     
     , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }

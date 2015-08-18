@@ -41,9 +41,16 @@ module.exports = function () {
 	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3 - room_data.NZ;
 	room_data.buildersBallanceOrig = room_data.buildersBallance;
 	room_data.buildersWaiting = 0;
+
+	var hostiles = room.find(FIND_HOSTILE_CREEPS);
+	room_data.hostiles = hostiles ? hostiles.length : 0;
+
+	if(!room_data.maxHostiles)
+	    room_data.maxHostiles = 0;
+	if(room_data.hostiles > room_data.maxHostiles)
+	    room_data.maxHostiles = room_data.hostiles;
 	
 	u.str_plan_work(room);
-
 
 	if(room_data && room_data.strategy)
 	    u[room_data.strategy](room_data.strategy_data, room);
