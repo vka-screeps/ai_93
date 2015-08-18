@@ -24,7 +24,7 @@ printStat_ = function() {
 	for(var ic in  creeps)
 	{
 	    var c = creeps[ic];
-	    var cr = c.memory.role + (c.memory.role_id ? c.memory.role_id : '');
+	    var cr = c.memory.role + (c.memory.role_id ? '_'+c.memory.role_id : '');
 	    // console.log( 'found ' + c.name + ' : ' + cr );
 	    if(!roles[cr])
 		roles[cr] = [c];
