@@ -12,6 +12,12 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 
+    , { role_id : 'a1', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { pos_to : { x : 8, y : 6, d : 0} }}
+
+    , { role_id : 'a2', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
+	, props : { pos_to : { x : 2, y : 19, d : 0} }}
+    
     , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
 
@@ -52,6 +58,10 @@ for(var name in Game.creeps) {
     else if(creep.memory.role == 'carry') {
 	u.crstr_do_carry(creep);
     }
+
+    else if(creep.memory.role == 'archer') {
+	u.crstr_do_archer(creep);
+    }    
 
     if(creep.memory.role == 'cr') {
 	u.crstr_do_control(creep);

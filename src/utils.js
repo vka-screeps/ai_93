@@ -261,6 +261,28 @@ module.exports = {
 			   } );
     },
 
+    crstr_do_archer : function(cr) {
+	return str_do_smth(cr, 
+			   function( cr1, rm1 ) { 
+			       if(cr1.memory.pos_to)
+				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
+			       else
+				   return cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
+			       return null;
+			   },
+			   function( cr1, o ) {
+			       if(cr1.memory.pos_to) {
+				   var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS)
+
+				   if(target) {
+				       cr1.rangedAttack(target);
+				   }
+			       } else {
+				   cr1.rangedAttack(target);
+			       }
+			   } );
+    },    
+
     util_get_res_class : function (cr)  {
 	if(cr.memory.res_class)
 	    return res_class;
