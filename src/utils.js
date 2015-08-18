@@ -241,12 +241,23 @@ module.exports = {
 			   function( cr1, rm1 ) { 
 			       if(cr1.memory.pos_to)
 				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
+			       else if(cr1.memory.tgt) {
+				   var target = null;
+				   target = Game.getObjectById(cr1.memory.tgt);
+				   if(!target)
+				       console.log('target not found');
+				   return target;
+			       }
 			       return null;
 			   },
-			   function( cr1, o ) { 
-			       var dist = cr1.memory.pos_to.d ? cr1.memory.pos_to.d : 0;
-			       if(cr1.pos.getRangeTo(o.x,o.y) <= dist)
-				   cr1.dropEnergy();
+			   function( cr1, o ) {
+			       if(cr1.memory.pos_to) {
+				   var dist = cr1.memory.pos_to.d ? cr1.memory.pos_to.d : 0;
+				   if(cr1.pos.getRangeTo(o.x,o.y) <= dist)
+				       cr1.dropEnergy();
+			       } else {
+				   cr1.transferEnergy(o);
+			       }
 			   } );
     },
 
@@ -639,6 +650,17 @@ CRoleQ.prototype.getPriority = function(o) {
     return o.p.role;
 };
 
+function CCreepIdQ(store) {
+    CPriorityQ.call(this, store);
+};
+
+CCreepIdQ.prototype = Object.create(CPriorityQ.prototype);
+CCreepIdQ.prototype.constructor = CCreepIdQ;
+
+CCreepIdQ.prototype.getPriority = function(o) {
+    return o.p.role;
+};
+
 
 ///
 var initMemVars = function() {
@@ -659,7 +681,9 @@ var initMemVars = function() {
 
     if(!Memory.wrk_by_role)
 	Memory.wrk_by_role = new CRoleQ(Memory.wrk_by_id);
-    
+
+    if(!Memory.wrk_by_creep_id)
+	Memory.wrk_by_creep_id = new CCreepIdQ(Memory.wrk_by_id);
 };
 
 // id, target_id, priority, count, taken_by, cost{e}, role
@@ -689,7 +713,21 @@ var CWorker = function(prop) {
 CWorker.prototype.register = function() {
     Memory.wrk_by_id[this.id] = this;
     Memory.wrk_by_role.put(this)
+    Memory.wrk_by_creep_id.put(this)
 };
+
+/*
+function updateWorkers(rm) {
+    var creeps = rm.find(FIND_MY_CREEPS);
+    
+    for(var ic in  creeps)
+    {
+	var c = creeps[ic];
+	
+    }    
+}
+
+*/
 
 /*
 var CCreep = function (creep) {
