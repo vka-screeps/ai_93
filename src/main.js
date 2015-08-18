@@ -23,7 +23,7 @@ Memory.rooms['E9S8'].strategy_data =[
 	, props : { src : '55c34a6b5be41a0a6e80c1a0' }}
     
     , { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
-									       pos_to : { x : 22, y : 8, d : 0}}
+									       pos_to : { x : 22, y : 8, d : 0}} }
 
     // , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE ]
     // 	, props : { isMilitary:1,  pos_to : { x : 16, y : 45, d : 0} }}
