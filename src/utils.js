@@ -544,10 +544,14 @@ str_do_smth = function( cr, where, what )
 		cr.pickup(target);
 	    } else {
 		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
-						    {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
+						   {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
 
-		cr.moveTo(target);
-		target.transferEnergy(cr);
+		if(target) {
+		    cr.moveTo(target);
+		    target.transferEnergy(cr);
+		} else {
+		    console.log(cr.name + '-cannot find a storage');
+		}
 	    }
 
 	}
