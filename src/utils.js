@@ -535,32 +535,32 @@ var genNamePrefix = function (creep, id) {
 	newName += '_' + id;
 
     return newName;
-}
+};
 
 // CPriorityQ
 var CPriorityQ = function(store ) {
     this.q = [];
     this.store = store;
-}
+};
 
 
-CPriorityQ.prototype.getPriority(o) {
+CPriorityQ.prototype.getPriority = function(o) {
     return o.p.priority;
-}
+};
 
-CPriorityQ.prototype.setPriority(o,priority) {
+CPriorityQ.prototype.setPriority = function(o,priority) {
     o.p.priority = priority;
-}
+};
 
-CPriorityQ.prototype.getId(o) {
+CPriorityQ.prototype.getId = function(o) {
     return o.id;
-}
+};
 
-CPriorityQ.prototype.getById(id) {
+CPriorityQ.prototype.getById = function(id) {
     return this.store[id];
-}
+};
 
-CPriorityQ.prototype.put(o) {
+CPriorityQ.prototype.put = function(o) {
     var pri = this.getPriority(o);
     var id = this.getId(o);
     var qq = this.q[pri];
@@ -568,9 +568,9 @@ CPriorityQ.prototype.put(o) {
 	this.q[pri] = [id];
     else
 	qq.push(id);
-}
+};
 
-CPriorityQ.prototype.changePriority(o, pri) {
+CPriorityQ.prototype.changePriority = function(o, pri) {
 
     if(this.getPriority(o) == pri)
 	return;
@@ -589,9 +589,9 @@ CPriorityQ.prototype.changePriority(o, pri) {
 
     this.setPriority(o, pri);
     this.put(o);
-}
+};
 
-CPriorityQ.prototype.iterByPriority(f) {
+CPriorityQ.prototype.iterByPriority = function(f) {
     for(qi in this.q) {
 	var qq = this.q[qi];
 	for(qqi in qq) {
@@ -600,10 +600,10 @@ CPriorityQ.prototype.iterByPriority(f) {
 		return ret;
 	}
     }
-}
+};
 
 // return [object]
-CPriorityQ.prototype.findByPriority(pri) {
+CPriorityQ.prototype.findByPriority = function(pri) {
     var qq = this.q[pri];
     var ret = [];
     
@@ -614,7 +614,7 @@ CPriorityQ.prototype.findByPriority(pri) {
 	ret.push( this.getById(qq[qqi]) );
     }    
     return ret;
-}
+};
 
 
 function CTargetQ(store) {
@@ -624,9 +624,9 @@ function CTargetQ(store) {
 CTargetQ.prototype = Object.create(CPriorityQ.prototype);
 CTargetQ.prototype.constructor = CTargetQ;
 
-CTargetQ.prototype.getPriority(o) {
+CTargetQ.prototype.getPriority = function(o) {
     return o.p.target_id;
-}
+};
 
 function CRoleQ(store) {
     CPriorityQ.call(this, store);
@@ -635,9 +635,9 @@ function CRoleQ(store) {
 CRoleQ.prototype = Object.create(CPriorityQ.prototype);
 CRoleQ.prototype.constructor = CRoleQ;
 
-CRoleQ.prototype.getPriority(o) {
+CRoleQ.prototype.getPriority = function(o) {
     return o.p.role;
-}
+};
 
 
 ///
@@ -660,7 +660,7 @@ var initMemVars = function() {
     if(!Memory.wrk_by_role)
 	Memory.wrk_by_role = new CRoleQ(Memory.wrk_by_id);
     
-}
+};
 
 // id, target_id, priority, count, taken_by, cost{e}, role
 var CJob = function(prop) {
@@ -671,25 +671,25 @@ var CJob = function(prop) {
 	this.p.taken_by = [];
     if(!this.p.cost)
 	this.p.cost = {e:0};
-}
+};
 
-CJob.prototype.register() {
+CJob.prototype.register = function() {
     Memory.job_by_id[this.id] = this;
     Memory.job_by_pri.put(this)
     Memory.job_by_tgt.put(this);
-}
+};
 
 
 // id, role, 
 var CWorker = function(prop) {
     this.id = 'wrk_' + Memory.next_id++;
     this.p = prop;
-}
+};
 
-CWorker.prototype.register() {
+CWorker.prototype.register = function() {
     Memory.wrk_by_id[this.id] = this;
     Memory.wrk_by_role.put(this)
-}
+};
 
 /*
 var CCreep = function (creep) {
