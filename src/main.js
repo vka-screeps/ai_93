@@ -11,7 +11,7 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80bd5b', role : 'harv', role_id : 'h4'}}
 
-    , { role_id : 'c1', role : 'workonly', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
+    , { role_id : 'c1', role : 'workonly', count : 0, body : [ WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	, props : { tgt : '55c34a6b5be41a0a6e80bd5c', f_from : 'stay_put'} }
 
     , { role : 'builder', count : 7, body : [ WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
