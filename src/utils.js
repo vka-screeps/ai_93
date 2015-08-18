@@ -534,8 +534,8 @@ str_do_smth = function( cr, where, what )
 	    if(cr.memory.src) {
 		target = Game.getObjectById(cr.memory.src);
 
-		if(target.room != cr.room) {
-		    var exitDir = cr.room.findExitTo(target.room);
+		if(cr.memory.src == '55c34a6b5be41a0a6e80c19f') {
+		    var exitDir = FIND_EXIT_BOTTOM; // cr.room.findExitTo(target.room);
 		    var exit = cr.pos.findClosest(exitDir);
 		    target = exit;
 		}
