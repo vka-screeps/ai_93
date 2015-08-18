@@ -170,7 +170,7 @@ module.exports = {
 	    if(tgt.progressTotal < 2000)
 		w = 5;
 	    else
-		c = 2;
+		c = 3;
 
 	    if(maxLen-- <= 0)
 		break;
