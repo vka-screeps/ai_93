@@ -28,7 +28,7 @@ module.exports = function () {
 
 	for(var i in el) {
 	    var e = el[i];
-	    esum = esum + e.storage.energy
+	    esum = esum + e.store.energy
 	}	
 
 	room_data.energyDropped = esum;
