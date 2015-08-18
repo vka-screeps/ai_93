@@ -3,6 +3,7 @@ var cr = require('cr');
 var myroom = require('myroom');
 var u = require('utils');
 
+u.init();
 
 Memory.rooms['E9S8'].strategy_data =[
     { role : 'harvester', count : 3, body : [ CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
