@@ -31,7 +31,11 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'c4', role : 'carry', count : 0, body : [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE ]
 	, props : { f_from : 'res1',
 		    pos_to : { x : 21, y : 22, d : 0},
-		    is_consumer: 1 } } 
+		    is_consumer: 1 } }
+
+    , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+	, props : { isMilitary:1,  pos_to : { x : 8, y : 3, d : 0} }}
+    
 ];
 
 if(!Memory.next_creep_id)
@@ -74,6 +78,10 @@ for(var name in Game.creeps) {
 	u.crstr_do_build(creep);
     }
 
+    if(creep.memory.role == 'testtgt') {
+	u.crstr_do_testtgt(creep);
+    }    
+    
     if(creep.memory.role == 'guard') {
 	var targets = creep.room.find(FIND_HOSTILE_CREEPS);
 	if(targets.length) {

@@ -269,6 +269,9 @@ module.exports = {
 				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
 			       else {
 				   var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+				   if(!target)
+				       target = cr1.pos.findClosestByRange(FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
+ 
 				   if(target) {
 				       if(cr1.pos.getRangeTo(target.pos) <= 3)
 					   return cr1.pos;
@@ -282,11 +285,28 @@ module.exports = {
 			   },
 			   function( cr1, o ) {
 			       var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+			       if(!target)
+				   target = cr1.pos.findClosestByRange(FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
+			       
 			       if(target) {
 				   cr1.rangedAttack(target);
 			       }
 			   } );
-    },    
+    },
+
+    crstr_do_testtgt : function(cr) {
+	return str_do_smth(cr, 
+			   function( cr1, rm1 ) {
+			       if(cr1.memory.pos_to)
+				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
+			       return null;
+			   },
+			   function( cr1, o ) {
+			       if(cr1.pos.getRangeTo(cr1.memory.pos_to) == 0) {
+				   cr1.memory.ready = 1;
+			       }
+			   } );
+    },        
 
     util_get_res_class : function (cr)  {
 	if(cr.memory.res_class)
