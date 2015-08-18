@@ -289,6 +289,7 @@ module.exports = {
 				   target = cr1.pos.findClosestByRange(FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
 			       
 			       if(target) {
+				   cr1.say('shooting at ' + target);
 				   cr1.rangedAttack(target);
 			       }
 			   } );
