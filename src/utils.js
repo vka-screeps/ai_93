@@ -447,10 +447,14 @@ str_do_smth = function( cr, where, what )
 		return;
 	    }
 
-	    target = cr.pos.findClosest(FIND_DROPPED_ENERGY, 
+	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
 					{ filter: function(o) { return o.energy>50 &&
 								cr.pos.getRangeTo(o.pos)<10; } });
 
+	    if(!target) {
+		targets = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
+						    {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
+	    }
 	    if(target) {
 		cr.moveTo(target);
 		cr.pickup(target);
