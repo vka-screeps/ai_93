@@ -83,10 +83,12 @@ module.exports = {
 		    //break;
 		}
 	    else if( it.count < curCount )
-		{
+	    {
+		if(!roles[it_name][0].memory.isMilitary) {
 		    console.log('killing ' + it.role);
 		    roles[it_name][0].suicide();
 		}
+	    }
 	    roles[it_name] = 'del';
 
 	}
@@ -98,8 +100,10 @@ module.exports = {
 		continue;
 	    }
 	    if(jit) {
-		console.log('killing ' + it.role);
-		jit[0].suicide();
+		if(!jit[0].memory.isMilitary) {
+		    console.log('killing ' + it.role);
+		    jit[0].suicide();
+		}
 	    }
 	}
 
