@@ -467,8 +467,9 @@ str_do_smth = function( cr, where, what )
 								cr.pos.getRangeTo(o.pos)<10; } });
 
 	    if(!target) {
-		targets = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
+		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
 						    {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
+
 	    }
 	    if(target) {
 		cr.moveTo(target);
