@@ -32,7 +32,7 @@ module.exports = function () {
 	}	
 
 	room_data.energyDropped = esum;
-	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3;
+	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3 - room_data.NZ;
 	room_data.buildersBallanceOrig = room_data.buildersBallance;
 	room_data.buildersWaiting = 0;
 	
