@@ -406,12 +406,12 @@ module.exports = {
 			       if(targets.length)
 				   return targets[0];
 
-			       var targets = cr1.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+			       var target = cr1.pos.findClosestByRange(FIND_MY_STRUCTURES, {
 				       filter: function(o) { 
 					   return (o.structureType == STRUCTURE_EXTENSION) && o.energy < o.energyCapacity; } } );
 
-			       if(targets.length)
-				   return targets[0];
+			       if(target)
+				   return target;
 			       
 			       return null
 			   },
