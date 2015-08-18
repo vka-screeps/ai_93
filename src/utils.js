@@ -303,7 +303,7 @@ module.exports = {
 			       return null;
 			   },
 			   function( cr1, o ) {
-			       if(cr1.pos.getRangeTo(cr1.memory.pos_to) == 0) {
+			       if(cr1.pos.getRangeTo(o) == 0) {
 				   cr1.memory.ready = 1;
 			       }
 			   } );
