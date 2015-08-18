@@ -509,18 +509,18 @@ str_do_smth = function( cr, where, what )
 
 		    if(flg && flg.pos.roomName == cr.pos.roomName)
 			cr.memory.flag1 = flg.pos;
-		}
 
-		if(cr.memory.flag1 || flg) {
-
-		    if(flg.pos.roomName != cr.pos.roomName) {
-			//console.log(flg.pos.roomName + ' ' + cr.pos.roomName);
+		    if(flg && flg.pos.roomName != cr.pos.roomName) {
 			var exitDir = cr.room.findExitTo(flg.room);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
 			return;
 		    }
 		    
+		}
+
+		if(cr.memory.flag1) {
+
 		    if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
 			//console.log('retarget');
 			cr.memory.flag=1;
