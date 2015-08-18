@@ -519,10 +519,11 @@ str_do_smth = function( cr, where, what )
 		} else {
 		    if(cr.memory.f_from)
 			var flg = Game.flags[cr.memory.f_from];
-		    if(flg) {
+		    if(flg && flg.room.id != cr.room.id) {
 			var exitDir = cr.room.findExitTo(flg.room);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
+			return;
 		    }
 		    console.log('flag not found - ' + cr.memory.f_from);
 		    return;
