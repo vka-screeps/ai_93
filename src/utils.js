@@ -400,8 +400,12 @@ printObjectFnc = function(o) {
 str_do_smth = function( cr, where, what )
 {
     var rm = cr.room;
-    
-    if(cr.carry.energy == 0) {
+
+    if(cr.memory.isMilitary) {
+	cr.memory.step='working';
+    }
+
+    else if(cr.carry.energy == 0) {
 	
 	cr.memory.step='loading';
 	
@@ -427,7 +431,7 @@ str_do_smth = function( cr, where, what )
 	}
     }
 
-    if(cr.carry.energy >= cr.carryCapacity && cr.carryCapacity>0)
+    else if(cr.carry.energy >= cr.carryCapacity && cr.carryCapacity>0)
 	cr.memory.step='working';
 
     if(cr.memory.step=='loading') {
