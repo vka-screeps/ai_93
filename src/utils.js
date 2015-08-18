@@ -496,8 +496,9 @@ str_do_smth = function( cr, where, what )
 
 	    // may be go to flag
 	    if(!cr.memory.flag) {
+		var flg = cr.memory.flag1;
+		
 		if(!cr.memory.flag1) {
-		    var flg = null;
 		    if( cr.memory.f_from ) {
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name == cr.memory.f_from; } } );
 			if(!flg)
@@ -506,15 +507,15 @@ str_do_smth = function( cr, where, what )
 		    else
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
 
-		    if(flg)
+		    if(flg && flg.pos.roomName == cr.pos.roomName)
 			cr.memory.flag1 = flg.pos;
 		}
 
-		if(cr.memory.flag1) {
+		if(cr.memory.flag1 || flg) {
 
-		    if(cr.memory.flag1.pos.roomName != cr.pos.roomName) {
+		    if(flg.pos.roomName != cr.pos.roomName) {
 			//console.log(flg.pos.roomName + ' ' + cr.pos.roomName);
-			var exitDir = cr.room.findExitTo(cr.memory.flag1.room);
+			var exitDir = cr.room.findExitTo(flg.room);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
 			return;
