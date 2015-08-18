@@ -12,6 +12,9 @@ Memory.rooms['E9S8'].strategy_data =[
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	, props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 
+    , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+	, props : { isMilitary:1,  pos_to : { x : 8, y : 3, d : 0} }}
+    
     , { role_id : 'a5', role : 'archer', count : 1, body : [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE]
 	, props : { isMilitary:1,  pos_to : { x : 8, y : 6, d : 0}, stay_put:1 }}
 
@@ -33,8 +36,6 @@ Memory.rooms['E9S8'].strategy_data =[
 		    pos_to : { x : 21, y : 22, d : 0},
 		    is_consumer: 1 } }
 
-    , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
-	, props : { isMilitary:1,  pos_to : { x : 8, y : 3, d : 0} }}
     
 ];
 
