@@ -8,7 +8,7 @@ u.init();
 var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
     
 Memory.rooms['E9S8'].strategy_data =[
-    { role : 'harvester', count : 3, body : [ CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]}
+    { role : 'harvester', count : 3, body : carryBody}
     ,  { role_id : 'h5', role : 'harv', count : 2, body : [ WORK, WORK, WORK, CARRY, WORK, MOVE]
 	 , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
@@ -42,9 +42,9 @@ Memory.rooms['E9S8'].strategy_data =[
 
     , { role : 'builder', count : 7, body : [ WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
 	, props : { is_consumer: 1 } }
-    , { role_id : 'c3', role : 'carry', count : 4, body : [ CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
+    , { role_id : 'c3', role : 'carry', count : 4, body : carryBody
 	, props : { f_from : 'f1', tgt: '55d37aec137951da224e8ae7'}}
-    , { role_id : 'c4', role : 'carry', count : 0, body : [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE ]
+    , { role_id : 'c4', role : 'carry', count : 0, body : carryBody
 	, props : { f_from : 'res1',
 		    pos_to : { x : 21, y : 22, d : 0},
 		    is_consumer: 1 } }
