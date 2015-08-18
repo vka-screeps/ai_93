@@ -9,7 +9,7 @@ var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOV
 var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE]
     
 Memory.rooms['E9S8'].strategy_data =[
-    { role : 'harvester', count : 4, body : carryBody}
+    { role : 'harvester', count : 3, body : carryBody}
     ,  { role_id : 'h5', role : 'harv', count : 2, body : [ WORK, WORK, WORK, CARRY, WORK, MOVE]
 	 , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
     , { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
