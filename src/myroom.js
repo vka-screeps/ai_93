@@ -7,6 +7,9 @@ module.exports = function () {
 	u.log('room1');
 	var room = Game.rooms[name];
 	var room_data = Memory.rooms[name]
+
+	// Accumulate energy
+	room_data.NZ++;
 	
 	// energy dropped
 	var res_flag = room.find(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } )[0];
