@@ -11,9 +11,6 @@ module.exports = function () {
 	if(!room_data || !room_data.strategy)
 	    continue;
 
-	if(!room_data.NZ)
-	    room_data.NZ = 0;
-
 	// energy dropped
 	var res_flag = room.find(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } )[0];
 	var res_pos=null;
