@@ -742,6 +742,20 @@ CPriorityQ.prototype.put = function(o) {
 	qq.push(id);
 };
 
+CPriorityQ.prototype.remove = function(o) {
+    var id = this.getId(o);
+    var qq = this.q[this.getPriority(o)];
+    
+    if(qq) {
+	for(qqi in qq) {
+	    if(qq[qqi] == id) {
+		qq.splice(qqi, 1);
+		break;
+	    }
+	}
+    }
+};
+
 CPriorityQ.prototype.changePriority = function(o, pri) {
 
     if(this.getPriority(o) == pri)
@@ -841,6 +855,12 @@ CJob.prototype.register = function() {
     Memory.job_by_pri.put(this)
     Memory.job_by_tgt.put(this);
 };
+
+CJob.prototype.remove = function() {
+    Memory.job_by_tgt.remove(this);
+    Memory.job_by_pri.remove(this)
+    delete Memory.job_by_id[this.id];
+}
 
 function addJobNewCreep( rm, it, repl ) {
     var props = it.props ? it.props : { };
