@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = 7;
+	var newVersion = 8;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
