@@ -901,7 +901,7 @@ function addJobNewCreep( rm, it, repl ) {
 	var priority = job.p.expTime - Game.time;
 	if(priority <= 0)
 	    priority = 1;
-	Memory.job_by_pri.changePriority(priority);
+	// Memory.job_by_pri.changePriority(priority);
     }
 }
 
