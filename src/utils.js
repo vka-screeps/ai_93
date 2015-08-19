@@ -828,7 +828,7 @@ CCreepIdQ.prototype.getPriority = function(o) {
 // id, target_id, priority, count, taken_by, cost{e}, role
 var CJob = function(prop) {
     
-    this.id = 'job_' + Memory.next_id++;
+    this.id = prop.id; //'job_' + Memory.next_id++;
     this.p = prop;
     if(!this.p.taken_by)
 	this.p.taken_by = [];
@@ -841,6 +841,47 @@ CJob.prototype.register = function() {
     Memory.job_by_pri.put(this)
     Memory.job_by_tgt.put(this);
 };
+
+function addJobNewCreep( rm, it, repl ) {
+    var props = it.props ? it.props : { };
+    props.role = it.role;
+    if(it.role_id)
+	props.role_id = it.role_id;
+    
+    var jobId = 'newCreep_' + rm.name + '_' + genNamePrefix(props);
+    if(repl)
+	jobId += '_' + repl.id;
+
+
+    var job = Memory.job_by_id[jobId];
+    if(!job) {
+	var expTime = repl ? (Game.time + repl.ticksToLive) : Game.time;
+	var priority = expTime - Game.time;
+	if(priority <= 0)
+	    priority = 1;
+	
+	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm.id });
+	job.register();
+    } else {
+	var priority = job.p.expTime - Game.time;
+	if(priority <= 0)
+	    priority = 1;
+	Memory.job_by_pri.changePriority(priority);
+    }
+}
+
+getNextJobForSpawn(sp) {
+    var ret_job = Memory.job_by_pri.iterByPriority( function(job) {
+	if(job.role == 'spawn' && job.taken_by.length == 0) {
+	    if(job.rm == sp.room.id) {
+		job.taken_by.push(sp.id);
+		return job;
+	    }
+	}
+    } );
+
+    return ret_job;
+}
 
 
 // id, role, 
