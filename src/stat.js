@@ -11,6 +11,7 @@ printStat_ = function() {
     var creepCosts = {};
     creepCosts[MOVE] =  50;
     creepCosts[WORK] =  100;
+    creepCosts['work'] =  100;   
     creepCosts[CARRY] =  50;
     creepCosts[ATTACK] =  80;
     creepCosts[RANGED_ATTACK ] =  150;
