@@ -90,13 +90,14 @@ module.exports = {
 	    var autoExpand = 0;
 	    if(!isGlobal)
 		autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
+
+	    if(isGlobal) {
+		console.log(it_name + ' ' + (it.count + autoExpand) + ', ' + curCount);
+	    }
+
 	    
 	    if( (it.count + autoExpand) > curCount )
 	    {
-		if(isGlobal) {
-		    console.log(it_name);
-		}
-		
 		roles[it_name].del = 1;
 
 		if(rm.find(FIND_MY_SPAWNS)[0].spawning || created)
