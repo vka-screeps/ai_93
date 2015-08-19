@@ -1,3 +1,5 @@
+var config = require('config');
+
 module.exports = {
 
     init : function() {
@@ -20,30 +22,45 @@ module.exports = {
 	print_r(o);
     },
 
-    str_maintian_creeps : function(lst, rm)
+    str_maintain_creeps : function(lst, rm)
     {
-	var creeps = Game.creeps;//rm.find(FIND_MY_CREEPS); 
-	var roles = [];
+	var creeps = rm.find(FIND_MY_CREEPS);
+	if(!config.rooms[rm.name])
+	    config.rooms[rm.name] = {roles:[]};
+	var roles = config.rooms[rm.name].roles;
 	var created = 0;
 	var spawning = 0;
 
-	Memory.rooms['E9S8'].spawning=0;
+	Memory.rooms[rm.name].spawning=0;
 
 	for(var ic in  creeps)
 	{
 	    var c = creeps[ic];
-	    // var cr = c.memory.role + (c.memory.role_id ? c.memory.role_id : '');
 	    var cr = genNamePrefix(c.memory);
-	    // console.log( 'found ' + c.name + ' : ' + cr );
-	    if(!roles[cr])
-		roles[cr] = [c];
-	    else
-		roles[cr].push(c);
+	    
+	    if(c.memory.rm && c.memory.rm != rm.name) {
+		if(!config.rooms[c.memory.rm])
+		    config.rooms[c.memory.rm] = {roles:[]};
+		if(!config.rooms[c.memory.rm].roles[cr])
+		    config.rooms[c.memory.rm].roles[cr] = {creeps:[c]};
+		else
+		    config.rooms[c.memory.rm].roles[cr].creeps.push(c);
+	    } else {
+		if(!roles[cr])
+		    roles[cr] = {creeps:[c]};
+		else
+		    roles[cr].creeps.push(c);
+	    }
 	}
 
 	for(var i in lst)
 	{
 	    var it = lst[i];
+
+	    if(it.props && it.props.rm && it.props.rm != rm.name) {
+		console.log("not my room - " + it.props.rm);
+		continue;
+	    }
 	    //	    printObjectFnc(lst[it]);
 	    //	    console.log('role: ' + it['role']);
 
@@ -51,57 +68,61 @@ module.exports = {
 	    var it_name = genNamePrefix(it);
 
 	    var curCount = 0;
-	    if(roles[it_name] && roles[it_name] == 'del') {
+	    if(roles[it_name] && roles[it_name].del) {
 		console.log('duplicate ' + it_name);
 		continue;
 	    }
 
-	    curCount = roles[it_name] ? roles[it_name].length : 0;
+	    curCount = roles[it_name] ? roles[it_name].creeps.length : 0;
 
 	    // console.log(it.role + ', ' + it.count + ', ' + curCount);
 	    var autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
 	    
 	    if( (it.count + autoExpand) > curCount )
-		{
-		    roles[it_name] = 'del';
-		    Memory.rooms['E9S8'].spawning=1;
+	    {
+		roles[it_name].del = 1;
+		Memory.rooms['E9S8'].spawning=1;
 
-		    if(rm.find(FIND_MY_SPAWNS)[0].spawning || created)
-		    	continue;
+		if(rm.find(FIND_MY_SPAWNS)[0].spawning || created)
+		    continue;
 
-		    var props = it.props ? it.props : { };
-		    props.role = it.role;
-		    if(it.role_id)
-			props.role_id = it.role_id;
+		var props = it.props ? it.props : { };
+		props.role = it.role;
+		if(it.role_id)
+		    props.role_id = it.role_id;
 
-		    var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
-		    if(newName != -6)
-			console.log('spawning ' + ' - ' + newName);
-		    
-		    created = 1;
-		    //break;
-		}
+		var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
+		if(newName != -6)
+		    console.log('spawning ' + ' - ' + newName);
+
+		// if(props.rm && "string" ==  typeof newName) {
+		//     Game.creeps[newName].memory.rm = props.rm;
+		// }
+		
+		created = 1;
+		//break;
+	    }
 	    else if( it.count < curCount )
 	    {
-		if(!roles[it_name][0].memory.isMilitary) {
-		    console.log('killing ' + it.role);
-		    roles[it_name][0].suicide();
+		if(!roles[it_name].creeps[0].memory.isMilitary) {
+		    console.log('killing ' + it_name);
+		    roles[it_name].creeps[0].suicide();
 		}
 	    }
-	    roles[it_name] = 'del';
+	    roles[it_name].del = 1;
 
 	}
 
 	for(var j in roles) {
 	    var jit = roles[j];
 
-	    if(jit && jit == 'del') {
+	    if(jit && jit.del) {
 		continue;
 	    }
 	    if(jit) {
-		if(!jit[0].memory.isMilitary) {
-		    console.log('killing ' + it.role);
-		    jit[0].suicide();
+		if(!jit.creeps[0].memory.isMilitary) {
+		    console.log('killing ' + jit.creeps[0].memory.role);
+		    jit.creeps[0].suicide();
 		}
 	    }
 	}
