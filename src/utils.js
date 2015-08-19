@@ -547,7 +547,7 @@ str_do_smth = function( cr, where, what )
 			cr.memory.flag1 = flg.pos;
 
 		    if(flg && flg.pos.roomName != cr.pos.roomName) {
-			console.log('flag room - ' + flg.room);
+			console.log('flag room - ' + flg.pos.roomName);
 			var exitDir = cr.room.findExitTo(flg.room);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
