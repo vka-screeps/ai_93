@@ -542,38 +542,44 @@ str_do_smth = function( cr, where, what )
 
 	    // may be go to flag
 	    if(!cr.memory.flag) {
-		var flg = cr.memory.flag1;
+		var flg = null;
 		
 		if(!cr.memory.flag1) {
 		    if( cr.memory.f_from ) {
+			/*
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name == cr.memory.f_from; } } );
 			if(!flg)
-			    flg = Game.flags[cr.memory.f_from];
+			*/
+			flg = Game.flags[cr.memory.f_from];
 		    }
-		    else
+		    else {
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
-
-		    if(flg && flg.pos.roomName == cr.pos.roomName)
-			cr.memory.flag1 = flg.pos;
-
-		    if(flg && flg.pos.roomName != cr.pos.roomName) {
+		    }
+		    if(flg) {
+			cr.memory.flag1 = flg.id;
+ 
+		    }
+		    
+		} else {
+		    flg = Game.getObjectById(cr.memory.flag1);
+		}
+		
+		if(flg) {
+		    if(flg.pos.roomName != cr.pos.roomName)		    
+		    {
 			var destRoomName = flg.pos.roomName;
-//			console.log('flag room - ' + destRoomName);
+			//			console.log('flag room - ' + destRoomName);
 			var exitDir = cr.room.findExitTo(destRoomName);
 			var exit = cr.pos.findClosest(exitDir);
 			cr.moveTo(exit);
 			return;
 		    }
 		    
-		}
-
-		if(cr.memory.flag1) {
-
-		    if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
+		    if(cr.pos.getRangeTo(flg.pos.x,flg.pos.y) < 4) {
 			//console.log('retarget');
 			cr.memory.flag=1;
 		    } else {
-			var ret = cr.moveTo(cr.memory.flag1.x, cr.memory.flag1.y);
+			var ret = cr.moveTo(flg.pos.x, flg.pos.y);
 			// console.log('mt='+ret + ','+cr.memory.flag1.x);
 		    }
 		    return;
