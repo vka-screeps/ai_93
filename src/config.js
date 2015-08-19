@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = '$Id$';
+	var newVersion = "$Id$";
     }
 
 }
