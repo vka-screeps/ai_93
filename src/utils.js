@@ -748,6 +748,7 @@ CPriorityQ.prototype.getById = function(id) {
 };
 
 CPriorityQ.prototype.put = function(o) {
+    console.log('CPriorityQ.prototype.put');
     var pri = this.getPriority(o);
     var id = this.getId(o);
     var qq = this.q[pri];
