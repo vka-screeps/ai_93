@@ -9,7 +9,7 @@ module.exports = {
 	}
     },
 
-    rooms = []; // [ {roles: [ {creeps: [Creep], del: 1} ] } ]
+    rooms : [] // [ {roles: [ {creeps: [Creep], del: 1} ] } ]
 };
 
 var initMemVars = function() {
