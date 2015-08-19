@@ -8,15 +8,14 @@ printStat_ = function() {
     var totalCreeps = 0;
     var totalCreepParts = 0;
 
-    var creepCosts = {
-	move: 50,
-	WORK: 100,
-	CARRY: 50,
-	ATTACK: 80,
-	RANGED_ATTACK : 150,
-	HEAL: 250,
-	TOUGH: 10
-    };
+    var creepCosts = {};
+    creepCosts[MOVE] =  50;
+    creepCosts[WORK] =  100;
+    creepCosts[CARRY] =  50;
+    creepCosts[ATTACK] =  80;
+    creepCosts[RANGED_ATTACK ] =  150;
+    creepCosts[HEAL] =  250;
+    creepCosts[TOUGH] =  10;
     
     for(var ri in Game.rooms) {
 	var rm = Game.rooms[ri];
