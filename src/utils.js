@@ -870,7 +870,7 @@ function addJobNewCreep( rm, it, repl ) {
     }
 }
 
-getNextJobForSpawn(sp) {
+function getNextJobForSpawn(sp) {
     var ret_job = Memory.job_by_pri.iterByPriority( function(job) {
 	if(job.role == 'spawn' && job.taken_by.length == 0) {
 	    if(job.rm == sp.room.id) {
