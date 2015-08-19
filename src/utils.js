@@ -867,6 +867,9 @@ var CJob = function(prop) {
 };
 
 CJob.prototype.register = function() {
+    console.log('CJob.prototype.register');
+    Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
+	
     Memory.job_by_id[this.id] = this;
     Memory.job_by_pri.put(this)
     Memory.job_by_tgt.put(this);
