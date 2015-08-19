@@ -65,6 +65,10 @@ module.exports = {
 	    var it = lst[i];
 
 	    var it_name = genNamePrefix(it);
+
+	    if(isGlobal) {
+		console.log(it_name);
+	    }
 	    
 	    if(it.props && it.props.rm && it.props.rm != rm_name) {
 		console.log("not my room - " + it.props.rm + ' - ' + it_name);
