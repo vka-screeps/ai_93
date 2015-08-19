@@ -8,12 +8,12 @@ module.exports = function () {
 	var room = Game.rooms[name];
 	var room_data = Memory.rooms[name]
 
-	if(!room_data || !room_data.NZ)
+	if(!room_data || !room_data.strategy)
 	    continue;
 
-	// Accumulate energy
-	room_data.NZ++;
-	
+	if(!room_data.NZ)
+	    room_data.NZ = 0;
+
 	// energy dropped
 	var res_flag = room.find(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } )[0];
 	var res_pos=null;
@@ -32,10 +32,18 @@ module.exports = function () {
 	var el = room.find(FIND_MY_STRUCTURES,
 			 {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
 
+	var storeCapacity = 0;
 	for(var i in el) {
 	    var e = el[i];
 	    esum = esum + e.store.energy
-	}	
+	    storeCapacity += e.storeCapacity;
+	    // Accumulate energy
+	    room_data.NZ++;
+	}
+
+	// Can't accumulate more then storeCapacity
+	if(room_data.NZ > storeCapacity)
+	    room_data.NZ = storeCapacity;
 
 	room_data.energyDropped = esum;
 	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3 - room_data.NZ;
