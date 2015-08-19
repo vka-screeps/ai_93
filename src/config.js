@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = 4;
+	var newVersion = 5;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -46,7 +46,7 @@ function setConfig() {
     
     initMemVars();
     
-    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
+    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE];
     
     Memory.rooms['E9S8'].strategy_data =[
@@ -55,7 +55,7 @@ function setConfig() {
 	     , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
 	, { role_id : 'h4', role : 'harv', count : 2, body : [ WORK, WORK, WORK, MOVE]
 	    , props : { src : '55c34a6b5be41a0a6e80bd5b' }}
-	, { role_id : 'c3', role : 'carry', count : 4, body : carryBody
+	, { role_id : 'c3', role : 'carry', count : 2, body : carryBody
 	    , props : { f_from : 'f1', tgt: '55d37aec137951da224e8ae7'}}
 
 	// defence
