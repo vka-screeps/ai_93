@@ -46,9 +46,9 @@ printStat_ = function() {
 
 	    totalCreeps++;
 	    for(pi in c.body) {
-		var partCost = creepCosts[c.body[pi]];
+		var partCost = creepCosts[c.body[pi].type];
 		if(isNaN(partCost))
-		    console.log(c.body[pi] + ' - ' + partCost);
+		    console.log(c.body[pi].type + ' - ' + partCost);
 		else
 		    totalCreepParts += partCost;
 	    }
