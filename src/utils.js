@@ -1,7 +1,6 @@
 module.exports = {
 
     init : function() {
-	initMemVars();
     },
 
     log : function(str) {
@@ -773,28 +772,6 @@ CCreepIdQ.prototype.getPriority = function(o) {
 
 
 ///
-var initMemVars = function() {
-    if(!Memory.next_id)
-	Memory.next_id = 1;
-    // job
-    if(!Memory.job_by_id)
-	Memory.job_by_id = {};
-
-    if(!Memory.job_by_pri)
-	Memory.job_by_pri = new CPriorityQ(Memory.job_by_id);
-
-    if(!Memory.job_by_tgt)
-	Memory.job_by_tgt = new CTargetQ(Memory.job_by_id);
-    // wrk
-    if(!Memory.wrk_by_id)
-	Memory.wrk_by_id = {};
-
-    if(!Memory.wrk_by_role)
-	Memory.wrk_by_role = new CRoleQ(Memory.wrk_by_id);
-
-    if(!Memory.wrk_by_creep_id)
-	Memory.wrk_by_creep_id = new CCreepIdQ(Memory.wrk_by_id);
-};
 
 // id, target_id, priority, count, taken_by, cost{e}, role
 var CJob = function(prop) {
