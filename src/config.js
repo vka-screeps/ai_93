@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = 2;
+	var newVersion = 3;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -63,15 +63,16 @@ function setConfig() {
 	
 	
 	, { role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
-	    , props : { src : '55c34a6b5be41a0a6e80c19f' }}
+	    , props : { src : '55c34a6b5be41a0a6e80c19f', isGlobal: 1 }}
 
-	, { role_id : 'c6', role : 'carry', count : 4, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7'}}
+	, { role_id : 'c6', role : 'carry', count : 4, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7', isGlobal: 1}}
 
 	, { role_id : 'h7', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
-	    , props : { src : '55c34a6b5be41a0a6e80c1a0' }}
+	    , props : { src : '55c34a6b5be41a0a6e80c1a0', isGlobal: 1 }}
 	
 	, { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
-										   pos_to : { x : 22, y : 8, d : 1}} }
+										   pos_to : { x : 22, y : 8, d : 1},
+										   isGlobal: 1} }
 
 	// , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE ]
 	// 	, props : { isMilitary:1,  pos_to : { x : 16, y : 45, d : 0} }}
