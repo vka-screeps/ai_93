@@ -57,15 +57,16 @@ module.exports = {
 	{
 	    var it = lst[i];
 
+	    var it_name = genNamePrefix(it);
+	    
 	    if(it.props && it.props.rm && it.props.rm != rm.name) {
-		console.log("not my room - " + it.props.rm);
+		console.log("not my room - " + it.props.rm + ' - ' + it_name);
 		continue;
 	    }
 	    //	    printObjectFnc(lst[it]);
 	    //	    console.log('role: ' + it['role']);
 
 	    // var it_name = it.role + (it.role_id ? it.role_id : '');
-	    var it_name = genNamePrefix(it);
 
 	    var curCount = 0;
 	    if(roles[it_name] && roles[it_name].del) {
