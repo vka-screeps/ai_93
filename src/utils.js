@@ -53,11 +53,13 @@ module.exports = {
 		var cr = genNamePrefix(c.memory);
 
 		// May be generte a new job?
+		/*
 		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm, lst_by_id[cr], c );
 		    }
 		}
+		*/
 		
 		if(c.memory.rm && c.memory.rm != rm_name) {
 		    if(!config.rooms[c.memory.rm])
@@ -869,8 +871,8 @@ var CJob = function(prop) {
 CJob.prototype.register = function() {
     console.log('CJob.prototype.register');
     
-    Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
-    Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
+    // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
+    // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
     
     Memory.job_by_id[this.id] = this;
     Memory.job_by_pri.put(this)
