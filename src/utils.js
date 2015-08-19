@@ -91,13 +91,15 @@ module.exports = {
 	    if(!isGlobal)
 		autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
 
+	    /*
 	    if(isGlobal) {
 //		console.log(it_name + ' ' + (it.count + autoExpand) + ', ' + curCount);
 
 		if(it_name == 'harv_h6') {
-		    console.log('havr_h6 - ' + roles[it_name].creeps[0] );
+		    console.log('harv_h6 - ' + roles[it_name].creeps[0] );
 		}
 	    }
+	    */
 	    
 	    if( (it.count + autoExpand) > curCount )
 	    {
