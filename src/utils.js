@@ -72,7 +72,7 @@ module.exports = {
 	    }
 
 	    if(!roles[it_name])
-		roles[it_name] = {creeps:[c]};
+		roles[it_name] = {creeps:[]};
 	    //	    printObjectFnc(lst[it]);
 	    //	    console.log('role: ' + it['role']);
 
