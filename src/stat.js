@@ -45,8 +45,13 @@ printStat_ = function() {
 		roles[cr].push(c);
 
 	    totalCreeps++;
-	    for(pi in c.body)
-		totalCreepParts += creepCosts[c.body[pi]];
+	    for(pi in c.body) {
+		var partCost = creepCosts[c.body[pi]];
+		if(isNaN(partCost))
+		    console.log(c.body[pi] + ' - ' + partCost);
+		else
+		    totalCreepParts += partCost;
+	    }
 	}
 
 	for(ic in roles) {
