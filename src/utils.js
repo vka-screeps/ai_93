@@ -554,10 +554,12 @@ str_do_smth = function( cr, where, what )
 		    }
 		    else {
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
+			if(!flg) {
+			    console.log('no res flag at ' + pos);
+			}
 		    }
 		    if(flg) {
 			cr.memory.flag1 = flg.id;
- 
 		    }
 		    
 		} else {
@@ -584,7 +586,7 @@ str_do_smth = function( cr, where, what )
 		    }
 		    return;
 		} else {
-		    console.log(cr.name + '- flag not found');
+		    console.log(cr.name + ' - flag not found');
 		    return;
 		}
 	    }
