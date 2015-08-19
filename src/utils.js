@@ -546,7 +546,7 @@ str_do_smth = function( cr, where, what )
 	    if(target) {
 		cr.moveTo(target);
 		cr.pickup(target);
-	    } else if(cr.memory.role != 'carry') {
+	    } else if(cr.memory.role != 'carry' || cr.memory.is_consumer) {
 		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
 						   {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
 
