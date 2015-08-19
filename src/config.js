@@ -36,6 +36,12 @@ var initMemVars = function() {
 };
 
 
+function initRoomVars(name) {
+        if(!Memory.rooms[name].NZ)
+	    Memory.rooms[name].NZ = 0;
+
+}
+
 function setConfig() {
     
     initMemVars();
@@ -64,18 +70,6 @@ function setConfig() {
 	    , autoExpand: 1}
 	
 	
-	, { role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
-	    , props : { src : '55c34a6b5be41a0a6e80c19f', rm: 'g1' }}
-
-	, { role_id : 'c6', role : 'carry', count : 4, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7', rm: 'g1'}}
-
-	, { role_id : 'h7', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
-	    , props : { src : '55c34a6b5be41a0a6e80c1a0', rm: 'g1' }}
-	
-	, { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
-										   pos_to : { x : 22, y : 8, d : 1},
-										   rm: 'g1'} }
-
 	// , { role_id : 't1', role : 'testtgt', count : 1, body : [ MOVE ]
 	// 	, props : { isMilitary:1,  pos_to : { x : 16, y : 45, d : 0} }}
 	
@@ -91,9 +85,31 @@ function setConfig() {
     ];
 
     Memory.rooms['E9S8'].strategy = 'str_maintain_creeps';
-    if(!Memory.rooms['E9S8'].NZ)
-	Memory.rooms['E9S8'].NZ = 0;
+    initRoomVars('E9S8');
 
+    Memory.rooms['E9S9'].strategy_data = [];
+    Memory.rooms['E9S9'].strategy = 'str_maintain_creeps';
+    initRoomVars('E9S9');
+
+    Memory.rooms['g1'].strategy_data = [
+	{ role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+	    , props : { src : '55c34a6b5be41a0a6e80c19f', rm: 'g1' }}
+
+	, { role_id : 'c6', role : 'carry', count : 4, body : carryBody, props : { f_from : 'f2', tgt: '55d37aec137951da224e8ae7', rm: 'g1'}}
+
+	, { role_id : 'h7', role : 'harv', count : 2, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
+	    , props : { src : '55c34a6b5be41a0a6e80c1a0', rm: 'g1' }}
+	
+	, { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
+										   pos_to : { x : 22, y : 8, d : 1},
+										   rm: 'g1'} }
+	
+    ];
+    
+    Memory.rooms['g1'].strategy = 'str_maintain_creeps';
+    Memory.rooms['g1'].spawnIn = 'E9S8';
+    initRoomVars('g1');
+    
 
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;

@@ -60,5 +60,10 @@ module.exports = function () {
 	if(room_data && room_data.strategy)
 	    u[room_data.strategy](room_data.strategy_data, room);
     }
+    var name = 'g1';
+    room_data = Memory.rooms[name]
+    if(room_data && room_data.strategy)
+	u[room_data.strategy](room_data.strategy_data, room_data.spawnIn, name);
+    
 }
 
