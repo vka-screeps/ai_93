@@ -64,3 +64,4 @@ module.exports = function () {
 	    u[room_data.strategy](room_data.strategy_data, room);
     }
 }
+
