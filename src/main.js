@@ -4,6 +4,7 @@ var myroom = require('myroom');
 var u = require('utils');
 var config = require('config');
 
+config.rooms = [];
 u.init();
 config.updateConfig();
 

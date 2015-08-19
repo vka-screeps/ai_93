@@ -94,7 +94,6 @@ module.exports = {
 	    if(isGlobal) {
 		console.log(it_name + ' ' + (it.count + autoExpand) + ', ' + curCount);
 	    }
-
 	    
 	    if( (it.count + autoExpand) > curCount )
 	    {
