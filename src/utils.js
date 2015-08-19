@@ -568,6 +568,16 @@ str_do_smth = function( cr, where, what )
 		}
 
 		if(cr.memory.flag1) {
+		    var flg = cr.memory.flag1;
+		    if(flg && flg.pos.roomName != cr.pos.roomName) {
+			var destRoomName = flg.pos.roomName;
+//			console.log('flag room - ' + destRoomName);
+			var exitDir = cr.room.findExitTo(destRoomName);
+			var exit = cr.pos.findClosest(exitDir);
+			cr.moveTo(exit);
+			return;
+		    }
+		    
 
 		    if(cr.pos.getRangeTo(cr.memory.flag1.x,cr.memory.flag1.y) < 4) {
 			//console.log('retarget');
