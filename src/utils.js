@@ -23,7 +23,7 @@ module.exports = {
 
     str_maintian_creeps : function(lst, rm)
     {
-	var creeps = rm.find(FIND_MY_CREEPS); 
+	var creeps = Game.creeps;//rm.find(FIND_MY_CREEPS); 
 	var roles = [];
 	var created = 0;
 	var spawning = 0;
