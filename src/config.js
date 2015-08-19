@@ -105,7 +105,8 @@ function setConfig() {
 										   rm: 'g1'} }
 	
     ];
-    
+
+    Memory.rooms['g1'] = {};
     Memory.rooms['g1'].strategy = 'str_maintain_creeps';
     Memory.rooms['g1'].spawnIn = 'E9S8';
     initRoomVars('g1');
