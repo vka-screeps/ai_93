@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = 8;
+	var newVersion = 10;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -78,7 +78,7 @@ function setConfig() {
 
 	, { role : 'builder', count : 5, body : [ WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
 	    , props : { is_consumer: 1 } }
-	, { role_id : 'c4', role : 'carry', count : 2, body : carryBody
+	, { role_id : 'c4', role : 'carry', count : 3, body : carryBody
 	    , props : { f_from : 'res1',
 			pos_to : { x : 21, y : 22, d : 0},
 			is_consumer: 1 } }
