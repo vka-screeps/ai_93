@@ -5,6 +5,19 @@ module.exports = {
 
 
 printStat_ = function() {
+    var totalCreeps = 0;
+    var totalCreepParts = 0;
+
+    var creepCosts = {
+	MOVE: 50,
+	WORK: 100,
+	CARRY: 50,
+	ATTACK: 80,
+	RANGED_ATTACK : 150,
+	HEAL: 250,
+	TOUGH: 10
+    };
+    
     for(var ri in Game.rooms) {
 	var rm = Game.rooms[ri];
 	console.log ('ROOM: ' + rm.name);
@@ -30,6 +43,10 @@ printStat_ = function() {
 		roles[cr] = [c];
 	    else
 		roles[cr].push(c);
+
+	    totalCreeps++;
+	    for(pi in c.body)
+		totalCreepParts += creepCosts[c.body[pi]];
 	}
 
 	for(ic in roles) {
@@ -43,6 +60,8 @@ printStat_ = function() {
 	    console.log(str);
 	}
     }
+
+    console.log('Total creeps: ' + totalCreeps + ' / ' + totalCreepParts);
 };
 
 
