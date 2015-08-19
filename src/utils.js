@@ -94,7 +94,7 @@ module.exports = {
 	    if(isGlobal) {
 //		console.log(it_name + ' ' + (it.count + autoExpand) + ', ' + curCount);
 
-		if(it_name == 'havr_h6') {
+		if(it_name == 'harv_h6') {
 		    console.log('havr_h6 - ' + roles[it_name].creeps[0] );
 		}
 	    }
