@@ -1,7 +1,7 @@
 module.exports = {
     
     updateConfig() {
-	var newVersion = 2;
+	var newVersion = 3;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -91,7 +91,9 @@ function setConfig() {
     Memory.rooms['E9S9'].strategy = 'str_maintain_creeps';
     initRoomVars('E9S9');
 
-    Memory.rooms['g1'].strategy_data = [
+    Memory.myrooms = {};
+    Memory.myrooms['g1'] = {};
+    Memory.myrooms['g1'].strategy_data = [
 	{ role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	    , props : { src : '55c34a6b5be41a0a6e80c19f', rm: 'g1' }}
 
@@ -106,8 +108,6 @@ function setConfig() {
 	
     ];
 
-    Memory.myrooms = {};
-    Memory.myrooms['g1'] = {};
     Memory.myrooms['g1'].strategy = 'str_maintain_creeps';
     Memory.myrooms['g1'].spawnIn = 'E9S8';
 
