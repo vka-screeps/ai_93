@@ -22,34 +22,43 @@ module.exports = {
 	print_r(o);
     },
 
-    str_maintain_creeps : function(lst, rm)
+    str_maintain_creeps : function(lst, rm, rm_name)
     {
-	var creeps = rm.find(FIND_MY_CREEPS);
-	if(!config.rooms[rm.name])
-	    config.rooms[rm.name] = {roles:[]};
-	var roles = config.rooms[rm.name].roles;
+	var isGlobal = true;
+	if(!rm_name) {
+	    rm_name = rm.name;
+	    isGlobal = false;
+	}
+
+	if(!config.rooms[rm_name])
+	    config.rooms[rm_name] = {roles:[]};
+	
+	var roles = config.rooms[rm_name].roles;
 	var created = 0;
 	var spawning = 0;
 
-	Memory.rooms[rm.name].spawning=0;
+	Memory.rooms[rm_name].spawning=0;
 
-	for(var ic in  creeps)
-	{
-	    var c = creeps[ic];
-	    var cr = genNamePrefix(c.memory);
-	    
-	    if(c.memory.rm && c.memory.rm != rm.name) {
-		if(!config.rooms[c.memory.rm])
-		    config.rooms[c.memory.rm] = {roles:[]};
-		if(!config.rooms[c.memory.rm].roles[cr])
-		    config.rooms[c.memory.rm].roles[cr] = {creeps:[c]};
-		else
-		    config.rooms[c.memory.rm].roles[cr].creeps.push(c);
-	    } else {
-		if(!roles[cr])
-		    roles[cr] = {creeps:[c]};
-		else
-		    roles[cr].creeps.push(c);
+	if(!isGlobal) {
+	    var creeps = rm.find(FIND_MY_CREEPS);
+	    for(var ic in  creeps)
+	    {
+		var c = creeps[ic];
+		var cr = genNamePrefix(c.memory);
+		
+		if(c.memory.rm && c.memory.rm != rm_name) {
+		    if(!config.rooms[c.memory.rm])
+			config.rooms[c.memory.rm] = {roles:[]};
+		    if(!config.rooms[c.memory.rm].roles[cr])
+			config.rooms[c.memory.rm].roles[cr] = {creeps:[c]};
+		    else
+			config.rooms[c.memory.rm].roles[cr].creeps.push(c);
+		} else {
+		    if(!roles[cr])
+			roles[cr] = {creeps:[c]};
+		    else
+			roles[cr].creeps.push(c);
+		}
 	    }
 	}
 
@@ -59,10 +68,13 @@ module.exports = {
 
 	    var it_name = genNamePrefix(it);
 	    
-	    if(it.props && it.props.rm && it.props.rm != rm.name) {
+	    if(it.props && it.props.rm && it.props.rm != rm_name) {
 		console.log("not my room - " + it.props.rm + ' - ' + it_name);
 		continue;
 	    }
+
+	    if(!roles[it_name])
+		roles[it_name] = {creeps:[c]};
 	    //	    printObjectFnc(lst[it]);
 	    //	    console.log('role: ' + it['role']);
 
@@ -77,7 +89,9 @@ module.exports = {
 	    curCount = roles[it_name] ? roles[it_name].creeps.length : 0;
 
 	    // console.log(it.role + ', ' + it.count + ', ' + curCount);
-	    var autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
+	    var autoExpand = 0;
+	    if(!isGlobal)
+		autoExpand = it.autoExpand ? (rm.memory.hostiles * 3 / 2) : 0;
 	    
 	    if( (it.count + autoExpand) > curCount )
 	    {
