@@ -554,9 +554,6 @@ str_do_smth = function( cr, where, what )
 		    }
 		    else {
 			flg = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,3) == 'res'; } } );
-			if(!flg) {
-			    console.log('no res flag at ' + pos);
-			}
 		    }
 		    if(flg) {
 			cr.memory.flag1 = flg.id;
@@ -564,6 +561,8 @@ str_do_smth = function( cr, where, what )
 		    
 		} else {
 		    flg = Game.getObjectById(cr.memory.flag1);
+		    if(!flg)
+			cr.memory.flag1 = null;
 		}
 		
 		if(flg) {
