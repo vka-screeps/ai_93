@@ -37,12 +37,27 @@ module.exports = {
 	var created = 0;
 	var spawning = 0;
 
+	var lst_by_id = {};
+	for(var i in lst)
+	{
+	    var it = lst[i];
+	    var it_name = genNamePrefix(it);
+	    lst_by_id[it_name] = it;
+	}	
+
 	if(!isGlobal) {
 	    var creeps = rm.find(FIND_MY_CREEPS);
 	    for(var ic in  creeps)
 	    {
 		var c = creeps[ic];
 		var cr = genNamePrefix(c.memory);
+
+		// May be generte a new job?
+		if(c.ticksToLive < 50) {
+		    if(lst_by_id[cr]) {
+			addJobNewCreep( c.memory.rm ? c.memory.rm : rm, lst_by_id[cr], c );
+		    }
+		}
 		
 		if(c.memory.rm && c.memory.rm != rm_name) {
 		    if(!config.rooms[c.memory.rm])
