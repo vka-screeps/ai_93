@@ -9,7 +9,7 @@ printStat_ = function() {
     var totalCreepParts = 0;
 
     var creepCosts = {
-	MOVE: 50,
+	move: 50,
 	WORK: 100,
 	CARRY: 50,
 	ATTACK: 80,
