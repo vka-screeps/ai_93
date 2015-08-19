@@ -37,8 +37,6 @@ module.exports = {
 	var created = 0;
 	var spawning = 0;
 
-	Memory.rooms[rm_name].spawning=0;
-
 	if(!isGlobal) {
 	    var creeps = rm.find(FIND_MY_CREEPS);
 	    for(var ic in  creeps)
@@ -96,7 +94,6 @@ module.exports = {
 	    if( (it.count + autoExpand) > curCount )
 	    {
 		roles[it_name].del = 1;
-		Memory.rooms['E9S8'].spawning=1;
 
 		if(rm.find(FIND_MY_SPAWNS)[0].spawning || created)
 		    continue;

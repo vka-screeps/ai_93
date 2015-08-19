@@ -106,11 +106,13 @@ function setConfig() {
 	
     ];
 
-    Memory.rooms['g1'] = {};
-    Memory.rooms['g1'].strategy = 'str_maintain_creeps';
-    Memory.rooms['g1'].spawnIn = 'E9S8';
-    initRoomVars('g1');
-    
+    Memory.myrooms = {};
+    Memory.myrooms['g1'] = {};
+    Memory.myrooms['g1'].strategy = 'str_maintain_creeps';
+    Memory.myrooms['g1'].spawnIn = 'E9S8';
+
+    if(!Memory.myrooms['g1'].NZ)
+	Memory.myrooms['g1'].NZ = 0;
 
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;
