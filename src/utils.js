@@ -66,10 +66,6 @@ module.exports = {
 
 	    var it_name = genNamePrefix(it);
 
-	    if(isGlobal) {
-		console.log(it_name);
-	    }
-	    
 	    if(it.props && it.props.rm && it.props.rm != rm_name) {
 		console.log("not my room - " + it.props.rm + ' - ' + it_name);
 		continue;
@@ -97,6 +93,10 @@ module.exports = {
 	    
 	    if( (it.count + autoExpand) > curCount )
 	    {
+		if(isGlobal) {
+		    console.log(it_name);
+		}
+		
 		roles[it_name].del = 1;
 
 		if(rm.find(FIND_MY_SPAWNS)[0].spawning || created)
