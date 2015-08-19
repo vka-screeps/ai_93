@@ -63,7 +63,7 @@ module.exports = function () {
     var name = 'g1';
     room_data = Memory.myrooms[name]
     if(room_data && room_data.strategy)
-	u[room_data.strategy](room_data.strategy_data, room_data.spawnIn, name);
+	u[room_data.strategy](room_data.strategy_data, Game.rooms[room_data.spawnIn], name);
     
 }
 
