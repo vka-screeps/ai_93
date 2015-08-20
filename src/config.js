@@ -3,7 +3,7 @@ var u = require('utils');
 module.exports = {
     
     updateConfig() {
-	var newVersion = 12;
+	var newVersion = 15;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -16,7 +16,7 @@ var initMemVars = function() {
     if(!Memory.next_id)
 	Memory.next_id = 1;
     // job
-    if(!Memory.job_by_id)
+//    if(!Memory.job_by_id)
 	Memory.job_by_id = {};
 
     //    if(!Memory.job_by_pri)
