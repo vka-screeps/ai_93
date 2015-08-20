@@ -975,7 +975,7 @@ function addJobNewCreep( rm, it, repl ) {
 
 function getNextJobForSpawn(sp) {
     var jobs_del=[];
-    var ret_job = Memory.job_by_pri.iterByPriority( function(job) {
+    var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
 	if(job.role == 'spawn' && job.taken_by.length == 0) {
 	    if(job.repl && !Game.getObjectById(job.repl))
 		jobs_del.push(job.id); // expired job
