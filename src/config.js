@@ -3,7 +3,7 @@ var u = require('utils');
 module.exports = {
     
     updateConfig() {
-	var newVersion = 11;
+	var newVersion = 12;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
@@ -25,8 +25,11 @@ var initMemVars = function() {
 	u.vTable['CPriorityQ'].cons(Memory.job_by_pri, Memory.job_by_id, 'CPriorityQ');
     }
 
-//    if(!Memory.job_by_tgt)
-	Memory.job_by_tgt = u.vTable['CTargetQ'].cons(Memory.job_by_id, 'CTargetQ');
+    //    if(!Memory.job_by_tgt)
+    {
+	Memory.job_by_tgt = {};
+	u.vTable['CTargetQ'].cons(Memory.job_by_tgt, Memory.job_by_id, 'CTargetQ');
+    }
 
     // wrk
     /*
