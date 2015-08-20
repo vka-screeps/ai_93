@@ -776,8 +776,6 @@ CPriorityQ.prototype.cons = function(this_, store, class_) {
 function getPriority(this_, o) { vTable[this_.class_].getPriority(this_, o); }
 
 CPriorityQ.prototype.getPriority = function(this_, o) {
-    console.log('pri=' + o.p.priority);
-
     return o.p.priority;
 };
 
@@ -785,6 +783,21 @@ function setPriority(this_, o, priority) { return vTable[this_.class_].setPriori
 CPriorityQ.prototype.setPriority = function(this_, o, priority) {
     o.p.priority = priority;
 };
+
+function printQ(this_) { return vTable[this_.class_].printQ(this_); }
+CPriorityQ.prototype.printQ = function(this_) {
+
+    for(var qi in this_.q ){
+	var qq = this_.q[qi];
+	console.log('pri: ' + qi);
+	if(qq) {
+	    for(qqi in qq) {
+		console.log('pri: ' + qq[qqi]);
+	    }
+	}
+    }
+}
+
 
 function getId(this_, o) { return vTable[this_.class_].getId(this_, o); }
 CPriorityQ.prototype.getId = function(this_, o) {
