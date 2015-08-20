@@ -786,7 +786,7 @@ CPriorityQ.prototype.setPriority = function(this_, o, priority) {
 
 function printQ(this_) { return vTable[this_.class_].printQ(this_); }
 CPriorityQ.prototype.printQ = function(this_) {
-
+    console.log('printQ: ' + this_.q.length);
     for(var qi in this_.q ){
 	var qq = this_.q[qi];
 	console.log('pri: ' + qi);
