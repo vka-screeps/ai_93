@@ -814,7 +814,10 @@ CPriorityQ.prototype.remove = function(this_, o) {
     if(qq) {
 	for(qqi in qq) {
 	    if(qq[qqi] == id) {
+		console.log('splice ');
+		printObjectFnc(qq);
 		qq.splice(qqi, 1);
+		printObjectFnc(qq);
 		break;
 	    }
 	}
@@ -833,7 +836,10 @@ CPriorityQ.prototype.changePriority = function(this_, o, pri) {
     if(qq) {
 	for(qqi in qq) {
 	    if(qq[qqi] == id) {
+		console.log('splice ');
+		printObjectFnc(qq);
 		qq.splice(qqi, 1);
+		printObjectFnc(qq);
 		break;
 	    }
 	}
@@ -926,6 +932,11 @@ var CJob = function(prop) {
 };
 
 registerJob = function(this_) {
+    console.log('Adding new job - ' + this_.id);
+
+    if(Memory.job_by_id[this_.id])
+	removeJob(this_);
+    
     // console.log('CJob.prototype.register');
     
     // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
@@ -937,13 +948,14 @@ registerJob = function(this_) {
 };
 
 removeJob = function(this_) {
+    console.log('Remove job - ' + this_.id);
+    
     remove(Memory.job_by_tgt, this_);
     remove(Memory.job_by_pri, this_);
     delete Memory.job_by_id[this_.id];
 }
 
 function addJobNewCreep( rm, it, repl ) {
-    console.log('Adding new job - ' + repl.id);
     
     var props = it.props ? it.props : { };
     props.role = it.role;
