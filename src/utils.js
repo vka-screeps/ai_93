@@ -993,9 +993,9 @@ function getNextJobForSpawn(sp) {
 
     var jobs_del=[];
     var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
-	console.log(job.id);
-
 	if(job.role == 'spawn' && job.taken_by.length == 0) {
+	    console.log(job.id);
+
 	    if(!job.repl || job.repl && !Game.getObjectById(job.repl))
 		jobs_del.push(job.id); // expired job
 	    else /*if(job.rm == sp.room.id)*/ {
