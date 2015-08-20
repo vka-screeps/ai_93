@@ -828,8 +828,11 @@ CPriorityQ.prototype.remove = function(this_, o) {
 function changePriority(this_, o, pri) { return vTable[this_.class_].changePriority(this_, o, pri); }
 CPriorityQ.prototype.changePriority = function(this_, o, pri) {
 
+    console.log('CPriorityQ.prototype.changePriority 1');
     if(getPriority(this_, o) == pri)
 	return;
+
+    console.log('CPriorityQ.prototype.changePriority 2');
     
     var id = getId(this_, o);
     var qq = this_.q[getPriority(this_, o)];
