@@ -769,12 +769,13 @@ CPriorityQ.prototype.cons = function(this_, store, class_) {
     else
 	this_.class_ = 'CPriorityQ';
     this_.q = [];
+    for(var i =0; i<100; ++i)
+	this_.q[i] = [];
     this_.store = store;
     return this;
 }
 
 function getPriority(this_, o) { vTable[this_.class_].getPriority(this_, o); }
-
 CPriorityQ.prototype.getPriority = function(this_, o) {
     return o.p.priority;
 };
@@ -792,7 +793,7 @@ CPriorityQ.prototype.printQ = function(this_) {
 	console.log('pri: ' + qi);
 	if(qq) {
 	    for(qqi in qq) {
-		console.log(qq[qqi]);
+		console.log('    ' + qq[qqi]);
 	    }
 	}
     }
@@ -814,6 +815,9 @@ CPriorityQ.prototype.put = function(this_, o) {
     // console.log('CPriorityQ.prototype.put');
     var pri = getPriority(this_, o);
     var id = getId(this_, o);
+    if(!pri) {
+	console.log('invalid pri - ' + pri);
+    }
     var qq = this_.q[pri];
     if(!qq)
 	this_.q[pri] = [id];
