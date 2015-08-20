@@ -57,7 +57,7 @@ module.exports = {
 
 		// May be generte a new job?
 
-		if(c.ticksToLive < 50) {
+		if(c.ticksToLive < 500) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm_name, lst_by_id[cr], c );
 		    }
@@ -989,8 +989,12 @@ function addJobNewCreep( rm, it, repl ) {
 }
 
 function getNextJobForSpawn(sp) {
+    console.log('getNextJobForSpawn');
+
     var jobs_del=[];
     var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
+	console.log(job.id);
+
 	if(job.role == 'spawn' && job.taken_by.length == 0) {
 	    if(!job.repl || job.repl && !Game.getObjectById(job.repl))
 		jobs_del.push(job.id); // expired job
