@@ -850,13 +850,15 @@ CPriorityQ.prototype.findByPriority = function(this_, pri) {
 function CTargetQ() {
     CPriorityQ.call(this);
 };
-vTable['CTargetQ'] = new CTargetQ();
+
 CTargetQ.prototype = Object.create(CPriorityQ.prototype);
 CTargetQ.prototype.constructor = CTargetQ;
 
 CTargetQ.prototype.getPriority = function(this_, o) {
     return o.p.target_id;
 };
+
+vTable['CTargetQ'] = new CTargetQ();
 
 // CRoleQ
 function CRoleQ() {
