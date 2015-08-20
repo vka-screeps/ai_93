@@ -798,6 +798,7 @@ function put(this_, o) { return vTable[this_.class_].put(this_, o); }
 CPriorityQ.prototype.put = function(this_, o) {
     // console.log('CPriorityQ.prototype.put');
     var pri = getPriority(this_, o);
+    console.log('put - pri=' + pri);
     var id = getId(this_, o);
     var qq = this_.q[pri];
     if(!qq)
