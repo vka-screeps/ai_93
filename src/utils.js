@@ -57,7 +57,7 @@ module.exports = {
 
 		// May be generte a new job?
 
-		if(c.ticksToLive < 500) {
+		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm_name, lst_by_id[cr], c );
 		    }
@@ -989,24 +989,24 @@ function addJobNewCreep( rm, it, repl ) {
 }
 
 function getNextJobForSpawn(sp) {
-    console.log('getNextJobForSpawn');
+//    console.log('getNextJobForSpawn');
 
     var jobs_del=[];
     var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
-	if(job.role == 'spawn' && job.taken_by.length == 0) {
-	    console.log(job.id);
+	if(job.p.role == 'spawn' && job.p.taken_by.length == 0) {
+//	    console.log(job.id);
 
-	    if(!job.repl || job.repl && !Game.getObjectById(job.repl))
+	    if(!job.p.repl || job.p.repl && !Game.getObjectById(job.p.repl))
 		jobs_del.push(job.id); // expired job
 	    else /*if(job.rm == sp.room.id)*/ {
-		job.taken_by.push(sp.id);
+		job.p.taken_by.push(sp.id);
 		return job;
 	    }
 	}
     } );
 
     for(di in jobs_del) {
-	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
+//	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
 	removeJob( Memory.job_by_id[jobs_del[di]] );
     }
 
