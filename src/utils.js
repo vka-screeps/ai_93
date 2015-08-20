@@ -767,7 +767,7 @@ CPriorityQ.prototype.getId = function(this_, o) {
 
 function getById(this_, id) { return vTable[this_.class_].getById(this_, id); }
 CPriorityQ.prototype.getById = function(this_, id) {
-    return this_.store[id];
+    return Memory[this_.store][id];
 };
 
 function put(this_, o) { return vTable[this_.class_].put(this_, o); }
