@@ -1,15 +1,15 @@
+var u = require('utils');
+
 module.exports = {
     
     updateConfig() {
-	var newVersion = 11;
+	var newVersion = 12;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
 	    setConfig()
 	}
     },
-
-    rooms : [] // [ {roles: [ {creeps: [Creep], del: 1} ] } ]
 };
 
 var initMemVars = function() {
@@ -20,11 +20,13 @@ var initMemVars = function() {
 	Memory.job_by_id = {};
 
     if(!Memory.job_by_pri)
-	Memory.job_by_pri = new CPriorityQ(Memory.job_by_id);
+	Memory.job_by_pri = u.vTable['CPriorityQ'].cons(Memory.job_by_id, 'CPriorityQ');
 
     if(!Memory.job_by_tgt)
-	Memory.job_by_tgt = new CTargetQ(Memory.job_by_id);
+	Memory.job_by_tgt = u.vTable['CTargetQ'].cons(Memory.job_by_id, 'CTargetQ');
+
     // wrk
+    /*
     if(!Memory.wrk_by_id)
 	Memory.wrk_by_id = {};
 
@@ -33,6 +35,7 @@ var initMemVars = function() {
 
     if(!Memory.wrk_by_creep_id)
 	Memory.wrk_by_creep_id = new CCreepIdQ(Memory.wrk_by_id);
+    */
 };
 
 

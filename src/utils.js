@@ -1,6 +1,9 @@
-var config = require('config');
+var glb = require('glb');
 
 module.exports = {
+
+    vTable : {},
+
 
     init : function() {
     },
@@ -30,10 +33,10 @@ module.exports = {
 	    isGlobal = false;
 	}
 
-	if(!config.rooms[rm_name])
-	    config.rooms[rm_name] = {roles:[]};
+	if(!glb.rooms[rm_name])
+	    glb.rooms[rm_name] = {roles:[]};
 	
-	var roles = config.rooms[rm_name].roles;
+	var roles = glb.rooms[rm_name].roles;
 	var created = 0;
 	var spawning = 0;
 
@@ -62,12 +65,12 @@ module.exports = {
 		*/
 		
 		if(c.memory.rm && c.memory.rm != rm_name) {
-		    if(!config.rooms[c.memory.rm])
-			config.rooms[c.memory.rm] = {roles:[]};
-		    if(!config.rooms[c.memory.rm].roles[cr])
-			config.rooms[c.memory.rm].roles[cr] = {creeps:[c]};
+		    if(!glb.rooms[c.memory.rm])
+			glb.rooms[c.memory.rm] = {roles:[]};
+		    if(!glb.rooms[c.memory.rm].roles[cr])
+			glb.rooms[c.memory.rm].roles[cr] = {creeps:[c]};
 		    else
-			config.rooms[c.memory.rm].roles[cr].creeps.push(c);
+			glb.rooms[c.memory.rm].roles[cr].creeps.push(c);
 		} else {
 		    if(!roles[cr])
 			roles[cr] = {creeps:[c]};
@@ -726,43 +729,62 @@ var genNamePrefix = function (creep, id) {
     return newName;
 };
 
+vTable = module.exports.vTable;
+
 // CPriorityQ
-var CPriorityQ = function(store ) {
-    this.q = [];
-    this.store = store;
+var CPriorityQ = function( ) {
 };
 
+vTable['CPriorityQ'] = new CPriorityQ();
 
-CPriorityQ.prototype.getPriority = function(o) {
+CPriorityQ.prototype.cons(store, class_) {
+    var this_ = {};
+    if(class_)
+	this_.class_ = class_;
+    else
+	this_.class_ = 'CPriorityQ';
+    this_.q = [];
+    this_.store = store;
+    return this;
+}
+
+function getPriority(this_, o) { vTable[this_.class_].getPriority(this_, o); }
+
+CPriorityQ.prototype.getPriority = function(this_, o) {
     return o.p.priority;
 };
 
-CPriorityQ.prototype.setPriority = function(o,priority) {
+function setPriority(this_, o, priority) { return vTable[this_.class_].setPriority(this_, o, priority); }
+CPriorityQ.prototype.setPriority = function(this_, o, priority) {
     o.p.priority = priority;
 };
 
-CPriorityQ.prototype.getId = function(o) {
+function getId(this_, o) { return vTable[this_.class_].getId(this_, o); }
+CPriorityQ.prototype.getId = function(this_, o) {
     return o.id;
 };
 
-CPriorityQ.prototype.getById = function(id) {
-    return this.store[id];
+function getById(this_, id) { return vTable[this_.class_].getById(this_, id); }
+CPriorityQ.prototype.getById = function(this_, id) {
+    return this_.store[id];
 };
 
-CPriorityQ.prototype.put = function(o) {
+function put(this_, o) { return vTable[this_.class_].put(this_, o); }
+CPriorityQ.prototype.put = function(this_, o) {
     console.log('CPriorityQ.prototype.put');
-    var pri = this.getPriority(o);
-    var id = this.getId(o);
-    var qq = this.q[pri];
+    var pri = getPriority(this_, o);
+    var id = getId(this_, o);
+    var qq = this_.q[pri];
     if(!qq)
-	this.q[pri] = [id];
+	this_.q[pri] = [id];
     else
 	qq.push(id);
 };
 
-CPriorityQ.prototype.remove = function(o) {
-    var id = this.getId(o);
-    var qq = this.q[this.getPriority(o)];
+function remove(this_, o) { return vTable[this_.class_].remove(this_, o); }
+CPriorityQ.prototype.remove = function(this_, o) {
+    var id = getId(this_, o);
+    var qq = this_.q[getPriority(this_, o)];
     
     if(qq) {
 	for(qqi in qq) {
@@ -774,13 +796,14 @@ CPriorityQ.prototype.remove = function(o) {
     }
 };
 
-CPriorityQ.prototype.changePriority = function(o, pri) {
+function changePriority(this_ o, pri) { return vTable[this_.class_].changePriority(this_ o, pri); }
+CPriorityQ.prototype.changePriority = function(this_ o, pri) {
 
-    if(this.getPriority(o) == pri)
+    if(getPriority(this_, o) == pri)
 	return;
     
-    var id = this.getId(o);
-    var qq = this.q[this.getPriority(o)];
+    var id = getId(this_, o);
+    var qq = this_.q[getPriority(this_, o)];
     
     if(qq) {
 	for(qqi in qq) {
@@ -791,15 +814,16 @@ CPriorityQ.prototype.changePriority = function(o, pri) {
 	}
     }
 
-    this.setPriority(o, pri);
-    this.put(o);
+    setPriority(this_, o, pri);
+    put(this_, o);
 };
 
-CPriorityQ.prototype.iterByPriority = function(f) {
-    for(qi in this.q) {
-	var qq = this.q[qi];
+function iterByPriority(this_, f) { return vTable[this_.class_].iterByPriority(this_, f); }
+CPriorityQ.prototype.iterByPriority = function(this_, f) {
+    for(qi in this_.q) {
+	var qq = this_.q[qi];
 	for(qqi in qq) {
-	    var ret = f( this.getById(qq[qqi]) );
+	    var ret = f( getById(this_, qq[qqi]) );
 	    if(ret)
 		return ret;
 	}
@@ -807,51 +831,56 @@ CPriorityQ.prototype.iterByPriority = function(f) {
 };
 
 // return [object]
-CPriorityQ.prototype.findByPriority = function(pri) {
-    var qq = this.q[pri];
+function findByPriority(this_, pri) { return vTable[this_.class_].findByPriority(this_, pri); }
+CPriorityQ.prototype.findByPriority = function(this_, pri) {
+    var qq = this_.q[pri];
     var ret = [];
     
     if(!qq)
 	return ret;
 
     for(qqi in qq) {
-	ret.push( this.getById(qq[qqi]) );
+	ret.push( getById(this_, qq[qqi]) );
     }    
     return ret;
 };
 
 
-function CTargetQ(store) {
-    CPriorityQ.call(this, store);
+// CTargetQ
+function CTargetQ() {
+    CPriorityQ.call(this);
 };
-
+vTable['CTargetQ'] = new CTargetQ();
 CTargetQ.prototype = Object.create(CPriorityQ.prototype);
 CTargetQ.prototype.constructor = CTargetQ;
 
-CTargetQ.prototype.getPriority = function(o) {
+CTargetQ.prototype.getPriority = function(this_, o) {
     return o.p.target_id;
 };
 
-function CRoleQ(store) {
-    CPriorityQ.call(this, store);
+// CRoleQ
+function CRoleQ() {
+    CPriorityQ.call(this);
 };
-
+vTable['CRoleQ'] = new CRoleQ();
 CRoleQ.prototype = Object.create(CPriorityQ.prototype);
 CRoleQ.prototype.constructor = CRoleQ;
 
-CRoleQ.prototype.getPriority = function(o) {
+CRoleQ.prototype.getPriority = function(this_, o) {
     return o.p.role;
 };
 
-function CCreepIdQ(store) {
-    CPriorityQ.call(this, store);
+// CCreepIdQ
+function CCreepIdQ() {
+    CPriorityQ.call(this);
 };
+vTable['CCreepIdQ'] = new CCreepIdQ();
 
 CCreepIdQ.prototype = Object.create(CPriorityQ.prototype);
 CCreepIdQ.prototype.constructor = CCreepIdQ;
 
-CCreepIdQ.prototype.getPriority = function(o) {
-    return o.p.role;
+CCreepIdQ.prototype.getPriority = function(this_, o) {
+    return o.p.id;
 };
 
 
@@ -868,21 +897,21 @@ var CJob = function(prop) {
 	this.p.cost = {e:0};
 };
 
-CJob.prototype.register = function() {
+registerJob = function(this_) {
     console.log('CJob.prototype.register');
     
     // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
     // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
     
-    Memory.job_by_id[this.id] = this;
-    Memory.job_by_pri.put(this)
-    Memory.job_by_tgt.put(this);
+    Memory.job_by_id[this_.id] = this_;
+    Memory.job_by_pri.put(this_)
+    Memory.job_by_tgt.put(this_);
 };
 
-CJob.prototype.remove = function() {
-    Memory.job_by_tgt.remove(this);
-    Memory.job_by_pri.remove(this)
-    delete Memory.job_by_id[this.id];
+removeJob = function(this_) {
+    Memory.job_by_tgt.remove(this_);
+    Memory.job_by_pri.remove(this_)
+    delete Memory.job_by_id[this_.id];
 }
 
 function addJobNewCreep( rm, it, repl ) {
