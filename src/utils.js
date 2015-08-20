@@ -56,13 +56,12 @@ module.exports = {
 		var cr = genNamePrefix(c.memory);
 
 		// May be generte a new job?
-		/*
+
 		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm, lst_by_id[cr], c );
 		    }
 		}
-		*/
 		
 		if(c.memory.rm && c.memory.rm != rm_name) {
 		    if(!glb.rooms[c.memory.rm])
@@ -907,13 +906,13 @@ registerJob = function(this_) {
     // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
     
     Memory.job_by_id[this_.id] = this_;
-    Memory.job_by_pri.put(this_)
-    Memory.job_by_tgt.put(this_);
+    put(Memory.job_by_pri, this_);
+    put(Memory.job_by_tgt, this_);
 };
 
 removeJob = function(this_) {
-    Memory.job_by_tgt.remove(this_);
-    Memory.job_by_pri.remove(this_)
+    remove(Memory.job_by_tgt, this_);
+    remove(Memory.job_by_pri, this_);
     delete Memory.job_by_id[this_.id];
 }
 
@@ -927,7 +926,6 @@ function addJobNewCreep( rm, it, repl ) {
     if(repl)
 	jobId += '_' + repl.id;
 
-
     var job = Memory.job_by_id[jobId];
     if(!job) {
 	var expTime = repl ? (Game.time + repl.ticksToLive) : Game.time;
@@ -936,12 +934,13 @@ function addJobNewCreep( rm, it, repl ) {
 	    priority = 1;
 	
 	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm.id });
-	job.register();
+	registerJob(job);
     } else {
 	var priority = job.p.expTime - Game.time;
 	if(priority <= 0)
 	    priority = 1;
 	// Memory.job_by_pri.changePriority(priority);
+	changePriority( Memory.job_by_pri, job, priority );
     }
 }
 

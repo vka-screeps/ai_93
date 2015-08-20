@@ -3,7 +3,7 @@ var u = require('utils');
 module.exports = {
     
     updateConfig() {
-	var newVersion = 20;
+	var newVersion = 25;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
