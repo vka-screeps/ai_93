@@ -832,10 +832,10 @@ CPriorityQ.prototype.changePriority = function(this_, o, pri) {
     if(getPriority(this_, o) == pri)
 	return;
 
-    console.log('CPriorityQ.prototype.changePriority 2');
-    
     var id = getId(this_, o);
     var qq = this_.q[getPriority(this_, o)];
+
+    console.log('CPriorityQ.prototype.changePriority ' + id);
     
     if(qq) {
 	for(qqi in qq) {
