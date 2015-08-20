@@ -816,7 +816,7 @@ CPriorityQ.prototype.put = function(this_, o) {
     var pri = getPriority(this_, o);
     var id = getId(this_, o);
     if(!pri) {
-	console.log('invalid pri - ' + pri);
+	console.log('invalid pri - ' + pri + ' for ' + o.p.priority);
     }
     var qq = this_.q[pri];
     if(!qq)
