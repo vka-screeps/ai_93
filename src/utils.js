@@ -737,7 +737,7 @@ var CPriorityQ = function( ) {
 
 vTable['CPriorityQ'] = new CPriorityQ();
 
-CPriorityQ.prototype.cons(store, class_) {
+CPriorityQ.prototype.cons = function(store, class_) {
     var this_ = {};
     if(class_)
 	this_.class_ = class_;
