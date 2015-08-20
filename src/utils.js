@@ -943,6 +943,8 @@ removeJob = function(this_) {
 }
 
 function addJobNewCreep( rm, it, repl ) {
+    console.log('Adding new job - ' + repl.id);
+    
     var props = it.props ? it.props : { };
     props.role = it.role;
     if(it.role_id)
@@ -971,6 +973,7 @@ function addJobNewCreep( rm, it, repl ) {
 	    changePriority( Memory.job_by_pri, job, priority );
 	}
     }
+
 }
 
 function getNextJobForSpawn(sp) {
@@ -987,6 +990,7 @@ function getNextJobForSpawn(sp) {
     } );
 
     for(di in jobs_del) {
+	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
 	removeJob( Memory.job_by_id[jobs_del[di]] );
     }
 
