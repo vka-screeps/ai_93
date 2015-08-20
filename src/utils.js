@@ -775,7 +775,7 @@ CPriorityQ.prototype.cons = function(this_, store, class_) {
     return this;
 }
 
-function getPriority(this_, o) { vTable[this_.class_].getPriority(this_, o); }
+function getPriority(this_, o) { return vTable[this_.class_].getPriority(this_, o); }
 CPriorityQ.prototype.getPriority = function(this_, o) {
     return o.p.priority;
 };
