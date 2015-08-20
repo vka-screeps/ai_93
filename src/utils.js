@@ -792,7 +792,7 @@ CPriorityQ.prototype.printQ = function(this_) {
 	console.log('pri: ' + qi);
 	if(qq) {
 	    for(qqi in qq) {
-		console.log('pri: ' + qq[qqi]);
+		console.log(qq[qqi]);
 	    }
 	}
     }
