@@ -17,7 +17,8 @@ var initMemVars = function() {
 	Memory.next_id = 1;
     // job
 //    if(!Memory.job_by_id)
-	Memory.job_by_id = {};
+    Memory.job_by_id = {};
+    Memory.jobs_del=[];
 
     //    if(!Memory.job_by_pri)
     {

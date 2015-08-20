@@ -59,7 +59,7 @@ module.exports = {
 
 		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
-			addJobNewCreep( c.memory.rm ? c.memory.rm : rm, lst_by_id[cr], c );
+			addJobNewCreep( c.memory.rm ? c.memory.rm : rm_name, lst_by_id[cr], c );
 		    }
 		}
 		
@@ -146,8 +146,10 @@ module.exports = {
 	    else if( it.count < curCount )
 	    {
 		if(!roles[it_name].creeps[0].memory.isMilitary) {
+		    /*
 		    console.log('killing ' + it_name);
 		    roles[it_name].creeps[0].suicide();
+		    */
 		}
 	    }
 	    roles[it_name].del = 1;
@@ -160,6 +162,7 @@ module.exports = {
 	    if(jit && jit.del) {
 		continue;
 	    }
+	    // this role_id is no longer in use
 	    if(jit) {
 		if(!jit.creeps[0].memory.isMilitary) {
 		    console.log('killing ' + jit.creeps[0].memory.role);
@@ -168,6 +171,28 @@ module.exports = {
 	    }
 	}
 
+	// May be take a job?
+	var sp = rm.find(FIND_MY_SPAWNS)[0];
+	if(sp) {
+	    if(!sp.spawning && !created){
+
+		var job = getNextJobForSpawn(sp);
+		if(job) {
+		    console.log('got new job - ' + job.id);
+		    var it = job.p.it;
+
+		    var props = it.props ? it.props : { };
+		    props.role = it.role;
+		    if(it.role_id)
+			props.role_id = it.role_id;
+		    
+		    var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
+		    if(newName != -6)
+			console.log('spawning ' + ' - ' + newName);
+
+		}
+	    }
+	}
 	return created;
     },
 
@@ -771,7 +796,7 @@ CPriorityQ.prototype.getById = function(this_, id) {
 
 function put(this_, o) { return vTable[this_.class_].put(this_, o); }
 CPriorityQ.prototype.put = function(this_, o) {
-    console.log('CPriorityQ.prototype.put');
+    // console.log('CPriorityQ.prototype.put');
     var pri = getPriority(this_, o);
     var id = getId(this_, o);
     var qq = this_.q[pri];
@@ -828,6 +853,7 @@ CPriorityQ.prototype.iterByPriority = function(this_, f) {
 		return ret;
 	}
     }
+    return null;
 };
 
 // return [object]
@@ -900,7 +926,7 @@ var CJob = function(prop) {
 };
 
 registerJob = function(this_) {
-    console.log('CJob.prototype.register');
+    // console.log('CJob.prototype.register');
     
     // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
     // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
@@ -922,7 +948,7 @@ function addJobNewCreep( rm, it, repl ) {
     if(it.role_id)
 	props.role_id = it.role_id;
     
-    var jobId = 'newCreep_' + rm.name + '_' + genNamePrefix(props);
+    var jobId = 'newCreep_' + rm + '_' + genNamePrefix(props);
     if(repl)
 	jobId += '_' + repl.id;
 
@@ -933,26 +959,36 @@ function addJobNewCreep( rm, it, repl ) {
 	if(priority <= 0)
 	    priority = 1;
 	
-	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm.id });
+	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm });
 	registerJob(job);
     } else {
 	var priority = job.p.expTime - Game.time;
-	if(priority <= 0)
-	    priority = 1;
-	// Memory.job_by_pri.changePriority(priority);
-	changePriority( Memory.job_by_pri, job, priority );
+	if(priority <= 1) {
+	    removeJob( job );
+	}
+	else {
+	    // Memory.job_by_pri.changePriority(priority);
+	    changePriority( Memory.job_by_pri, job, priority );
+	}
     }
 }
 
 function getNextJobForSpawn(sp) {
+    var jobs_del=[];
     var ret_job = Memory.job_by_pri.iterByPriority( function(job) {
 	if(job.role == 'spawn' && job.taken_by.length == 0) {
-	    if(job.rm == sp.room.id) {
+	    if(job.repl && !Game.getObjectById(job.repl))
+		jobs_del.push(job.id); // expired job
+	    else /*if(job.rm == sp.room.id)*/ {
 		job.taken_by.push(sp.id);
 		return job;
 	    }
 	}
     } );
+
+    for(di in jobs_del) {
+	removeJob( Memory.job_by_id[jobs_del[di]] );
+    }
 
     return ret_job;
 }
