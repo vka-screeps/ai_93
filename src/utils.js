@@ -959,7 +959,7 @@ function addJobNewCreep( rm, it, repl ) {
 	if(priority <= 0)
 	    priority = 1;
 	
-	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm });
+	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm, repl: repl.id });
 	registerJob(job);
     } else {
 	var priority = job.p.expTime - Game.time;
