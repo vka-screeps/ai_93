@@ -38,9 +38,9 @@ module.exports = function () {
 	    room_data.NZ++;
 	}
 
-	// Can't accumulate more then storeCapacity
-	if(room_data.NZ > storeCapacity)
-	    room_data.NZ = storeCapacity;
+	// Can't accumulate more then storeCapacity * 0.9
+	if(room_data.NZ > storeCapacity * 9 / 10)
+	    room_data.NZ = storeCapacity * 9 / 10;
 
 	room_data.energyDropped = esum;
 	room_data.buildersBallance = esum + 2*room.energyAvailable - room.energyCapacityAvailable * 3 - room_data.NZ;
