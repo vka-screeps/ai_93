@@ -64,7 +64,7 @@ printStat_ = function() {
 	    console.log(str);
 	}
 
-	console.log('Hostilities: ' + rm.memory.hostilities + ' / ' + rm.memory.maxHostiles);
+	console.log('Hostiles: ' + rm.memory.hostiles + ' / ' + rm.memory.maxHostiles);
 	console.log('NZ: ' + rm.memory.NZ);
     }
 
