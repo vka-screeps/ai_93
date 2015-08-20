@@ -56,12 +56,13 @@ module.exports = {
 		var cr = genNamePrefix(c.memory);
 
 		// May be generte a new job?
-
+		/*
 		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm_name, lst_by_id[cr], c );
 		    }
 		}
+		*/
 		
 		if(c.memory.rm && c.memory.rm != rm_name) {
 		    if(!glb.rooms[c.memory.rm])
