@@ -63,6 +63,9 @@ printStat_ = function() {
 
 	    console.log(str);
 	}
+
+	console.log('Hostilities: ' + rm.memory.hostilities + ' / ' + rm.memory.maxHostiles);
+	console.log('NZ: ' + rm.memory.NZ);
     }
 
     console.log('Total creeps: ' + totalCreeps + ' / ' + totalCreepParts);
