@@ -57,7 +57,7 @@ module.exports = {
 
 		// May be generte a new job?
 
-		if(c.ticksToLive < 100) {
+		if(c.ticksToLive < 50) {
 		    if(lst_by_id[cr]) {
 			addJobNewCreep( c.memory.rm ? c.memory.rm : rm_name, lst_by_id[cr], c );
 		    }
@@ -799,7 +799,6 @@ CPriorityQ.prototype.printQ = function(this_) {
 	}
     }
 }
-
 
 function getId(this_, o) { return vTable[this_.class_].getId(this_, o); }
 CPriorityQ.prototype.getId = function(this_, o) {
