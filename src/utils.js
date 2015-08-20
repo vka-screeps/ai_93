@@ -814,10 +814,10 @@ CPriorityQ.prototype.remove = function(this_, o) {
     if(qq) {
 	for(qqi in qq) {
 	    if(qq[qqi] == id) {
-		console.log('1. splice ' ++ qq.length);
+		console.log('1. splice ' + qq.length);
 		// printObjectFnc(qq);
 		qq.splice(qqi, 1);
-		console.log('2. splice ' ++ qq.length);
+		console.log('2. splice ' + qq.length);
 		// printObjectFnc(qq);
 		break;
 	    }
@@ -837,10 +837,10 @@ CPriorityQ.prototype.changePriority = function(this_, o, pri) {
     if(qq) {
 	for(qqi in qq) {
 	    if(qq[qqi] == id) {
-		console.log('1. splice ' ++ qq.length);
+		console.log('1. splice ' + qq.length);
 		// printObjectFnc(qq);
 		qq.splice(qqi, 1);
-		console.log('2. splice ' ++ qq.length);
+		console.log('2. splice ' + qq.length);
 		// printObjectFnc(qq);
 		break;
 	    }
