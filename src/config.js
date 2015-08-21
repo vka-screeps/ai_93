@@ -146,6 +146,7 @@ function setConfigSim() {
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
     
 
+
     Memory.rooms['sim'] = {};
     // SIM CONFIG
     Memory.rooms['sim'].strategy_data =[
