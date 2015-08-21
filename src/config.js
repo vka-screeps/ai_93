@@ -153,6 +153,10 @@ function setConfigSim() {
 	{ role_id : 'h1', role : 'harv', count : 2, body : [ WORK, WORK, CARRY, MOVE] }
     ];
 
+    Memory.rooms['sim'].strategy = 'str_maintain_creeps';
+    initRoomVars('sim');
+    
+
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;
 }
