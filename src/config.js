@@ -150,7 +150,7 @@ function setConfigSim() {
     Memory.rooms['sim'] = {};
     // SIM CONFIG
     Memory.rooms['sim'].strategy_data =[
-	{ role_id : 'h1', role : 'harvester', count : 2, body : [ WORK, WORK, CARRY, MOVE] }
+	{ role_id : 'h1', role : 'harvester', count : 2, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
 	, { role_id : 'free', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1 }
 	    , autoExpand: 1}

@@ -560,7 +560,7 @@ var str_do_smth = function( cr, where, what )
 
 	var target = null;
 	
-	if(cr.carryCapacity>0 && cr.memory.role != 'harv') {
+	if(cr.carryCapacity>0 && cr.memory.role != 'harv' && !cr.memory.goHarvest) {
 
 
 	    if( cr.memory.f_from && cr.memory.f_from == 'stay_put' ) {
