@@ -1,5 +1,5 @@
 var u = require('utils');
-var configver = require('configver.js');
+var configver = require('configver');
 
 module.exports = {
     
