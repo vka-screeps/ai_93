@@ -154,7 +154,7 @@ function setConfigSim() {
 	, { role_id : 'free', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1 }
 	    , autoExpand: 1}
-	{ role_id : 'h2', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }	
+	,{ role_id : 'h2', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }	
 	,{ role_id : 'h3', role : 'harv', count : 1, body : [ WORK, WORK, MOVE] }
     ];
 
