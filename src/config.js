@@ -154,7 +154,7 @@ function setConfigSim() {
 	, { role_id : 'free', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1 }
 	    , autoExpand: 1}
-	{ role_id : 'h1', role : 'harv', count : 1, body : [ WORK, WORK, MOVE] }
+	,{ role_id : 'h1', role : 'harv', count : 1, body : [ WORK, WORK, MOVE] }
     ];
 
     Memory.rooms['sim'].strategy = 'str_maintain_creeps';
