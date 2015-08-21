@@ -127,5 +127,6 @@ function setConfig() {
 
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;
-    
+
+
 };
