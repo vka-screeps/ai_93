@@ -53,12 +53,12 @@ function initRoomVars(name) {
 
 }
 
-// setConfigSim();
+
 function setConfig() {
 
     if( Game.rooms.sim && !Game.rooms.E9S8 ) {
 	console.log("Sim mode detected");
-//	setConfigSim();
+	return setConfigSim();
     }
 
     initMemVars();
@@ -137,3 +137,20 @@ function setConfig() {
 
 
 };
+
+
+function setConfigSim() {
+    initMemVars();
+    
+    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
+    
+
+    // SIM CONFIG
+    Memory.rooms['E9S8'].strategy_data =[
+	{ role_id : 'h1', role : 'harv', count : 2, body : [ WORK, WORK, CARRY, MOVE] }
+    ];
+
+    if(!Memory.next_creep_id)
+	Memory.next_creep_id = 1;
+}
