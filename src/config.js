@@ -146,8 +146,9 @@ function setConfigSim() {
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
     
 
+    Memory.rooms['sim'] = {};
     // SIM CONFIG
-    Memory.rooms['E9S8'].strategy_data =[
+    Memory.rooms['sim'].strategy_data =[
 	{ role_id : 'h1', role : 'harv', count : 2, body : [ WORK, WORK, CARRY, MOVE] }
     ];
 
