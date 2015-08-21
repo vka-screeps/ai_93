@@ -799,7 +799,7 @@ CPriorityQ.prototype.printQ = function(this_) {
 	if(qq.length)
 	    console.log('pri: ' + qi);
 	if(qq) {
-	    for(qqi in qq) {
+	    for(var qqi in qq) {
 		console.log('    ' + qq[qqi]);
 	    }
 	}
@@ -837,7 +837,7 @@ CPriorityQ.prototype.remove = function(this_, o) {
     var qq = this_.q[getPriority(this_, o)];
     
     if(qq) {
-	for(qqi in qq) {
+	for(var qqi in qq) {
 	    if(qq[qqi] == id) {
 		//console.log('1. splice ' + qq.length);
 		// printObjectFnc(qq);
@@ -863,7 +863,7 @@ CPriorityQ.prototype.changePriority = function(this_, o, pri) {
 //    console.log('CPriorityQ.prototype.changePriority ' + id);
     
     if(qq) {
-	for(qqi in qq) {
+	for(var qqi in qq) {
 	    if(qq[qqi] == id) {
 		// console.log('1. splice ' + qq.length);
 		// printObjectFnc(qq);
@@ -881,9 +881,9 @@ CPriorityQ.prototype.changePriority = function(this_, o, pri) {
 
 function iterByPriority(this_, f) { return vTable[this_.class_].iterByPriority(this_, f); }
 CPriorityQ.prototype.iterByPriority = function(this_, f) {
-    for(qi in this_.q) {
+    for(var qi in this_.q) {
 	var qq = this_.q[qi];
-	for(qqi in qq) {
+	for(var qqi in qq) {
 	    var ret = f( getById(this_, qq[qqi]) );
 	    if(ret)
 		return ret;
@@ -901,7 +901,7 @@ CPriorityQ.prototype.findByPriority = function(this_, pri) {
     if(!qq)
 	return ret;
 
-    for(qqi in qq) {
+    for(var qqi in qq) {
 	ret.push( getById(this_, qq[qqi]) );
     }    
     return ret;
@@ -1035,7 +1035,7 @@ function getNextJobForSpawn(sp) {
 	}
     } );
 
-    for(di in jobs_del) {
+    for(var di in jobs_del) {
 //	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
 	removeJob( Memory.job_by_id[jobs_del[di]] );
     }
