@@ -506,7 +506,7 @@ module.exports = {
     }
 };
 
-printObjectFnc = function(o) {
+var printObjectFnc = function(o) {
     var out = '';
     for (var p in o) {
 	out += p + ': ' + o[p] + '\n';
