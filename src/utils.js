@@ -504,7 +504,7 @@ module.exports = {
 			   },
 			   function( cr1, o ) { return cr1.transferEnergy(o); } );
     }
-}
+};
 
 printObjectFnc = function(o) {
     var out = '';
