@@ -4,7 +4,7 @@ module.exports = {
 };
 
 
-printStat_ = function() {
+var printStat_ = function() {
     var totalCreeps = 0;
     var totalCreepParts = 0;
 
@@ -72,7 +72,7 @@ printStat_ = function() {
 };
 
 
-clearMemory_ = function() {
+var clearMemory_ = function() {
     var names = [];
     
     for(var ri in Game.rooms) {
