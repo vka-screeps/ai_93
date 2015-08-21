@@ -755,7 +755,7 @@ var genNamePrefix = function (creep, id) {
     return newName;
 };
 
-vTable = module.exports.vTable;
+var vTable = module.exports.vTable;
 
 // CPriorityQ
 var CPriorityQ = function( ) {
