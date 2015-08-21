@@ -359,9 +359,9 @@ module.exports = {
 			       if(cr1.memory.pos_to && cr1.memory.stay_put)
 				   return  rm1.getPositionAt(cr1.memory.pos_to.x, cr1.memory.pos_to.y);
 			       else {
-				   var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+				   var target = cr1.pos.findClosestByRange( FIND_HOSTILE_CREEPS, { filter:function(enemy){enemy.owner.username !== 'Source Keeper'}});
 				   if(!target)
-				       target = cr1.pos.findClosestByRange(FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
+				       target = cr1.pos.findClosestByRange( FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
  
 				   if(target) {
 				       if(cr1.pos.getRangeTo(target.pos) <= 3)
@@ -375,7 +375,7 @@ module.exports = {
 			       return null;
 			   },
 			   function( cr1, o ) {
-			       var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+			       var target = cr1.pos.findClosestByRange(FIND_HOSTILE_CREEPS, { filter:function(enemy){enemy.owner.username !== 'Source Keeper'}});
 			       if(!target)
 				   target = cr1.pos.findClosestByRange(FIND_MY_CREEPS, {filter: function(o) { return o.memory.role == 'testtgt' && o.memory.ready; } } );
 			       
