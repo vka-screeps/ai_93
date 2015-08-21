@@ -1,9 +1,10 @@
 var u = require('utils');
+var configver = require('configver.js');
 
 module.exports = {
     
     updateConfig() {
-	var newVersion = 4;
+	var newVersion = configver.configVersion;
 	if(Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
