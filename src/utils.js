@@ -515,7 +515,7 @@ var printObjectFnc = function(o) {
     console.log(out);
 };
 
-str_do_smth = function( cr, where, what )
+var str_do_smth = function( cr, where, what )
 {
     var rm = cr.room;
 
