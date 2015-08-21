@@ -957,7 +957,7 @@ var CJob = function(prop) {
 	this.p.cost = {e:0};
 };
 
-registerJob = function(this_) {
+var registerJob = function(this_) {
     console.log('Adding new job - ' + this_.id);
 
     if(Memory.job_by_id[this_.id])
@@ -973,13 +973,13 @@ registerJob = function(this_) {
     put(Memory.job_by_tgt, this_);
 };
 
-removeJob = function(this_) {
+var removeJob = function(this_) {
     console.log('Remove job - ' + this_.id);
     
     remove(Memory.job_by_tgt, this_);
     remove(Memory.job_by_pri, this_);
     delete Memory.job_by_id[this_.id];
-}
+};
 
 function addJobNewCreep( rm, it, repl ) {
     
