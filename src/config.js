@@ -59,6 +59,8 @@ function setConfig() {
     
     var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
+
+    console.log("Sp1 is in the room " + Game.spawns.Sp1.room.name);
     
     Memory.rooms['E9S8'].strategy_data =[
 	{ role : 'harvester', count : 3, body : carryBody}
