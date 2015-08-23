@@ -718,6 +718,8 @@ function gotoWait(cr) {
 }
 
 function myCreepMoveTo(cr, tgt) {
+    if(!tgt)
+	return;
     var pos = tgt.pos ? tgt.pos :  tgt;
 
     if(cr.pos.isEqualTo(pos)){
