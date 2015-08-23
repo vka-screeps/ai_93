@@ -736,7 +736,8 @@ function myCreepMoveTo(cr, tgt) {
     }
 
     if(cr.memory.path) {
-	if(cr.memory.path.pos.isEqualTo(pos)) {
+	var oPos = new RoomPosition(pos.x, pos.y, pos.roomName);
+	if(oPos.isEqualTo(cr.memory.path.pos) {
 	    if( !cr.pos.isEqualTo(cr.memory.path.lastPos) ) {
 		cr.memory.path.lastPos = cr.pos;
 		cr.memory.path.idx += 1;
