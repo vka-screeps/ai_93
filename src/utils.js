@@ -136,6 +136,9 @@ module.exports = {
 		var newName = rm.find(FIND_MY_SPAWNS)[0].createCreep( it.body, genNamePrefix(props, Memory.next_creep_id++), props );
 		if(newName != -6)
 		    console.log('spawning ' + ' - ' + newName);
+		if(newName == -10) {
+		    printObject(it.body);
+		}
 
 		// if(props.rm && "string" ==  typeof newName) {
 		//     Game.creeps[newName].memory.rm = props.rm;
