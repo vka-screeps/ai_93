@@ -713,7 +713,7 @@ function gotoWait(cr) {
 }
 
 function myCreepMoveTo(cr, tgt) {
-    var pos = tgt.pos ? tgt.pos, tgt;
+    var pos = tgt.pos ? tgt.pos :  tgt;
 
     if(cr.pos.isEqualTo(pos)){
 	delete cr.memory.path;
