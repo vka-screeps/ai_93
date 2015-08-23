@@ -758,7 +758,7 @@ function myCreepMoveTo(cr, tgt) {
     if(cr.memory.path) {
 
 	if(!cr.memory.path.isStuck) {
-	    delete cr.memory.path;
+	    // delete cr.memory.path;
 	    cr.moveTo(tgt);	    
 	    return;
 	}
