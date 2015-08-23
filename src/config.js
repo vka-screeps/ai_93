@@ -81,7 +81,7 @@ function setConfig() {
 	// defence
 	, { role_id : 'a5', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1,  pos_to : { x : 8, y : 6, d : 0}, stay_put:1 }}
-	/* 
+
 	, { role_id : 'a4', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
 
@@ -102,7 +102,7 @@ function setConfig() {
 	    , props : { f_from : 'res1',
 			pos_to : { x : 21, y : 22, d : 0},
 			is_consumer: 1 } }
-	*/
+
     ];
 
     Memory.rooms['E9S8'].strategy = 'str_maintain_creeps';
