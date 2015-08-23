@@ -772,7 +772,7 @@ function myCreepMoveTo(cr, tgt) {
 	    if(cr.name == 'archer_a5_21184')
 		console.log( 'move to ' + cr.memory.path.path[cr.memory.path.idx].x + ', ' + cr.memory.path.path[cr.memory.path.idx].y );
 	    cr.memory.path.isStuck -= 1;
-	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
+	    cr.move( cr.memory.path.path[cr.memory.path.idx].direction );
 	    return;
 	} else {
 	   //  console.log('not equal');
