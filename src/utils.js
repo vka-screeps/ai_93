@@ -775,11 +775,11 @@ function myCreepMoveTo(cr, tgt) {
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
 	} else {
-	    console.log('not equal');
+	   //  console.log('not equal');
 	}
 	
     } else {
-	console.log('no path');
+	// console.log('no path');
     }
     
 
