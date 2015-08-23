@@ -572,7 +572,7 @@ var str_do_smth = function( cr, where, what )
 		target = Game.getObjectById(cr.memory.tgt);
 		
 		if(!target) {
-		    console.log( cr.name + ' - target not found');
+		    console.log( cr.name + ' - target not found - ' + cr.memory.tgt);
 		    return;
 		}
 
