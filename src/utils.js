@@ -689,8 +689,8 @@ var str_do_smth = function( cr, where, what )
 	var target = where(cr, rm);
 	if(target) {
 	    cr.memory.my_target = target.id;
-	    // cr.moveTo(target);
-	    myCreepMoveTo(cr, target);
+	    cr.moveTo(target);
+	    // myCreepMoveTo(cr, target);
 	    
 	    what(cr, target);
 	}
