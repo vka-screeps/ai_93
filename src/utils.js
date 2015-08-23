@@ -710,7 +710,44 @@ function gotoWait(cr) {
 
     if(flag)
 	cr.moveTo(flag.pos);
+}
 
+function myCreepMoveTo(cr, tgt) {
+    var pos = tgt.pos ? tgt.pos, tgt;
+
+    if(cr.pos.isEqualTo(pos)){
+	delete cr.memory.path;
+	return;
+    }
+    
+    var sl = cr.pos.lookFor('structure');
+    var bOnRoad = false;
+    for(var si in sl) {
+	if (sl[si].structureType == STRUCTURE_ROAD ) {
+	    bOnRoad = true;
+	    break;
+	}
+    }
+
+    if(!bOnRoad) {
+	cr.moveTo(tgt);
+	return;
+    }
+
+    if(cr.memory.path) {
+	if(cr.memory.path.pos.isEqualTo(pos)) {
+	    if( !cr.pos.isEqualTo(cr.memory.path.lastPos) ) {
+		cr.memory.path.lastPos = cr.pos;
+		cr.memory.path.idx += 1;
+	    }
+	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
+	    return;
+	}
+    }
+
+    cr.memory.path = {pos: pos, idx: 0, lastPos: cr.pos};
+    cr.memory.path.path = cr.room.findPath( cr.pos, pos, {ignoreCreeps: true} );
+    cr.move( cr.memory.path.path[0] );
 }
 
 function myIsArray(o) {
