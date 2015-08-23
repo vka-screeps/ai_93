@@ -758,7 +758,10 @@ function myCreepMoveTo(cr, tgt) {
     if(cr.memory.path) {
 
 	if(!cr.memory.path.isStuck) {
-	    // delete cr.memory.path;
+	    if(!cr.memory.path.stuckPos)
+		cr.memory.path.stuckPos = makePlainPos(cr.pos);
+	    else if(!cr.pos.inRangeTo( new RoomPosition(cr.memory.path.stuckPos.x, cr.memory.path.stuckPos.y, cr.memory.path.stuckPos.roomName), 5 ) )
+		delete cr.memory.path;
 	    cr.moveTo(tgt);	    
 	    return;
 	}
