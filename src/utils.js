@@ -757,7 +757,7 @@ function myCreepMoveTo(cr, tgt) {
     }
 
     console.log("path to " + pos.x + ", " + pos.y);
-    cr.memory.path = {pos: pos, idx: 0, lastPos: cr.pos};
+    cr.memory.path = {pos: {x:pos.x, y:pos.y, roomName: pos.roomName}, idx: 0, lastPos: cr.pos};
     cr.memory.path.path = cr.room.findPath( cr.pos, pos, {ignoreCreeps: true} );
     cr.move( cr.memory.path.path[0].direction );
 }
