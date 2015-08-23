@@ -756,6 +756,11 @@ function myCreepMoveTo(cr, tgt) {
 	    if( !isPosEq(cr.pos, cr.memory.path.lastPos) ) {
 		cr.memory.path.lastPos = makePlainPos(cr.pos);
 		cr.memory.path.idx += 1;
+
+		if(cr.memory.path.idx >= cr.memory.path.path.length) {
+		    delete cr.memory.path;
+		    return;
+		}
 	    }
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
