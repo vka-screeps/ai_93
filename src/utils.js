@@ -731,7 +731,7 @@ function isPosEq(pos1, pos2) {
 }
 function myCreepMoveTo(cr, tgt) {
     if(!tgt) {
-	console.log('tgt is undefined' + tgt);
+	console.log('tgt is undefined' + tgt + ' for ' + cr.name);
 //	return;
     }
     var pos = tgt.pos ? tgt.pos :  tgt;
