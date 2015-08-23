@@ -751,9 +751,15 @@ function myCreepMoveTo(cr, tgt) {
     }
 
     if(cr.memory.path) {
+
+	if(!cr.memory.path.isStuck) {
+	    delete cr.memory.path;
+	    return;
+	}
 //	var oPos = new RoomPosition(pos.x, pos.y, pos.roomName);
 	if( isPosEq( pos, cr.memory.path.pos ) ) {
 	    if( !isPosEq(cr.pos, cr.memory.path.lastPos) ) {
+		cr.memory.path.isStuck = 5;
 		cr.memory.path.lastPos = makePlainPos(cr.pos);
 		cr.memory.path.idx += 1;
 
@@ -762,6 +768,7 @@ function myCreepMoveTo(cr, tgt) {
 		    return;
 		}
 	    }
+	    cr.memory.path.isStuck -= 1;
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
 	} else {
@@ -774,7 +781,7 @@ function myCreepMoveTo(cr, tgt) {
     
 
     console.log("path to " + pos.x + ", " + pos.y);
-    cr.memory.path = {pos: makePlainPos(pos), idx: 0, lastPos: makePlainPos(cr.pos)};
+    cr.memory.path = {pos: makePlainPos(pos), idx: 0, lastPos: makePlainPos(cr.pos), isStuck: 5};
     cr.memory.path.path = cr.room.findPath( cr.pos, pos, {ignoreCreeps: true} );
     cr.move( cr.memory.path.path[0].direction );
 }
