@@ -70,6 +70,7 @@ function setConfig() {
     
     Memory.rooms['E9S8'].strategy_data =[
 	{ role : 'harvester', count : 3, body : carryBody}
+	/*
 	,  { role_id : 'h5', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	     , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
 	, { role_id : 'h4', role : 'harv', count : 1, body :  [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE]
@@ -101,6 +102,7 @@ function setConfig() {
 	    , props : { f_from : 'res1',
 			pos_to : { x : 21, y : 22, d : 0},
 			is_consumer: 1 } }
+	*/
     ];
 
     Memory.rooms['E9S8'].strategy = 'str_maintain_creeps';
