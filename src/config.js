@@ -77,11 +77,11 @@ function setConfig() {
 	    , props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 	, { role_id : 'c3', role : 'carry', count : 2, body : carryBody
 	    , props : { f_from : 'f1', tgt: '55d37aec137951da224e8ae7'}}
-	/* 
+
 	// defence
 	, { role_id : 'a5', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1,  pos_to : { x : 8, y : 6, d : 0}, stay_put:1 }}
-
+	/* 
 	, { role_id : 'a4', role : 'archer', count : 1, body : archerBody
 	    , props : { isMilitary:1,  pos_to : { x : 2, y : 19, d : 0} }}
 
