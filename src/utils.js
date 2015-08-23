@@ -794,6 +794,7 @@ function myCreepMoveTo(cr, tgt) {
 
     if(!cr.memory.path.path || cr.memory.path.path.length == 0) {
 	console.log("Can't find path to " + pos);
+	delete cr.memory.path;
 	return cr.moveTo(pos);
     }
     cr.move( cr.memory.path.path[0].direction );
