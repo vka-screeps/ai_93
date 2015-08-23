@@ -718,8 +718,10 @@ function gotoWait(cr) {
 }
 
 function myCreepMoveTo(cr, tgt) {
-    if(!tgt)
+    if(!tgt) {
+	console.log('tgt is undefined' + tgt);
 	return;
+    }
     var pos = tgt.pos ? tgt.pos :  tgt;
 
     if(cr.pos.isEqualTo(pos)){
