@@ -756,8 +756,14 @@ function myCreepMoveTo(cr, tgt) {
 	    }
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
+	} else {
+	    console.log('not equial');
 	}
+	
+    } else {
+	console.log('no path');
     }
+    
 
     console.log("path to " + pos.x + ", " + pos.y);
     cr.memory.path = {pos: makePlainPos(pos), idx: 0, lastPos: makePlainPos(cr.pos)};
