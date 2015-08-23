@@ -580,7 +580,7 @@ var str_do_smth = function( cr, where, what )
 		}
 
 		if (cr.pos.getRangeTo(target.pos) > 1) {
-		    cr.moveTo(target);
+		    myCreepMoveTo(cr, target);
 		    return;
 		}
 		
@@ -625,7 +625,8 @@ var str_do_smth = function( cr, where, what )
 			//			console.log('flag room - ' + destRoomName);
 			var exitDir = cr.room.findExitTo(destRoomName);
 			var exit = cr.pos.findClosest(exitDir);
-			cr.moveTo(exit);
+			// cr.moveTo(exit);
+			myCreepMoveTo(cr, exit);
 			return;
 		    }
 		    
@@ -633,7 +634,8 @@ var str_do_smth = function( cr, where, what )
 			//console.log('retarget');
 			cr.memory.flag=1;
 		    } else {
-			var ret = cr.moveTo(flg.pos.x, flg.pos.y);
+			// var ret = cr.moveTo(flg.pos.x, flg.pos.y);
+			myCreepMoveTo(cr, flg);
 			// console.log('mt='+ret + ','+cr.memory.flag1.x);
 		    }
 		    return;
@@ -648,14 +650,16 @@ var str_do_smth = function( cr, where, what )
 								cr.pos.getRangeTo(o.pos)<10; } });
 
 	    if(target) {
-		cr.moveTo(target);
+		// cr.moveTo(target);
+		myCreepMoveTo(cr, target);
 		cr.pickup(target);
 	    } else if(cr.memory.role != 'carry' || cr.memory.is_consumer) {
 		target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES,
 						   {filter: function(o) { return o.structureType==STRUCTURE_STORAGE } } );
 
 		if(target) {
-		    cr.moveTo(target);
+		    // cr.moveTo(target);
+		    myCreepMoveTo(cr, target);
 		    target.transferEnergy(cr);
 		} else {
 		    console.log(cr.name + '-cannot find a storage');
@@ -715,7 +719,8 @@ function gotoWait(cr) {
     var flag = cr.pos.findClosestByRange(FIND_FLAGS, { filter: function(o) { return o.name.substring(0,4) == 'wait'; } } );
 
     if(flag)
-	cr.moveTo(flag.pos);
+	myCreepMoveTo(cr, flag);
+	// cr.moveTo(flag.pos);
 }
 
 function makePlainPos(pos) {
