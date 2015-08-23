@@ -793,7 +793,7 @@ function myCreepMoveTo(cr, tgt) {
     cr.memory.path.path = cr.room.findPath( cr.pos, pos, {ignoreCreeps: true} );
 
     if(!cr.memory.path.path || cr.memory.path.path.length == 0) {
-	console.log("Can't find path to " + pos);
+	console.log(cr.name + " - can't find path to " + pos);
 	delete cr.memory.path;
 	return cr.moveTo(pos);
     }
