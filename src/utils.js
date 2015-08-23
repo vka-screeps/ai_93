@@ -682,7 +682,7 @@ var str_do_smth = function( cr, where, what )
 	    if(!target)
 		console.log('target not found ');
 	    // cr.moveTo(target);
-	    console.log('target = ' + target);
+	    // console.log('target = ' + target);
 	    myCreepMoveTo(cr, target);
 	    cr.harvest(target);
 	}
