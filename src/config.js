@@ -63,8 +63,8 @@ function setConfig() {
 
     initMemVars();
     
-    //    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    var carryBody = [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
+    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    // var carryBody = [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
 //    var harv1rBody = [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     
