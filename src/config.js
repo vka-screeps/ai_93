@@ -115,6 +115,7 @@ function setConfig() {
     Memory.myrooms = {};
     Memory.myrooms['g1'] = {};
     Memory.myrooms['g1'].strategy_data = [
+	/*
 	{ role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	    , props : { src : '55c34a6b5be41a0a6e80c19f', rm: 'g1' }}
 
@@ -126,7 +127,7 @@ function setConfig() {
 	, { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
 										   pos_to : { x : 22, y : 8, d : 1},
 										   rm: 'g1'} }
-	
+	*/
     ];
 
     Memory.myrooms['g1'].strategy = 'str_maintain_creeps';
