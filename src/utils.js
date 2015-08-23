@@ -721,6 +721,9 @@ function gotoWait(cr) {
 function makePlainPos(pos) {
     return {x:pos.x, y:pos.y, roomName: pos.roomName};
 }
+function isPosEq(pos1, pos2) {
+    return (pos1.x === pos2.x) && (pos1.y === pos2.y) && (pos1.roomName === pos2.roomName);
+}
 function myCreepMoveTo(cr, tgt) {
     if(!tgt) {
 	console.log('tgt is undefined' + tgt);
@@ -748,8 +751,8 @@ function myCreepMoveTo(cr, tgt) {
     }
 
     if(cr.memory.path) {
-	var oPos = new RoomPosition(pos.x, pos.y, pos.roomName);
-	if( oPos.isEqualTo(cr.memory.path.pos) ) {
+//	var oPos = new RoomPosition(pos.x, pos.y, pos.roomName);
+	if( isPosEq( pos, cr.memory.path.pos ) ) {
 	    if( !cr.pos.isEqualTo(cr.memory.path.lastPos) ) {
 		cr.memory.path.lastPos = makePlainPos(cr.pos);
 		cr.memory.path.idx += 1;
@@ -757,7 +760,7 @@ function myCreepMoveTo(cr, tgt) {
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
 	} else {
-	    console.log('not equial');
+	    console.log('not equal');
 	}
 	
     } else {
