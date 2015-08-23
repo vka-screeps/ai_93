@@ -692,8 +692,8 @@ var str_do_smth = function( cr, where, what )
 	var target = where(cr, rm);
 	if(target) {
 	    cr.memory.my_target = target.id;
-	    // cr.moveTo(target);
-	    myCreepMoveTo(cr, target);
+	    cr.moveTo(target);
+	    // myCreepMoveTo(cr, target);
 	    
 	    what(cr, target);
 	}
@@ -753,7 +753,7 @@ function myCreepMoveTo(cr, tgt) {
     console.log("path to " + pos.x + ", " + pos.y);
     cr.memory.path = {pos: pos, idx: 0, lastPos: cr.pos};
     cr.memory.path.path = cr.room.findPath( cr.pos, pos, {ignoreCreeps: true} );
-    cr.move( cr.memory.path.path[0] );
+    cr.move( cr.memory.path.path[0].direction );
 }
 
 function myIsArray(o) {
