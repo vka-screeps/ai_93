@@ -769,7 +769,7 @@ function myCreepMoveTo(cr, tgt) {
 		}
 	    }
 	    if(cr.name == 'harv_h4_21166')
-		console.log( 'move to ' + cr.memory.path.path[cr.memory.path.idx].x, + ', ' + cr.memory.path.path[cr.memory.path.idx].y );
+		console.log( 'move to ' + cr.memory.path.path[cr.memory.path.idx].x + ', ' + cr.memory.path.path[cr.memory.path.idx].y );
 	    cr.memory.path.isStuck -= 1;
 	    cr.move( cr.memory.path.path[cr.memory.path.idx] );
 	    return;
