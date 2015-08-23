@@ -63,15 +63,16 @@ function setConfig() {
 
     initMemVars();
     
-    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    //    var carryBody = [ CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
+    var carryBody = [ CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
     var archerBody = [ RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, TOUGH, TOUGH, TOUGH];
-    
+//    var harv1rBody = [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     
     Memory.rooms['E9S8'].strategy_data =[
 	{ role : 'harvester', count : 3, body : carryBody}
 	,  { role_id : 'h5', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	     , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
-	, { role_id : 'h4', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE]
+	, { role_id : 'h4', role : 'harv', count : 1, body :  [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE, MOVE, MOVE]
 	    , props : { src : '55c34a6b5be41a0a6e80bd5b' }}
 	, { role_id : 'c3', role : 'carry', count : 2, body : carryBody
 	    , props : { f_from : 'f1', tgt: '55d37aec137951da224e8ae7'}}
