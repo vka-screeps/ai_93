@@ -336,7 +336,7 @@ module.exports = {
 				   var target = null;
 				   target = Game.getObjectById(cr1.memory.tgt);
 				   if(!target)
-				       console.log('target not found');
+				       console.log('target not found - ' + cr1.memory.tgt);
 				   return target;
 			       }
 			       return null;
@@ -474,7 +474,7 @@ module.exports = {
 				   var target = null;
 				   target = Game.getObjectById(cr1.memory.tgt);
 				   if(!target)
-				       console.log('target not found');
+				       console.log('target not found - ' + cr1.memory.tgt);
 				   return target;
 			       }
 			       return null;
