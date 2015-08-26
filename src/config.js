@@ -69,7 +69,7 @@ function setConfig() {
 //    var harv1rBody = [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     
     Memory.rooms['E9S8'].strategy_data =[
-	{ role_id : 'h0', role : 'harvester', count : 1, body : [CARRY, CARRY, MOVE, MOVE]},
+	// { role_id : 'h0', role : 'harvester', count : 1, body : [CARRY, CARRY, MOVE, MOVE]},
 	{ role : 'harvester', count : 3, body : carryBody}
 	,  { role_id : 'h5', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	     , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
@@ -116,7 +116,7 @@ function setConfig() {
     Memory.myrooms = {};
     Memory.myrooms['g1'] = {};
     Memory.myrooms['g1'].strategy_data = [
-	/*
+
 	{ role_id : 'h6', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE]
 	    , props : { src : '55c34a6b5be41a0a6e80c19f', rm: 'g1' }}
 
@@ -128,7 +128,7 @@ function setConfig() {
 	, { role_id : 'c7', role : 'carry', count : 2, body : carryBody, props : { f_from : 'f3',
 										   pos_to : { x : 22, y : 8, d : 1},
 										   rm: 'g1'} }
-	*/
+
 
     ];
 
