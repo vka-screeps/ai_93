@@ -1133,6 +1133,31 @@ function getNextJobForSpawn(sp) {
     return ret_job;
 }
 
+function reviewCreeps() {
+    if( !Memory.myCreepList ) {
+	Memory.myCreepList = {};
+    }
+
+    var tempCreepList = Memory.myCreepList;
+    Memory.myCreepList = {};
+    for( var ci in Game.creeps ) {
+	var id = Game.creeps[ci].id;
+	if(tempCreepList[id]) {
+	    // existing object
+	    Memory.myCreepList[id] = tempCreepList[id];
+	    delete tempCreepList[id];
+	} else {
+	    // new object
+	    Memory.myCreepList[id] = {};
+	}
+    }
+
+    for( var ci in tempCreepList ) {
+	// lost objects
+	
+    }
+}
+
 
 // id, role, 
 var CWorker = function(prop) {

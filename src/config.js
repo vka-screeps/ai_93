@@ -69,6 +69,7 @@ function setConfig() {
 //    var harv1rBody = [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     
     Memory.rooms['E9S8'].strategy_data =[
+	{ role : 'harvester0', count : 1, body : [CARRY, CARRY, MOVE, MOVE]},
 	{ role : 'harvester', count : 3, body : carryBody}
 	,  { role_id : 'h5', role : 'harv', count : 1, body : [ WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE]
 	     , props : { src : '55c34a6b5be41a0a6e80bd5d', tgt: '55d37aec137951da224e8ae7'}}
