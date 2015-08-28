@@ -1146,7 +1146,7 @@ function reviewCreeps() {
 	    // existing object
 	    Memory.myCreepList[id] = tempCreepList[id];
 	    delete tempCreepList[id];
-	} else {
+	} else if(!Game.creeps[ci].spawning) {
 	    // new object
 	    Memory.myCreepList[id] = {};
 	}
