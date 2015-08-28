@@ -3,10 +3,15 @@ var cr = require('cr');
 var myroom = require('myroom');
 var u = require('utils');
 var config = require('config');
+var stat = require('stat');
 
 //config.rooms = [];
 u.init();
 config.updateConfig();
+
+if ((Game.time % 10000) == 0) {
+    stat.clear();
+}
 
 //u.init();
 
