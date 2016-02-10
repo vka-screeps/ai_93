@@ -3,6 +3,7 @@ var configver = require('configver');
 
 module.exports = {
     
+
     updateConfig() {
 	var newVersion = configver.configVersion;
 	if(Memory.configVer != newVersion) {
