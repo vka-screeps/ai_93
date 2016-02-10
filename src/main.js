@@ -15,7 +15,7 @@ if ((Game.time % 10000) == 0) {
 
 //u.init();
 
-console.log('start');
+console.log('start 2');
 
 myroom();
 
