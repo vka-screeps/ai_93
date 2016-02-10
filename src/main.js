@@ -15,8 +15,9 @@ if ((Game.time % 10000) == 0) {
 
 //u.init();
 
-console.log('start 2');
+console.log('new global');
 module.exports.loop = function() {
+    console.log('new tick');
     myroom();
 
     for(var name in Game.creeps) {
