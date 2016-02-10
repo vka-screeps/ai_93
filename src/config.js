@@ -174,3 +174,41 @@ function setConfigSim() {
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;
 }
+
+
+
+class Goal {
+    constructor() {
+	this.name='Goal';
+    }
+}
+
+class GoalStart extends Goal {
+    constructor() {
+	super();
+	this.name='GoalStart';
+    }
+
+    init(str_data) {
+	str_data.curRoleTable = [];
+	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
+	return true;
+    }
+}
+
+class GoalDefence extends Goal {
+    constructor() {
+	super();
+	this.name='GoalStart';
+    }
+
+    init(str_data) {
+	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
+	return true;
+    }
+}
+
+var allGoals = {
+    "g_start" : new GoalStart(),
+    "g_def" : new GoalDefence()
+};
