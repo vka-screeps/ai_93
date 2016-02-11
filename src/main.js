@@ -106,6 +106,7 @@ function regClasses( list ) {
 }
 
 /* */
+/*
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
@@ -131,7 +132,7 @@ function initStrDataMemory(rm_name) {
     };
 }
 
-
+*/
 
 
 console.log('new global');
