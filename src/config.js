@@ -215,53 +215,49 @@ class MemList {
     }
 }
 
-class Goals {
-    constructor(d) {
-	this.d = d;
-	this.list = [];
+var f_classes { 
+    Goals : class Goals {
+	constructor(d) {
+	    this.d = d;
+	    this.list = [];
 
-	this.d.goals.forEach( function(goal) {
-	    this.list.push( f.make(goal) );
-	} );
+	    this.d.goals.forEach( function(goal) {
+		this.list.push( f.make(goal) );
+	    } );
+	}
+    },
+
+
+    Goal : class Goal {
+	constructor(d) {
+	    this.d = d;
+	}
+    },
+
+    GoalStart : class GoalStart extends Goal {
+	constructor(d) {
+	    super(d);
+	}
+
+	init(rm, str_data) {
+	    str_data.curRoleTable = [];
+	    str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
+	    return true;
+	}
+    },
+
+    GoalDefence : class GoalDefence extends Goal {
+	constructor(d) {
+	    super(d);
+	}
+
+	init(rm, str_data) {
+	    str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
+	    return true;
+	}
     }
-}
-/*
-f.reg(Goals);
 
-
-
-class Goal {
-    constructor(d) {
-	this.d = d;
-    }
-}
-f.reg(Goal);
-
-class GoalStart extends Goal {
-    constructor(d) {
-	super(d);
-    }
-
-    init(rm, str_data) {
-	str_data.curRoleTable = [];
-	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
-	return true;
-    }
-}
-f.reg(GoalStart);
-
-class GoalDefence extends Goal {
-    constructor(d) {
-	super(d);
-    }
-
-    init(rm, str_data) {
-	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
-	return true;
-    }
-}
-f.reg(GoalDefence);
-
+};
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
@@ -286,4 +282,4 @@ function initStrDataMemory(rm_name) {
 	curGoals : [];
     };
 }
-*/
+
