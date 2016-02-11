@@ -197,25 +197,42 @@ var F = class {
 
 var f = new F();
 
+var glb = {};
+
+function initGlb() {
+    glb.rooms = new MemList( Memory.rooms );
+    glb.rooms = new MemList( Memory.creeps );
+}
+
+class MemList {
+    constructor(d) {
+	this.d = d;
+	this.list = [];
+
+	this.d.forEach( function(o) {
+	    this.list.push( f.make(o.user_data) );
+	} );
+    }
+}
+
 class Goals {
     constructor(d) {
 	this.d = d;
-	this.goals = [];
+	this.list = [];
 
 	this.d.goals.forEach( function(goal) {
-	    this.goals.push( f.make(goal) );
+	    this.list.push( f.make(goal) );
 	} );
     }
-};
+}
 
 f.reg(Goals);
-
 
 class Goal {
     constructor(d) {
 	this.d = d;
     }
-};
+}
 f.reg(Goal);
 
 class GoalStart extends Goal {
@@ -228,7 +245,7 @@ class GoalStart extends Goal {
 	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
 	return true;
     }
-};
+}
 f.reg(GoalStart);
 
 class GoalDefence extends Goal {
@@ -240,7 +257,7 @@ class GoalDefence extends Goal {
 	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
 	return true;
     }
-};
+}
 f.reg(GoalDefence);
 
 var allGoals = {
