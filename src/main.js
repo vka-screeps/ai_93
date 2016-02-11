@@ -10,7 +10,7 @@ var stat = require('stat');
 
 //u.init();
 
-var f_classes { 
+var f_classes = { 
     Goals : class Goals {
 	constructor(d) {
 	    this.d = d;
