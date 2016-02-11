@@ -55,9 +55,9 @@ class MemList {
 	*/
 	for ( let oi in d ) {
 	    let o = d[oi];
-	    if(!o.user_data)
-		o.user_data = {cname : cn}
-	    this.list.push( f.make(o.user_data) );
+	    if(!o.cname)
+		o.cname = cn;
+	    this.list.push( f.make(o) );
 	}
     }
 }
