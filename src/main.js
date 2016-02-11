@@ -95,9 +95,9 @@ class GoalDefence extends Goal {
     }
 }
 
-/*
-var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
 
+var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
+/*
 function regClasses( list ) {
     if(!f)
 	f = new F();
@@ -105,7 +105,7 @@ function regClasses( list ) {
     list.forEach( function(c) {
 	f.reg(c); } );
 }
-/*
+
 
 /* */
 /*
