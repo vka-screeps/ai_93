@@ -46,11 +46,19 @@ class MemList {
 	this.d = d;
 	this.list = [];
 
+	/*
 	this.d.forEach( function(o) {
 	    if(!o.user_data)
 		o.user_data = {cname : cn}
 	    this.list.push( f.make(o.user_data) );
 	} );
+	*/
+	for ( let oi in d ) {
+	    let o = d[i];
+	    if(!o.user_data)
+		o.user_data = {cname : cn}
+	    this.list.push( f.make(o.user_data) );
+	}
     }
 }
 
