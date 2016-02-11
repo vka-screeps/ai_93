@@ -23,7 +23,7 @@ var F = class {
     make(d) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    return cls(d);
+	    return new cls(d);
 	} else {
 	    console.log("Can't find class: " + d.cname);
 	}
