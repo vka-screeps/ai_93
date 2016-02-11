@@ -195,6 +195,7 @@ var F = class {
     }
 };
 
+/*
 var f = new F();
 
 var glb = {};
@@ -240,3 +241,4 @@ function initStrDataMemory(rm_name) {
     };
 }
 
+*/
