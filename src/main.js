@@ -20,14 +20,14 @@ class Goals {
 	    this.list.push( f.make(goal) );
 	} );
     }
-},
+}
 
 
 class Goal {
     constructor(d) {
 	this.d = d;
     }
-},
+}
 
 class GoalStart extends f_classes.Goal {
     constructor(d) {
@@ -39,7 +39,7 @@ class GoalStart extends f_classes.Goal {
 	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
 	return true;
     }
-},
+}
 
 class GoalDefence extends f_classes.Goal {
     constructor(d) {
