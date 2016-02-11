@@ -30,7 +30,7 @@ var f_classes = {
 	}
     },
 
-    GoalStart : class GoalStart extends Goal {
+    GoalStart : class GoalStart extends this.Goal {
 	constructor(d) {
 	    super(d);
 	}
