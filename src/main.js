@@ -130,8 +130,8 @@ function doGoals(rm) {
 
 function initStrDataMemory(rm_name) {
     Memory.rooms['sim'].str_data = {
-	curRoleTable : [];
-	curGoals : [];
+	curRoleTable : [],
+	curGoals : []
     };
 }
 
