@@ -30,7 +30,7 @@ var f_classes = {
 	}
     },
 
-    GoalStart : class GoalStart extends this.Goal {
+    GoalStart : class GoalStart extends f_classes.Goal {
 	constructor(d) {
 	    super(d);
 	}
@@ -42,7 +42,7 @@ var f_classes = {
 	}
     },
 
-    GoalDefence : class GoalDefence extends Goal {
+    GoalDefence : class GoalDefence extends f_classes.Goal {
 	constructor(d) {
 	    super(d);
 	}
