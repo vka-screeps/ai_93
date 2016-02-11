@@ -126,7 +126,8 @@ function doGoals(rm) {
 	
     }
 }
-/*
+
+
 function initStrDataMemory(rm_name) {
     Memory.rooms['sim'].str_data = {
 	curRoleTable : [];
@@ -134,7 +135,6 @@ function initStrDataMemory(rm_name) {
     };
 }
 
-*/
 
 
 console.log('new global');
