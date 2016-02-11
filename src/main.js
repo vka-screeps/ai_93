@@ -97,7 +97,7 @@ class GoalDefence extends Goal {
 
 
 var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
-/*
+
 function regClasses( list ) {
     if(!f)
 	f = new F();
