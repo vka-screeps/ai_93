@@ -214,7 +214,7 @@ class MemList {
 	} );
     }
 }
-/*
+
 class Goals {
     constructor(d) {
 	this.d = d;
@@ -225,7 +225,7 @@ class Goals {
 	} );
     }
 }
-
+/*
 f.reg(Goals);
 
 
