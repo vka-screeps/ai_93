@@ -33,7 +33,7 @@ var F = class {
     }
 };
 
-/*
+
 //var f; //  =new F()
 
 var glb = {};
@@ -95,6 +95,7 @@ class GoalDefence extends Goal {
     }
 }
 
+/*
 var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
 
 function regClasses( list ) {
