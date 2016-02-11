@@ -196,7 +196,7 @@ var F = class {
 };
 
 
-var f; //  =new F()
+//var f; //  =new F()
 
 var glb = {};
 
