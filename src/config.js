@@ -196,7 +196,7 @@ var F = class {
 };
 
 
-var f = new F();
+var f = {}; // new F()
 
 var glb = {};
 
@@ -257,7 +257,7 @@ class GoalDefence extends Goal {
     }
 }
 
-
+/*
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
@@ -284,3 +284,4 @@ function initStrDataMemory(rm_name) {
 }
 
 
+*/
