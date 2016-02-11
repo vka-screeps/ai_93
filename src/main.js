@@ -148,7 +148,7 @@ function initStrDataMemory(rm_name) {
 
 console.log('new global');
 
-regClasses();
+regClasses(allClasses);
 initGlb();
 
 /******************************************************************************/
