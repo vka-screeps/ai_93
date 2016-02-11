@@ -10,6 +10,7 @@ var stat = require('stat');
 
 //u.init();
 
+/*
 var f_classes = { 
     Goals : class Goals {
 	constructor(d) {
@@ -53,7 +54,7 @@ var f_classes = {
     }
 
 };
-
+*/
 
 console.log('new global');
 module.exports.loop = function() {
