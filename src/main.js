@@ -29,7 +29,7 @@ class Goal {
     }
 }
 
-class GoalStart extends f_classes.Goal {
+class GoalStart extends Goal {
     constructor(d) {
 	super(d);
     }
@@ -41,7 +41,7 @@ class GoalStart extends f_classes.Goal {
     }
 }
 
-class GoalDefence extends f_classes.Goal {
+class GoalDefence extends Goal {
     constructor(d) {
 	super(d);
     }
