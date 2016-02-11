@@ -38,7 +38,7 @@ var glb = {};
 
 function initGlb() {
     glb.rooms = new MemList( Memory.rooms, 'CRoom' );
-    glb.rooms = new MemList( Memory.creeps, 'CCreep' );
+    glb.creeps = new MemList( Memory.creeps, 'CCreep' );
 }
 
 class MemList {
