@@ -160,64 +160,67 @@ regClasses(allClasses);
 initGlb();
 
 /******************************************************************************/
+module.exports = {
+    loop : function() {
 
-module.exports.loop = function() {
+	u.init();
+	config.updateConfig();
 
-    // u.printObject(glb);  // 
-    
-    u.init();
-    config.updateConfig();
-
-    if ((Game.time % 10000) == 0) {
-	stat.clear();
-    }
-
-    console.log('new tick');
-    myroom();
-
-    for(var name in Game.creeps) {
-	var creep = Game.creeps[name];
-
-	if(creep.memory.role == 'harvester') {
-	    u.crstr_do_harvest(creep);
-	    // harvester(creep);
+	if ((Game.time % 10000) == 0) {
+	    stat.clear();
 	}
 
-	else if(creep.memory.role == 'workonly') {
-	    u.crstr_do_workonly(creep);
-	    // harvester(creep);
-	}    
+	console.log('new tick');
+	myroom();
 
-	else if(creep.memory.role == 'harv') {
-	    u.crstr_do_harv(creep);
-	}
+	for(var name in Game.creeps) {
+	    var creep = Game.creeps[name];
 
-	else if(creep.memory.role == 'carry') {
-	    u.crstr_do_carry(creep);
-	}
+	    if(creep.memory.role == 'harvester') {
+		u.crstr_do_harvest(creep);
+		// harvester(creep);
+	    }
 
-	else if(creep.memory.role == 'archer') {
-	    u.crstr_do_archer(creep);
-	}    
+	    else if(creep.memory.role == 'workonly') {
+		u.crstr_do_workonly(creep);
+		// harvester(creep);
+	    }    
 
-	if(creep.memory.role == 'cr') {
-	    u.crstr_do_control(creep);
-	}
+	    else if(creep.memory.role == 'harv') {
+		u.crstr_do_harv(creep);
+	    }
 
-	if(creep.memory.role == 'builder') {
-	    u.crstr_do_build(creep);
-	}
+	    else if(creep.memory.role == 'carry') {
+		u.crstr_do_carry(creep);
+	    }
 
-	if(creep.memory.role == 'testtgt') {
-	    u.crstr_do_testtgt(creep);
-	}    
-	
-	if(creep.memory.role == 'guard') {
-	    var targets = creep.room.find(FIND_HOSTILE_CREEPS);
-	    if(targets.length) {
-		creep.moveTo(targets[0]);
-		creep.attack(targets[0]);
+	    else if(creep.memory.role == 'archer') {
+		u.crstr_do_archer(creep);
+	    }    
+
+	    if(creep.memory.role == 'cr') {
+		u.crstr_do_control(creep);
+	    }
+
+	    if(creep.memory.role == 'builder') {
+		u.crstr_do_build(creep);
+	    }
+
+	    if(creep.memory.role == 'testtgt') {
+		u.crstr_do_testtgt(creep);
+	    }    
+	    
+	    if(creep.memory.role == 'guard') {
+		var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+		if(targets.length) {
+		    creep.moveTo(targets[0]);
+		    creep.attack(targets[0]);
+		}
 	    }
 	}
+    },
+
+    printAll : function() {
+	u.printObject(glb);
     }
 }
