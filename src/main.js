@@ -10,48 +10,6 @@ var stat = require('stat');
 
 //u.init();
 
-
-class Goals {
-    constructor(d) {
-	this.d = d;
-	this.list = [];
-
-	this.d.goals.forEach( function(goal) {
-	    this.list.push( f.make(goal) );
-	} );
-    }
-}
-
-
-class Goal {
-    constructor(d) {
-	this.d = d;
-    }
-}
-
-class GoalStart extends Goal {
-    constructor(d) {
-	super(d);
-    }
-
-    init(rm, str_data) {
-	str_data.curRoleTable = [];
-	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
-	return true;
-    }
-}
-
-class GoalDefence extends Goal {
-    constructor(d) {
-	super(d);
-    }
-
-    init(rm, str_data) {
-	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
-	return true;
-    }
-}
-
 console.log('new global');
 module.exports.loop = function() {
     u.init();
