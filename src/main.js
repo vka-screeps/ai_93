@@ -33,7 +33,7 @@ var F = class {
     }
 };
 
-
+/*
 //var f; //  =new F()
 
 var glb = {};
@@ -104,6 +104,7 @@ function regClasses( list ) {
     list.forEach( function(c) {
 	f.reg(c); } );
 }
+/*
 
 /* */
 /*
