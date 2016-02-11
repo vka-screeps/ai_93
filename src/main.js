@@ -17,7 +17,7 @@ var F = class {
     }
 
     reg(c) {
-	this.tbl[d.name] = c;
+	this.tbl[c.name] = c;
     }
 
     make(d) {
