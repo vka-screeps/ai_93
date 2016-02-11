@@ -11,8 +11,6 @@ var stat = require('stat');
 //u.init();
 
 
-
-
 var F = class {
     constructor() {
 	this.tbl={}
@@ -39,16 +37,18 @@ var F = class {
 var glb = {};
 
 function initGlb() {
-    glb.rooms = new MemList( Memory.rooms );
-    glb.rooms = new MemList( Memory.creeps );
+    glb.rooms = new MemList( Memory.rooms, 'CRoom' );
+    glb.rooms = new MemList( Memory.creeps, 'CCreep' );
 }
 
 class MemList {
-    constructor(d) {
+    constructor(d, cn) {
 	this.d = d;
 	this.list = [];
 
 	this.d.forEach( function(o) {
+	    if(!o.user_data)
+		o.user_data = {cname : cn}
 	    this.list.push( f.make(o.user_data) );
 	} );
     }
@@ -67,6 +67,18 @@ class Goals {
 
 
 class Goal {
+    constructor(d) {
+	this.d = d;
+    }
+}
+
+class CRoom {
+    constructor(d) {
+	this.d = d;
+    }
+}
+
+class CCreep {
     constructor(d) {
 	this.d = d;
     }
@@ -96,7 +108,7 @@ class GoalDefence extends Goal {
 }
 
 
-var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
+var allClasses = [ Goals, Goal, GoalStart, GoalDefence, CRoom, CCreep ];
 
 function regClasses( list ) {
     if(!f)
@@ -106,8 +118,6 @@ function regClasses( list ) {
 	f.reg(c); } );
 }
 
-
-/* */
 
 var allGoals = {
     "g_start" : new GoalStart(),
@@ -136,8 +146,13 @@ function initStrDataMemory(rm_name) {
 }
 
 
-
 console.log('new global');
+
+regClasses();
+initGlb();
+
+/******************************************************************************/
+
 module.exports.loop = function() {
     u.init();
     config.updateConfig();
