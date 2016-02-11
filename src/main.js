@@ -108,7 +108,7 @@ function regClasses( list ) {
 
 
 /* */
-/*
+
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
@@ -126,7 +126,7 @@ function doGoals(rm) {
 	
     }
 }
-
+/*
 function initStrDataMemory(rm_name) {
     Memory.rooms['sim'].str_data = {
 	curRoleTable : [];
