@@ -162,6 +162,9 @@ initGlb();
 /******************************************************************************/
 
 module.exports.loop = function() {
+
+    u.printObject(glb);  // 
+    
     u.init();
     config.updateConfig();
 
