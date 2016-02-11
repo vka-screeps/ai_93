@@ -198,7 +198,7 @@ var F = class {
 var f = new F();
 
 var glb = {};
-/*
+
 function initGlb() {
     glb.rooms = new MemList( Memory.rooms );
     glb.rooms = new MemList( Memory.creeps );
@@ -227,6 +227,8 @@ class Goals {
 }
 
 f.reg(Goals);
+
+/*
 
 class Goal {
     constructor(d) {
