@@ -196,7 +196,7 @@ var F = class {
 };
 
 
-var f = {}; // new F()
+var f; //  =new F()
 
 var glb = {};
 
@@ -257,7 +257,17 @@ class GoalDefence extends Goal {
     }
 }
 
-/*
+var allClasses = [ Goals, Goal, GoalStart, GoalDefence ];
+
+function regClasses( list ) {
+    if(!f)
+	f = new F();
+    
+    list.forEach( function(c) {
+	f.reg(c); } );
+}
+
+/* */
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
@@ -283,5 +293,3 @@ function initStrDataMemory(rm_name) {
     };
 }
 
-
-*/
