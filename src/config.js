@@ -175,40 +175,95 @@ function setConfigSim() {
 	Memory.next_creep_id = 1;
 }
 
+var F = class {
+    constructor() {
+	this.tbl={}
+    }
+
+    reg(c) {
+	this.tbl[d.name] = c;
+    }
+
+    make(d) {
+	let cls = this.tbl[d.cname];
+	if ( cls  ) {
+	    return cls(d);
+	} else {
+	    console.log("Can't find class: " + d.cname);
+	}
+	
+    }
+};
+
+var f = new F();
+
+class Goals {
+    constructor(d) {
+	this.d = d;
+	this.goals = [];
+
+	this.d.goals.forEach( function(goal) {
+	    this.goals.push( f.make(goal) );
+	} );
+    }
+};
+
+f.reg(Goals);
 
 
 class Goal {
-    constructor() {
-	this.name='Goal';
+    constructor(d) {
+	this.d = d;
     }
-}
+};
+f.reg(Goal);
 
 class GoalStart extends Goal {
-    constructor() {
-	super();
-	this.name='GoalStart';
+    constructor(d) {
+	super(d);
     }
 
-    init(str_data) {
+    init(rm, str_data) {
 	str_data.curRoleTable = [];
 	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
 	return true;
     }
-}
+};
+f.reg(GoalStart);
 
 class GoalDefence extends Goal {
-    constructor() {
-	super();
-	this.name='GoalStart';
+    constructor(d) {
+	super(d);
     }
 
-    init(str_data) {
+    init(rm, str_data) {
 	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
 	return true;
     }
-}
+};
+f.reg(GoalDefence);
 
 var allGoals = {
     "g_start" : new GoalStart(),
     "g_def" : new GoalDefence()
 };
+
+function doGoals(rm) {
+    let rm_name = rm.name;
+    
+    if (!Memory.rooms[rm_name].str_data)
+	initStrDataMemory(rm_name);
+
+    var str_data = Memory.rooms[rm_name].str_data;
+    for( let gi in allGoals ) {
+	let g = allGoals[gi];
+	
+    }
+}
+
+function initStrDataMemory(rm_name) {
+    Memory.rooms['sim'].str_data = {
+	curRoleTable : [];
+	curGoals : [];
+    };
+}
