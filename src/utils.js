@@ -838,7 +838,7 @@ function print_r(printthis, returnoutput, ignore_list) {
     if( ignore_list.has(printthis) ) {
 	output = '"ignore"';
     } else {
-	ignore_list[printthis] = 1;
+	ignore_list.set(printthis, 1);
 
 	if(myIsArray(printthis)) {
 	    output += '[ ';
