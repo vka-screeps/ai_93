@@ -168,6 +168,10 @@ function setConfigSim() {
     ];
 
     Memory.rooms['sim'].strategy = 'str_maintain_creeps';
+    Memory.rooms['sim'].str_data = {	curRoleTable : [],
+					curGoals : [],
+					specialization : "growth"
+				   }
     initRoomVars('sim');
     
 
