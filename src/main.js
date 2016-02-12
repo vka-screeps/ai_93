@@ -69,19 +69,39 @@ class Goals {
 }
 
 
+
+
+class CMemObj {
+    constructor(d) {
+	this.d = d;
+    }
+
+    getObjLogName() {
+	return this.d.cname + "(" + this.d.name + ", " + this.d.id + ")";
+    }
+
+    getObj() {
+	if( this.d && this.d.id )
+	    return Game.getObjectById(this.d.id);
+
+	console.log( "Can't find object - " + this.getObjLogName() );
+	return null;
+    }
+}
+
+class CRoom extends CMemObj {
+    constructor(d) {
+	super(d);
+    }
+}
+
+class CCreep extends CMemObj {
+    constructor(d) {
+	super(d);
+    }
+}
+
 class Goal {
-    constructor(d) {
-	this.d = d;
-    }
-}
-
-class CRoom {
-    constructor(d) {
-	this.d = d;
-    }
-}
-
-class CCreep {
     constructor(d) {
 	this.d = d;
     }
