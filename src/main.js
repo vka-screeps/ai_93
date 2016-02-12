@@ -201,6 +201,9 @@ function runGoals() {
     }
 }
 
+u.initLog();
+Memory.log_level['global'] = 3;
+
 u.log('new global');
 
 regClasses(allClasses);

@@ -21,6 +21,11 @@ module.exports = {
 	console.log( 'Memory.log_level[facility] = ' + Memory.log_level[facility] );
     },
 
+    initLog : function() {
+	if(!Memory.log_level)
+	    Memory.log_level = {};
+    },
+
     LOG_INFO : 3,
     LOG_WARN : 2,
     LOG_ERR  : 1,
