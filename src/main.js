@@ -105,6 +105,9 @@ class Goal {
     constructor(d) {
 	this.d = d;
     }
+
+    init(rm, str_data) {
+    }
 }
 
 class GoalStart extends Goal {
@@ -168,8 +171,6 @@ function planGoals() {
     for(let rmi in glb.rooms.list) {
 	let rm = glb.rooms.list[rmi];
 
-	u.printObject(rm);
-	
 	if (!rm.d.str_data)
 	    initStrDataMemory(rm.d.name);
 
@@ -182,6 +183,22 @@ function planGoals() {
 	    }
 	}
     }
+}
+
+function runGoals() {
+    for(let rmi in glb.rooms.list) {
+	let rm = glb.rooms.list[rmi];
+
+	if (!rm.d.str_data)
+	    continue;
+	
+	var str_data = rm.d.str_data;
+	for( let gi in str_data.curGoals ) {
+	    let goal = f.make(str_data.curGoals[gi]);
+	    goal.init( rm, str_data );
+	}
+    }
+    
 }
 
 
@@ -208,6 +225,8 @@ module.exports = {
 	myroom();
 
 	planGoals();
+
+	runGoals();
 
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
