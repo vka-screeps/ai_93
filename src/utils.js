@@ -832,12 +832,13 @@ function print_r(printthis, returnoutput, ignore_list) {
     var comma = 0;
 
     if(!ignore_list)
-	ignore_list = [];
+	ignore_list = new Map()
 
-    if( _.findIndex(ignore_list, function(o) { return o === printthis; }) >= 0 ) {
-	output = 'ignore';
+    // _.findIndex(ignore_list, function(o) { return o === printthis; }) >= 0 ) {
+    if( ignore_list.has(printthis) ) {
+	output = '"ignore"';
     } else {
-	ignore_list.push(printthis);
+	ignore_list[printthis] = 1;
 
 	if(myIsArray(printthis)) {
 	    output += '[ ';
