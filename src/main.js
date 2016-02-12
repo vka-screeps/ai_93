@@ -175,9 +175,12 @@ function planGoals() {
 	var str_data = rm.d.str_data;
 	if(str_data.specialization == "growth") {
 	    if(!rm.d.my_creep_cnt) {
-		u.log( "Starting GoalStart" );
-		str_data.curGoals = [];
-		str_data.curGoals.push( {cname : 'GoalStart' } );
+		if(str_data.curGoals.length == 1 && str_data.curGoals[0].cname == 'GoalStart')	{
+		} else {
+		    u.log( "Starting GoalStart" );
+		    str_data.curGoals = [];
+		    str_data.curGoals.push( {cname : 'GoalStart' } );
+		}
 	    }
 	}
     }
