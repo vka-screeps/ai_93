@@ -831,7 +831,7 @@ function print_r(printthis, returnoutput, ignore_list) {
     var output = '';
     var comma = 0;
 
-    if(ignore_list === null) 
+    if(typeof ignore_list === "undefined")
 	ignore_list = new Map()
 
     // _.findIndex(ignore_list, function(o) { return o === printthis; }) >= 0 ) {
