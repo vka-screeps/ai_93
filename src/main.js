@@ -34,7 +34,7 @@ var F = class {
 
 var f; //  =new F()
 
-var glb = {};
+var glb; // = {};
 
 class MemList {
 
@@ -45,13 +45,7 @@ class MemList {
 	this.d = d;
 	this.list = [];
 
-	u.log( 'MemList ' + cn );
-
-	u.printObject(d);
-
 	for ( let oi in d ) {
-	    u.log( 'MemList ' + cn + ' - ' + o );
-	    
 	    let o = d[oi];
 	    if(!o.cname) {
 		o.cname = cn;
@@ -213,13 +207,15 @@ Memory.log_level['global'] = 3;
 u.log('new global');
 
 regClasses(allClasses);
-initGlb();
 
 config.updateConfig();
 
 /******************************************************************************/
 module.exports = {
     loop : function() {
+
+	if(!glb)
+	    initGlb();
 
 	/*
 	if ((Game.time % 10000) == 0) {
