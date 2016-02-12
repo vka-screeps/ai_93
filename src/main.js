@@ -42,9 +42,10 @@ class MemList {
     // cn - 'CRoom'
     // coll - Game.rooms
     constructor(parent, d, cn, coll) {
-	this.d = d;
 	this.list = {};
+	this.d = d;
 	this.parent = parent;
+	
 	for ( let oi in d ) {
 	    let o = d[oi];
 	    if(!o.cname) {
