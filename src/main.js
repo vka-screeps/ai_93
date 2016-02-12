@@ -36,27 +36,22 @@ var f; //  =new F()
 
 var glb = {};
 
-function initGlb() {
-    glb.rooms = new MemList( Memory.rooms, 'CRoom' );
-    glb.creeps = new MemList( Memory.creeps, 'CCreep' );
-}
-
 class MemList {
-    constructor(d, cn) {
+
+    // d - e.g. Memory.rooms
+    // cn - 'CRoom'
+    // coll - Game.rooms
+    constructor(d, cn, coll) {
 	this.d = d;
 	this.list = [];
 
-	/*
-	this.d.forEach( function(o) {
-	    if(!o.user_data)
-		o.user_data = {cname : cn}
-	    this.list.push( f.make(o.user_data) );
-	} );
-	*/
 	for ( let oi in d ) {
 	    let o = d[oi];
-	    if(!o.cname)
+	    if(!o.cname) {
 		o.cname = cn;
+		o.name = oi;
+		o.id = coll[o.name].id;
+	    }
 	    this.list.push( f.make(o) );
 	}
     }
@@ -152,6 +147,13 @@ function initStrDataMemory(rm_name) {
 	curGoals : []
     };
 }
+
+function initGlb() {
+    glb = {};
+    glb.rooms = new MemList( Memory.rooms, 'CRoom', Game.rooms );
+    glb.creeps = new MemList( Memory.creeps, 'CCreep', Game.creeps );
+}
+
 
 
 console.log('new global');
