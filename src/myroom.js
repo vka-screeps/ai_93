@@ -8,7 +8,7 @@ module.exports = function () {
 	var room = Game.rooms[name];
 	var room_data = Memory.rooms[name]
 
-	if(!room_data || !room_data.strategy)
+	if(!room_data ) // || !room_data.strategy)
 	    continue;
 
 	// energy dropped
@@ -54,18 +54,22 @@ module.exports = function () {
 	    room_data.maxHostiles = 0;
 	if(room_data.hostiles > room_data.maxHostiles)
 	    room_data.maxHostiles = room_data.hostiles;
-	
+
+	/*
 	u.str_plan_work(room);
 
 	if(room_data && room_data.strategy)
 	    u[room_data.strategy](room_data.strategy_data, room);
+	*/
     }
 
+    /*
     if(Memory.myrooms) {
 	var name = 'g1';
 	room_data = Memory.myrooms[name]
 	if(room_data && room_data.strategy)
 	    u[room_data.strategy](room_data.strategy_data, Game.rooms[room_data.spawnIn], name);
     }
+    */
 }
 

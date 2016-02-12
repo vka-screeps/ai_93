@@ -147,24 +147,13 @@ var allGoals = {
     "g_def" : new GoalDefence()
 };
 
-function doGoals(rm) {
-    let rm_name = rm.name;
-    
-    if (!Memory.rooms[rm_name].str_data)
-	initStrDataMemory(rm_name);
-
-    var str_data = Memory.rooms[rm_name].str_data;
-    for( let gi in allGoals ) {
-	let g = allGoals[gi];
-	
-    }
-}
 
 
 function initStrDataMemory(rm_name) {
-    Memory.rooms['sim'].str_data = {
+    Memory.rooms[rm_name].str_data = {
 	curRoleTable : [],
-	curGoals : []
+	curGoals : [],
+	specialization : ""
     };
 }
 
@@ -174,6 +163,23 @@ function initGlb() {
     glb.creeps = new MemList( Memory.creeps, 'CCreep', Game.creeps );
 }
 
+function planGoals() {
+
+    for(rm of glb.rooms) {
+
+	if (!rm.d.str_data)
+	    initStrDataMemory(rm.d.name);
+
+	var str_data = rm.d.str_data;
+	if(str_data.specialization == "growth") {
+	    if(!rm.d.my_creep_cnt) {
+		u.log( "Starting GoalStart" );
+		str_data.curGoals = [];
+		str_data.curGoals.push( {cname : 'GoalStart' } );
+	    }
+	}
+    }
+}
 
 
 console.log('new global');
@@ -181,19 +187,24 @@ console.log('new global');
 regClasses(allClasses);
 initGlb();
 
+config.updateConfig();
+
 /******************************************************************************/
 module.exports = {
     loop : function() {
 
-	u.init();
-	config.updateConfig();
-
+	/*
 	if ((Game.time % 10000) == 0) {
 	    stat.clear();
 	}
+	*/
 
 	console.log('new tick');
+	
+	// collect stats
 	myroom();
+
+	planGoals();
 
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];

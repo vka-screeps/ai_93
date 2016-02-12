@@ -8,9 +8,11 @@ module.exports = {
     init : function() {
     },
 
-    log : function(str) {
-	if(Memory.glb_mode==2)
-	    console.log('mylog: ' + str);
+    log : function(str, type) {
+	if( !type || type === "info" ) {
+	    if(Memory.glb_mode==2)
+		console.log('mylog: ' + str);
+	}
     },
 
     printObject : function(o) {
