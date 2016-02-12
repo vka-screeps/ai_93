@@ -57,6 +57,9 @@ function initRoomVars(name) {
 
 function setConfig() {
 
+    if(!Memory.log_level)
+	Memory.log_level = [];
+
     if( Game.rooms.sim && !Game.rooms.E9S8 ) {
 	console.log("Sim mode detected!");
 	return setConfigSim();
@@ -143,8 +146,6 @@ function setConfig() {
 
     if(!Memory.next_creep_id)
 	Memory.next_creep_id = 1;
-
-
 };
 
 

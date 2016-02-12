@@ -8,11 +8,19 @@ module.exports = {
     init : function() {
     },
 
-    log : function(str, type) {
-	if( !type || type === "info" ) {
-	    // if(Memory.glb_mode==2)
+    log : function(str, type, facility) {
+	if(!type) type = 'info';
+	if(!facility) facility = 'global';
+	if(!type || type === "info") {
+	    if(Memory.log_level[facility] && Memory.log_level[facility][type])
 		console.log('mylog: ' + str);
 	}
+    },
+
+    log_enable : function( type, facility ) {
+	if(!Memory.log_level[facility])
+	    Memory.log_level[facility] = {};
+	Memory.log_level[facility][type] = 1;
     },
 
     printObject : function(o) {
