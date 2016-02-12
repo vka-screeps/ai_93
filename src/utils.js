@@ -16,7 +16,9 @@ module.exports = {
     },
 
     log_enable : function( type, facility ) {
+	if(!facility) facility = 'global';
 	Memory.log_level[facility] = type;
+	console.log( 'Memory.log_level[facility] = ' + Memory.log_level[facility] );
     },
 
     LOG_INFO : 3,
