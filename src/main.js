@@ -165,7 +165,7 @@ function initGlb() {
 
 function planGoals() {
 
-    for(rm of glb.rooms) {
+    for(let rm of glb.rooms) {
 
 	if (!rm.d.str_data)
 	    initStrDataMemory(rm.d.name);
