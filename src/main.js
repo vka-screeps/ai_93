@@ -57,7 +57,8 @@ class MemList {
     }
 }
 
-/*
+
+// TODO - delete unused code
 class Goals {
     constructor(d) {
 	this.d = d;
@@ -68,7 +69,7 @@ class Goals {
 	} );
     }
 }
-*/
+
 
 class CMemObj {
     constructor(d, parent) {
