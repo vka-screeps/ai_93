@@ -20,10 +20,10 @@ var F = class {
 	this.tbl[c.name] = c;
     }
 
-    make(d) {
+    make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    return new cls(d);
+	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
 	}
@@ -43,8 +43,8 @@ class MemList {
     // coll - Game.rooms
     constructor(d, cn, coll) {
 	this.d = d;
-	this.list = [];
-
+	this.list = {};
+	this.parent = null;
 	for ( let oi in d ) {
 	    let o = d[oi];
 	    if(!o.cname) {
@@ -52,11 +52,12 @@ class MemList {
 		o.name = oi;
 		o.id = coll[o.name].id;
 	    }
-	    this.list.push( f.make(o) );
+	    this.list[o.id] = f.make(o, this);
 	}
     }
 }
 
+/*
 class Goals {
     constructor(d) {
 	this.d = d;
@@ -67,11 +68,12 @@ class Goals {
 	} );
     }
 }
-
+*/
 
 class CMemObj {
-    constructor(d) {
+    constructor(d, parent) {
 	this.d = d;
+	this.parent = parent;
     }
 
     getObjLogName() {
@@ -88,20 +90,37 @@ class CMemObj {
 }
 
 class CRoom extends CMemObj {
-    constructor(d) {
-	super(d);
+    constructor(d, parent) {
+	super(d, parent);
     }
 }
 
 class CCreep extends CMemObj {
-    constructor(d) {
-	super(d);
+    constructor(d, parent) {
+	super(d, parent);
+	this.croom = this.parent.parent.rooms[d.id_room];
+	this.role = f.make(d.role, this);
+    }
+}
+
+class CRole {
+    constructor(d, parent) {
+	this.d = d;
+	this.parent = parent;
+
+	let croom = this.parent.croom;
+	this.crolet = croom.lst_crolet[this.d.id_rolet];
+    }
+
+    process(ccreep) {
+	u.log( "CRole.process (" + ccreep.d.name + ")" );
     }
 }
 
 class Goal {
-    constructor(d) {
+    constructor(d, parent) {
 	this.d = d;
+	this.parent = parent;
     }
 
     init(rm, str_data) {
@@ -109,8 +128,8 @@ class Goal {
 }
 
 class GoalStart extends Goal {
-    constructor(d) {
-	super(d);
+    constructor(d, parent) {
+	super(d, parent);
     }
 
     init(rm, str_data) {
@@ -121,8 +140,8 @@ class GoalStart extends Goal {
 }
 
 class GoalDefence extends Goal {
-    constructor(d) {
-	super(d);
+    constructor(d, parent) {
+	super(d, parent);
     }
 
     init(rm, str_data) {
@@ -132,7 +151,7 @@ class GoalDefence extends Goal {
 }
 
 
-var allClasses = [ Goals, Goal, GoalStart, GoalDefence, CRoom, CCreep ];
+var allClasses = [ Goals, Goal, GoalStart, GoalDefence, CRoom, CCreep, CRole ];
 
 function regClasses( list ) {
     if(!f)
@@ -195,11 +214,17 @@ function runGoals() {
 	
 	var str_data = rm.d.str_data;
 	for( let gi in str_data.curGoals ) {
-	    let goal = f.make(str_data.curGoals[gi]);
+	    let goal = f.make(str_data.curGoals[gi], rm);
 	    goal.init( rm, str_data );
 	}
     }
 }
+
+/*
+function makeNewCreep(crm, spawn, id_crolet) {
+    let 
+}
+*/
 
 u.initLog();
 Memory.log_level['global'] = 3;
