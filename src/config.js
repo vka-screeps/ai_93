@@ -171,7 +171,7 @@ function setConfigSim() {
     Memory.rooms['sim'].str_data = {	curRoleTable : [],
 					curGoals : [],
 					specialization : "growth"
-				   }
+				   };
     initRoomVars('sim');
     
 
