@@ -10,7 +10,7 @@ module.exports = {
 
     log : function(str, type) {
 	if( !type || type === "info" ) {
-	    if(Memory.glb_mode==2)
+	    // if(Memory.glb_mode==2)
 		console.log('mylog: ' + str);
 	}
     },
