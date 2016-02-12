@@ -9,19 +9,19 @@ module.exports = {
     },
 
     log : function(str, type, facility) {
-	if(!type) type = 'info';
+	if(!type) type = 3; // info
 	if(!facility) facility = 'global';
-	if(!type || type === "info") {
-	    if(Memory.log_level[facility] && Memory.log_level[facility][type])
-		console.log('mylog: ' + str);
-	}
+	if(Memory.log_level[facility] >= type)
+	    console.log('mylog: ' + str);
     },
 
     log_enable : function( type, facility ) {
-	if(!Memory.log_level[facility])
-	    Memory.log_level[facility] = {};
-	Memory.log_level[facility][type] = 1;
+	Memory.log_level[facility] = type;
     },
+
+    LOG_INFO : 3,
+    LOG_WARN : 2,
+    LOG_ERR  : 1,
 
     printObject : function(o) {
 	/*
