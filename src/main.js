@@ -25,7 +25,7 @@ var F = class {
 	if ( cls  ) {
 	    return new cls(d);
 	} else {
-	    console.log("Can't find class: " + d.cname);
+	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
 	}
 	
     }
@@ -82,7 +82,7 @@ class CMemObj {
 	if( this.d && this.d.id )
 	    return Game.getObjectById(this.d.id);
 
-	console.log( "Can't find object - " + this.getObjLogName() );
+	u.log( "Can't find object - " + this.getObjLogName(), u.LOG_WARN);
 	return null;
     }
 }
@@ -198,7 +198,7 @@ function runGoals() {
     }
 }
 
-console.log('new global');
+u.log('new global');
 
 regClasses(allClasses);
 initGlb();
@@ -215,7 +215,7 @@ module.exports = {
 	}
 	*/
 
-	console.log('new tick');
+	u.log('new tick');
 	
 	// collect stats
 	myroom();

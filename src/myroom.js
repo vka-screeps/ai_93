@@ -3,8 +3,6 @@ var u = require('utils');
 module.exports = function () {
 
     for(var name in Game.rooms) {
-	// console.log('room');
-	u.log('room1');
 	var room = Game.rooms[name];
 	var room_data = Memory.rooms[name]
 
