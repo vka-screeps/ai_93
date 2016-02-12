@@ -165,8 +165,8 @@ function initGlb() {
 
 function planGoals() {
 
-    for(let rmi in glb.rooms) {
-	let rm = glb.rooms[rmi];
+    for(let rmi in glb.rooms.list) {
+	let rm = glb.rooms.list[rmi];
 
 	u.printObject(rm);
 	
