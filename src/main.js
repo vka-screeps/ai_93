@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var harvester = require('harvest');
 var cr = require('cr');
 var myroom = require('myroom');
@@ -9,7 +10,6 @@ var stat = require('stat');
 
 
 //u.init();
-
 
 var F = class {
     constructor() {
@@ -67,8 +67,6 @@ class Goals {
 	} );
     }
 }
-
-
 
 
 class CMemObj {
@@ -198,9 +196,7 @@ function runGoals() {
 	    goal.init( rm, str_data );
 	}
     }
-    
 }
-
 
 console.log('new global');
 
