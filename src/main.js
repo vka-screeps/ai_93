@@ -41,10 +41,10 @@ class MemList {
     // d - e.g. Memory.rooms
     // cn - 'CRoom'
     // coll - Game.rooms
-    constructor(d, cn, coll) {
+    constructor(parent, d, cn, coll) {
 	this.d = d;
 	this.list = {};
-	this.parent = null;
+	this.parent = parent;
 	for ( let oi in d ) {
 	    let o = d[oi];
 	    if(!o.cname) {
@@ -180,8 +180,8 @@ function initStrDataMemory(rm_name) {
 
 function initGlb() {
     glb = {};
-    glb.rooms = new MemList( Memory.rooms, 'CRoom', Game.rooms );
-    glb.creeps = new MemList( Memory.creeps, 'CCreep', Game.creeps );
+    glb.rooms = new MemList( glb, Memory.rooms, 'CRoom', Game.rooms ); // must go 1st
+    glb.creeps = new MemList( glb, Memory.creeps, 'CCreep', Game.creeps );
 }
 
 function planGoals() {
