@@ -47,6 +47,8 @@ class MemList {
 
 	u.log( 'MemList ' + cn );
 
+	u.printObject(d);
+
 	for ( let oi in d ) {
 	    u.log( 'MemList ' + cn + ' - ' + o );
 	    
