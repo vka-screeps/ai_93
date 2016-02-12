@@ -1,4 +1,5 @@
 var glb = require('glb');
+var _ = require('lodash');
 
 module.exports = {
 
@@ -826,29 +827,39 @@ function myIsArray(o) {
     return false;
 }
 
-function print_r(printthis, returnoutput) {
+function print_r(printthis, returnoutput, ignore_list) {
     var output = '';
     var comma = 0;
-    if(myIsArray(printthis)) {
-	output += '[ ';
-        for(var i in printthis) {
-	    if(comma) output += '\n, ';
-            output += print_r(printthis[i], true);
-	    ++comma;
-        }
-	output += ']';
-    } else if(myIsArray(printthis) || typeof(printthis) == 'object') {
-	output += '{ ';
-        for(var i in printthis) {
-	    if(comma) output += '\n, ';
-	    ++comma;
-            output += i + ' : ' + print_r(printthis[i], true);
-        }
-	output += '}';
-    }else if(typeof(printthis) == 'string'){
-        output += "'" + printthis + "'";
+
+    if(!ignore_list)
+	ignore_list = [];
+
+    if( _.findIndex(ignore_list, function(o) { return o === printthis; }) >= 0 ) {
+	output = 'ignore';
     } else {
-        output += printthis;
+	ignore_list.push(printthis);
+
+	if(myIsArray(printthis)) {
+	    output += '[ ';
+            for(var i in printthis) {
+		if(comma) output += '\n, ';
+		output += print_r(printthis[i], true, ignore_list);
+		++comma;
+            }
+	    output += ']';
+	} else if(myIsArray(printthis) || typeof(printthis) == 'object') {
+	    output += '{ ';
+            for(var i in printthis) {
+		if(comma) output += '\n, ';
+		++comma;
+		output += i + ' : ' + print_r(printthis[i], true, ignore_list);
+            }
+	    output += '}';
+	}else if(typeof(printthis) == 'string'){
+            output += "'" + printthis + "'";
+	} else {
+            output += printthis;
+	}
     }
     if(returnoutput && returnoutput == true) {
         return output;
