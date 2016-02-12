@@ -45,7 +45,11 @@ class MemList {
 	this.d = d;
 	this.list = [];
 
+	u.log( 'MemList ' + cn );
+
 	for ( let oi in d ) {
+	    u.log( 'MemList ' + cn + ' - ' + o );
+	    
 	    let o = d[oi];
 	    if(!o.cname) {
 		o.cname = cn;
