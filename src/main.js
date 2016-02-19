@@ -135,8 +135,8 @@ class GoalStart extends Goal {
     }
 
     init(rm, str_data) {
-	if(!d.running) {
-	    d.running = 1;
+	if(!this.d.running) {
+	    this.d.running = 1;
 	    u.log("Starting GoalStart...");
 	}
 	str_data.curRoleTable = [];
