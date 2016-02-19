@@ -135,6 +135,10 @@ class GoalStart extends Goal {
     }
 
     init(rm, str_data) {
+	if(!d.running) {
+	    d.running = 1;
+	    u.log("Starting GoalStart...");
+	}
 	str_data.curRoleTable = [];
 	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
 	return true;
@@ -174,7 +178,7 @@ var allGoals = {
 function initStrDataMemory(rm_name) {
     Memory.rooms[rm_name].str_data = {
 	curRoleTable : [],
-	curGoals : [],
+	curGoals : {},
 	specialization : ""
     };
 }
@@ -196,12 +200,11 @@ function planGoals() {
 	var str_data = rm.d.str_data;
 	if(str_data.specialization == "growth") {
 	    if(!rm.d.my_creep_cnt) {
-		if(str_data.curGoals.length == 1 && str_data.curGoals[0].cname == 'GoalStart')	{
-		} else {
-		    u.log( "Starting GoalStart" );
-		    str_data.curGoals = [];
-		    str_data.curGoals.push( {cname : 'GoalStart' } );
-		}
+		// no creeps in the room
+		if(!str_data.curGoals.start)
+		    str_data.curGoals.start = {cname : 'GoalStart'};
+
+		str_data.curGoals.start.active = 1;
 	    }
 	}
     }
