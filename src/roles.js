@@ -30,7 +30,7 @@ var F = class {
     }
 };
 
-var m_f = new F();
+var f = new F();
 
 function m_init() {
     regClasses(allClasses);
