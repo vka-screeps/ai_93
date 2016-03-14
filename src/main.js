@@ -245,6 +245,15 @@ function assignSpawnJobs() {
 	    } else {
 		let cjob = f.make(job, null);
 
+		u.printObject(job);
+		u.printObject(cjob.d);
+		job.workStatus = "asdf";
+		u.printObject(job);
+		u.printObject(cjob.d);
+		cjob.d.workStatus = "asdf";
+		u.printObject(job);
+		u.printObject(cjob.d);
+		
 		// is the job done ?
 		if(_.isString(job.workStatus)) {
 
