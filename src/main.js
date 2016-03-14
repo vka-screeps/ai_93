@@ -114,10 +114,10 @@ class JobSpawn extends Job {
     static cname() { return 'JobSpawn'; }
 
     do_work(rm) {
-/*	
+
 	let spawn = Game.getObjectById(d.taken_by_id);
 	let mem = {
-	    bal_id = d.bal_id,
+	    bal_id : d.bal_id,
 	    role: {
 		name: rm.memory.balance[d.bal_id].role,
 		job_id: null,
@@ -125,8 +125,8 @@ class JobSpawn extends Job {
 		workStatus: null,
 	    },
 	};
-*/	
-/*
+
+
 	let body = getDesign(d.design, spawn, rm);
 	
 	u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
@@ -139,7 +139,7 @@ class JobSpawn extends Job {
 	else {
 	    console.log('Spawn error: '+result);
 	}
-*/
+
     }
 }
 
