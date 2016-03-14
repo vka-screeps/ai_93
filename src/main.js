@@ -11,6 +11,7 @@ var stat = require('stat');
 
 //u.init();
 
+// Factory
 var F = class {
     constructor() {
 	this.tbl={}
@@ -39,8 +40,8 @@ var glb; // = {};
 class MemList {
 
     // d - e.g. Memory.rooms
-    // cn - 'CRoom'
-    // coll - Game.rooms
+    // cn - e.g. 'CRoom' - default class name, if none exists. TODO: use a function.
+    // coll - e.g. Game.rooms - helps to find out the obj's id. 
     constructor(parent, d, cn, coll) {
 	this.list = {};
 	this.d = d;
@@ -119,53 +120,10 @@ class CRole {
     }
 }
 
-class Goal {
-    constructor(d, parent) {
-	this.d = d;
-	this.parent = parent;
-    }
-
-    init(rm, str_data) {
-    }
-}
-
-class GoalStart extends Goal {
-    constructor(d, parent) {
-	super(d, parent);
-    }
-
-    init(rm, str_data) {
-	if(!this.d.running) {
-	    this.d.running = 1;
-	    u.log("Starting GoalStart...");
-	}
-	str_data.curRoleTable = [];
-	str_data.curRoleTable.push( {role_id: 'h1', count: 1 } );
-	return true;
-    }
-}
-
-class GoalDefence extends Goal {
-    constructor(d, parent) {
-	super(d, parent);
-    }
-
-    init(rm, str_data) {
-	str_data.curRoleTable.push( {role_id: 'free', count: 1 } );
-	return true;
-    }
-}
-
 
 var allClasses = [ Goals, Goal, GoalStart, GoalDefence, CRoom, CCreep, CRole ];
 
-function regClasses( list ) {
-    if(!f)
-	f = new F();
-    
-    list.forEach( function(c) {
-	f.reg(c); } );
-}
+
 
 
 var allGoals = {
@@ -189,41 +147,6 @@ function initGlb() {
     glb.creeps = new MemList( glb, Memory.creeps, 'CCreep', Game.creeps );
 }
 
-function planGoals() {
-
-    for(let rmi in glb.rooms.list) {
-	let rm = glb.rooms.list[rmi];
-
-	if (!rm.d.str_data)
-	    initStrDataMemory(rm.d.name);
-
-	var str_data = rm.d.str_data;
-	if(str_data.specialization == "growth") {
-	    if(!rm.d.my_creep_cnt) {
-		// no creeps in the room
-		if(!str_data.curGoals.start)
-		    str_data.curGoals.start = {cname : 'GoalStart'};
-
-		str_data.curGoals.start.active = 1;
-	    }
-	}
-    }
-}
-
-function runGoals() {
-    for(let rmi in glb.rooms.list) {
-	let rm = glb.rooms.list[rmi];
-
-	if (!rm.d.str_data)
-	    continue;
-	
-	var str_data = rm.d.str_data;
-	for( let gi in str_data.curGoals ) {
-	    let goal = f.make(str_data.curGoals[gi], rm);
-	    goal.init( rm, str_data );
-	}
-    }
-}
 
 /*
 function makeNewCreep(crm, spawn, id_crolet) {
