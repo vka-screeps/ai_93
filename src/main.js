@@ -11,7 +11,7 @@ r = {
     init: function() { m_init() },
     f : f,
     cf : F,
-    planSpawnJobs : planSpawnJobs,
+//    planSpawnJobs : planSpawnJobs,
 }
 
 
@@ -117,6 +117,7 @@ var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn ];
 
 
 ///////////////////////////////////////////////////////
+/*
 function planSpawnJobs(rm) {
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
@@ -138,6 +139,7 @@ function planSpawnJobs(rm) {
 	}
     }
 }
+*/
 
 
 //config.rooms = [];
