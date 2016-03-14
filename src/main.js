@@ -188,7 +188,7 @@ function assignSpawnJobs() {
 
 	    // work on it
 
-	    cjob = f.make(job, null);
+	    let cjob = f.make(job, null);
 	    // cjob.do_work();
 
 	    break;
