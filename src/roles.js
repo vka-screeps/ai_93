@@ -16,6 +16,7 @@ var F = class {
     }
 
     reg(c) {
+	u.log("Registering: " + c.cname, u.LOG_INFO);
 	this.tbl[c.name] = c;
     }
 
@@ -65,3 +66,29 @@ class CMemObj {
 	return null;
     }
 }
+
+class Job extends CMemObj {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+}
+
+class JobMiner extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+}
+
+class JobCarrier extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+}
+
+// class CCreep extends CMemObj {
+//     constructor(d, parent) {
+// 	super(d, parent);
+// 	this.croom = this.parent.parent.rooms[d.id_room];
+// 	this.role = f.make(d.role, this);
+//     }
+// }
