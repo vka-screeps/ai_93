@@ -116,6 +116,7 @@ class JobSpawn extends Job {
     start_work(rm) {
 	let d = this.d;
 	let spawn = Game.getObjectById(d.taken_by_id);
+	let role = spawn.memory.role;
 	let mem = {
 	    bal_id : d.bal_id,
 	    role: {
@@ -135,16 +136,14 @@ class JobSpawn extends Job {
 
 	if(_.isString(result)) {
 	    console.log('The name is: '+result);
-	    d.workStatus = result;
+	    role.workStatus = result;
 	}
 	else {
 	    if( result !== d.workStatus) {
 		console.log('Spawn error: '+result);
 	    }
-	    d.workStatus = result;
+	    role.workStatus = result;
 	}
-
-	console.log('d.workStatus = ' + d.workStatus);
     }
 
     finish_work(rm, success) {
@@ -246,7 +245,7 @@ function assignSpawnJobs() {
 		let cjob = f.make(job, null);
 
 		// is the job done ?
-		if(_.isString(job.workStatus)) {
+		if(_.isString(spawn.memory.role.workStatus)) {
 
 		    // release the job
 		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
@@ -259,20 +258,8 @@ function assignSpawnJobs() {
 		    spawn.memory.role.workStatus = null;
 		} else {
 		    
-		    u.printObject(job);
-		    u.printObject(cjob.d);
-		    job.workStatus = "asdf";
-		    u.printObject(job);
-		    u.printObject(cjob.d);
-		    cjob.d.workStatus = "qwer";
-		    u.printObject(job);
-		    u.printObject(cjob.d);
-		    
 		    u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
 		    cjob.start_work(spawn.room);
-		    u.log("Spawn " + spawn.name + " waiting with status(2) " + spawn.memory.role.workStatus, u.LOG_INFO);
-		    console.log('d.workStatus(2) = ' + spawn.memory.role.workStatus);
-		    
 		    continue;
 		}
 	    }
