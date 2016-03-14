@@ -151,6 +151,7 @@ class JobSpawn extends Job {
 
 	// update balance
 	if(success) {
+	    // TODO - Update curCount in the creep's do_work function instead.
 	    rm.memory.balance[d.bal_id].curCount++;
 	} else {
 	}
@@ -248,7 +249,7 @@ function assignSpawnJobs() {
 		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
 
 		    let cjob = f.make(job, null);
-		    cjob.finish_work(spawn.room);
+		    cjob.finish_work(spawn.room, true);
 
 		    delete lst[spawn.memory.role.job_id];
 
