@@ -243,6 +243,7 @@ function assignSpawnJobs() {
 		spawn.memory.role.job_id = null;
 		spawn.memory.role.workStatus = null;
 	    } else {
+		let cjob = f.make(job, null);
 
 		// is the job done ?
 		if(_.isString(job.workStatus)) {
@@ -250,7 +251,6 @@ function assignSpawnJobs() {
 		    // release the job
 		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
 
-		    let cjob = f.make(job, null);
 		    cjob.finish_work(spawn.room, true);
 
 		    delete lst[spawn.memory.role.job_id];
@@ -259,6 +259,7 @@ function assignSpawnJobs() {
 		    spawn.memory.role.workStatus = null;
 		} else {
 		    u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
+		    cjob.start_work(spawn.room);
 		    continue;
 		}
 	    }
