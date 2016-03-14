@@ -178,7 +178,7 @@ function assignSpawnJobs() {
 	    };
 	}
 
-	for(i2 in lst) {
+	for(let i2 in lst) {
 	    let job = lst[i2];
 
 	    // take the job
