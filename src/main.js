@@ -156,10 +156,10 @@ function assignSpawnJobs(rm) {
 
 	if(spawn.spawning != null)
 	    continue;
-	/*	
+
 	let jobs = spawn.rm.memory.jobs;
 	if(!jobs) {
-	    u.log("No jobs for room" spawn.rm.name, u.LOG_WARN);
+	    u.log("No jobs for room" + spawn.rm.name, u.LOG_WARN);
 	    continue;
 	}
 	let lst = jobs['JobSpawn'];
@@ -190,7 +190,6 @@ function assignSpawnJobs(rm) {
 	    cjob = f.make(job, null);
 	    // cjob.do_work();
 	}
-*/
     }    
 }
 
