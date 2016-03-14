@@ -135,9 +135,13 @@ class JobSpawn extends Job {
 
 	if(_.isString(result)) {
 	    console.log('The name is: '+result);
+	    d.workStatus = result;
 	}
 	else {
-	    console.log('Spawn error: '+result);
+	    if( result !== d.workStatus) {
+		console.log('Spawn error: '+result);
+		d.workStatus = d.workStatus;
+	    }
 	}
 
     }
