@@ -3,7 +3,7 @@ var u = require('utils');
 
 module.exports = {
     init: function() { m_init() },
-    f : m_f,
+    f : f,
     cf : F
 }
 
