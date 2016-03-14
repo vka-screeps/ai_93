@@ -155,7 +155,14 @@ function setConfigSim() {
 
 
     Memory.rooms['sim'] = {};
-    // SIM CONFIG  
+    // SIM CONFIG
+    Memory.rooms['sim'].balance = [
+	{id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
+	{id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
+    ];
+	
+
+    /*
     Memory.rooms['sim'].strategy_data =[
 	{ role_id : 'h1', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
 	,{ role_id : 'h2', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }	
@@ -170,6 +177,7 @@ function setConfigSim() {
 					curGoals : {},
 					specialization : "growth"
 				   };
+    */
     initRoomVars('sim');
     
 
