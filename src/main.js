@@ -7,7 +7,7 @@ var config = require('config');
 var stat = require('stat');
 //var r = require('roles');
 
-r = {
+var r = {
     init: function() { m_init() },
     f : f,
     cf : F,
@@ -117,12 +117,13 @@ var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn ];
 
 
 ///////////////////////////////////////////////////////
-/*
+
 function planSpawnJobs(rm) {
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
     let lst = jobs['JobSpawn'];
-    
+
+    /*
     for(let i in rm.memory.balance) {
 	let bal_ln = rm.memory.balance[i];
 	if(bal_ln.count > bal_ln.curCount) {
@@ -138,8 +139,9 @@ function planSpawnJobs(rm) {
 	    }
 	}
     }
-}
 */
+}
+
 
 
 //config.rooms = [];
