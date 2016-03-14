@@ -123,15 +123,19 @@ function planSpawnJobs(rm) {
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
     let lst = jobs['JobSpawn'];
 
+    let priority = 0;
     for(let i in rm.memory.balance) {
 	let bal_ln = rm.memory.balance[i];
-
+	priority++;
 
 	if(bal_ln.count > bal_ln.curCount) {
 	    let job_id = bal_ln.id;
 	    if(!lst[job_id]) {
 		let new_job = {
+		    cname: 'JobSpawn',
 		    id: job_id,
+		    taken_by_id: null,
+		    priority: priority,
 		    design: bal_ln.design
 		};
 
@@ -141,7 +145,51 @@ function planSpawnJobs(rm) {
 	}
 
     }
+}
 
+function assignSpawnJobs(rm) {
+
+    for(let i1 in Game.spawns) {
+	let spawn = Game.spawns[i];
+	if(!spawn.my)
+	    continue;
+
+	if(spawn.spawning != null)
+	    continue;
+	
+	let jobs = spawn.rm.memory.jobs;
+	if(!jobs) {
+	    u.log("No jobs for room" spawn.rm.name, u.LOG_WARN);
+	    continue;
+	}
+	let lst = jobs['JobSpawn'];
+	if(!lst)
+	    continue;
+
+	if(!spawn.memory.role) {
+	    // init role
+	    spawn.memory.role = {
+		name: 'JobSpawn',
+		job_id: null,
+		initTime: 0,
+		workStatus: null
+	    };
+	}
+
+	for(i2 in lst) {
+	    let job = lst[i2];
+
+	    // take the job
+	    u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
+	    spawn.memory.role.job_id = job.id;
+	    job.taken_by_id = spawn.id;
+
+	    // work on it
+
+	    cjob = f.make(job, null);
+	    // cjob.do_work();
+	}
+    }    
 }
 
 
