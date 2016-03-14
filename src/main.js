@@ -260,6 +260,8 @@ function assignSpawnJobs() {
 		} else {
 		    u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
 		    cjob.start_work(spawn.room);
+		    u.log("Spawn " + spawn.name + " waiting with status(2) " + spawn.memory.role.workStatus, u.LOG_INFO);
+		    
 		    continue;
 		}
 	    }
