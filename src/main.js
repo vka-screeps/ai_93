@@ -140,8 +140,8 @@ class JobSpawn extends Job {
 	else {
 	    if( result !== d.workStatus) {
 		console.log('Spawn error: '+result);
-		d.workStatus = result;
 	    }
+	    d.workStatus = result;
 	}
 
 	console.log('d.workStatus = ' + d.workStatus);
