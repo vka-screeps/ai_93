@@ -178,6 +178,17 @@ function assignSpawnJobs() {
 	    };
 	}
 
+	if(spawn.memory.role.job_id != null) {
+	    // is the job done ?
+
+	    // release the job
+	    let job = lst[spawn.memory.role.job_id];
+	    if(job != null) {
+		lst[spawn.memory.role.job_id] = null;
+	    }
+	    spawn.memory.role.job_id = null;
+	}
+
 	for(let i2 in lst) {
 	    let job = lst[i2];
 
