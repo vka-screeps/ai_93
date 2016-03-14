@@ -156,7 +156,7 @@ function assignSpawnJobs(rm) {
 
 	if(spawn.spawning != null)
 	    continue;
-	
+	/*	
 	let jobs = spawn.rm.memory.jobs;
 	if(!jobs) {
 	    u.log("No jobs for room" spawn.rm.name, u.LOG_WARN);
@@ -166,7 +166,7 @@ function assignSpawnJobs(rm) {
 	if(!lst)
 	    continue;
 
-	/*
+
 	if(!spawn.memory.role) {
 	    // init role
 	    spawn.memory.role = {
