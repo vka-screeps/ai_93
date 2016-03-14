@@ -98,6 +98,14 @@ class JobCarrier extends Job {
     static cname() { return 'JobCarrier'; }
 }
 
+function getDesign( design, sp, rm ) {
+    if(design == 'h1') {
+	return [WORK, CARRY, MOVE];
+    }
+
+    return [WORK, CARRY, MOVE];
+}
+
 class JobSpawn extends Job {
     constructor(d, parent) {
 	super(d, parent);
