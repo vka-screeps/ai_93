@@ -165,6 +165,8 @@ u.log('new global');
 
 config.updateConfig();
 
+r.init();
+
 /******************************************************************************/
 module.exports = {
     loop : function() {
