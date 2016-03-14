@@ -5,6 +5,7 @@ module.exports = {
     init: function() { m_init() },
     f : f,
     cf : F,
+    planSpawnJobs : planSpawnJobs,
 }
 
 

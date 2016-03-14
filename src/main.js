@@ -187,6 +187,8 @@ module.exports = {
 	// collect stats
 	myroom();
 
+	r.planSpawnJobs();
+
 	// planGoals();
 
 	// runGoals();
