@@ -126,20 +126,20 @@ function planSpawnJobs(rm) {
     for(let i in rm.memory.balance) {
 	let bal_ln = rm.memory.balance[i];
 
-	/*
+
 	if(bal_ln.count > bal_ln.curCount) {
 	    let job_id = bal_ln.id;
 	    if(!lst[new_job]) {
 		let new_job = {
 		    id: job_id,
-		    design: bal_ln.design;
+		    design: bal_ln.design
 		};
 
 		u.log("New JobSpawn: " + job_id, u.LOG_INFO); 		
 		lst.push(new_job);
 	    }
 	}
-*/
+
     }
 
 }
@@ -326,7 +326,7 @@ module.exports = {
 	// collect stats
 	myroom();
 
-	r.planSpawnJobs();
+	r.planSpawnJobs(Game.rooms['sim']);
 
 	// planGoals();
 
