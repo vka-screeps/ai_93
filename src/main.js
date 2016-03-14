@@ -250,7 +250,7 @@ function assignSpawnJobs() {
 		job.workStatus = "asdf";
 		u.printObject(job);
 		u.printObject(cjob.d);
-		cjob.d.workStatus = "asdf";
+		cjob.d.workStatus = "qwer";
 		u.printObject(job);
 		u.printObject(cjob.d);
 		
