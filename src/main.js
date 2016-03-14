@@ -124,7 +124,7 @@ class JobSpawn extends Job {
 		workStatus: null,
 	    },
 	};
-
+/*
 	let body = getDesign(d.design, spawn, rm);
 	
 	u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
@@ -137,6 +137,7 @@ class JobSpawn extends Job {
 	else {
 	    console.log('Spawn error: '+result);
 	}
+*/
     }
 }
 
