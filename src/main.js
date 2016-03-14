@@ -104,6 +104,32 @@ class JobSpawn extends Job {
     }
 
     static cname() { return 'JobSpawn'; }
+
+    do_work(rm) {
+	let spawn = Game.getObjectById(d.taken_by_id);
+	let mem = {
+	    bal_id = d.bal_id,
+	    role: {
+		name: rm.memory.balance[d.bal_id].role,
+		job_id: null,
+		initTime: null,
+		workStatus: null,
+	    },
+	};
+
+	let body = getDesign(d.design, spawn, rm);
+	
+	u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
+	
+	let result = spawn.createCreep(body, undefined, mem);
+
+	if(_.isString(result)) {
+	    console.log('The name is: '+result);
+	}
+	else {
+	    console.log('Spawn error: '+result);
+	}
+    }
 }
 
 // class CCreep extends CMemObj {
@@ -136,6 +162,7 @@ function planSpawnJobs(rm) {
 		    cname: 'JobSpawn',
 		    id: job_id,
 		    taken_by_id: null,
+		    bal_id: bal_ln.id,
 		    priority: priority,
 		    design: bal_ln.design
 		};
@@ -204,7 +231,7 @@ function assignSpawnJobs() {
 	    // work on it
 
 	    let cjob = f.make(job, null);
-	    // cjob.do_work();
+	    cjob.do_work(spawn.room);
 
 	    break;
 	}

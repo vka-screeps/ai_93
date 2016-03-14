@@ -156,10 +156,10 @@ function setConfigSim() {
 
     Memory.rooms['sim'] = {};
     // SIM CONFIG
-    Memory.rooms['sim'].balance = [
-	{id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
-	{id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
-    ];
+    Memory.rooms['sim'].balance = {
+	h1: {id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
+	c1: {id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
+    };
 
     Memory.rooms['sim'].jobs = { };
 	
