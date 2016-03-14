@@ -90,6 +90,78 @@ class JobMiner extends Job {
     static cname() { return 'JobMiner'; }
 }
 
+class JobMinerBasic extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobMinerBasic'; }
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+	
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+    }
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+	let res = Game.getObjectById(d.res_id);
+	let drop = Game.getObjectById(d.drop_id);
+
+	while( true ) {
+	    if(role.workStatus.step === 0) {
+		if(cr.pos.getRangeTo(res) > 1) {
+		    cr.moveTo(res);
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 1) {
+		if(cr.carry[RESOURCE_ENERGY] < cr.carryCapacity) {
+		    cr.harvest(res);		
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 2) {
+		if(cr.pos.getRangeTo(drop) > 1) {
+		    cr.moveTo(drop);
+		    break;
+		} else {
+		    role.workStatus.step++;		
+		}
+	    }
+
+	    if(role.workStatus.step === 3) {
+		if(cr.carry[RESOURCE_ENERGY] > 0) {
+		    cr.transferEnergy(drop);
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}	    
+	    }
+	    
+	    if(role.workStatus.step === 4) {
+		role.workStatus.step = 0;
+	    }
+	}
+	
+    }
+}
+
 class JobCarrier extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -157,6 +229,8 @@ class JobSpawn extends Job {
 	} else {
 	}
     }
+
+    // todo - renew creeps
 }
 
 // class CCreep extends CMemObj {
@@ -167,7 +241,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic ];
 
 
 ///////////////////////////////////////////////////////
