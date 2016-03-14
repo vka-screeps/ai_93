@@ -15,18 +15,18 @@ var F = class {
     }
 
     reg(c) {
-	u.log("Registering: " + c.cname, u.LOG_INFO);
+	u.log("Registering: " + c.cname(), u.LOG_INFO);
 	this.tbl[c.cname()] = c;
     }
 
     make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
+	    u.log("Instantiating: " + d.cname, u.LOG_INFO);	    
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
 	}
-	
     }
 };
 
