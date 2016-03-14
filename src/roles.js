@@ -7,7 +7,6 @@ module.exports = {
     cf : F
 }
 
-allClasses = [ Job, JobMiner, JobCarrier ];
 
 // Factory
 var F = class {
@@ -92,3 +91,5 @@ class JobCarrier extends Job {
 // 	this.role = f.make(d.role, this);
 //     }
 // }
+
+var allClasses = [ Job, JobMiner, JobCarrier ];
