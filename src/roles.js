@@ -16,7 +16,7 @@ var F = class {
 
     reg(c) {
 	u.log("Registering: " + c.cname, u.LOG_INFO);
-	this.tbl[c.name] = c;
+	this.tbl[c.name()] = c;
     }
 
     make(d, parent) {
@@ -70,18 +70,24 @@ class Job extends CMemObj {
     constructor(d, parent) {
 	super(d, parent);
     }
+
+    static cname() { return 'Job'; }
 }
 
 class JobMiner extends Job {
     constructor(d, parent) {
 	super(d, parent);
     }
+
+    static cname() { return 'JobMiner'; }
 }
 
 class JobCarrier extends Job {
     constructor(d, parent) {
 	super(d, parent);
     }
+
+    static cname() { return 'JobCarrier'; }    
 }
 
 // class CCreep extends CMemObj {
