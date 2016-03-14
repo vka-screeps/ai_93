@@ -5,6 +5,7 @@ var myroom = require('myroom');
 var u = require('utils');
 var config = require('config');
 var stat = require('stat');
+var r = require('roles');
 
 //config.rooms = [];
 
@@ -12,6 +13,7 @@ var stat = require('stat');
 //u.init();
 
 // Factory
+/*
 var F = class {
     constructor() {
 	this.tbl={}
@@ -147,7 +149,7 @@ function initGlb() {
     glb.creeps = new MemList( glb, Memory.creeps, 'CCreep', Game.creeps );
 }
 
-
+*/
 /*
 function makeNewCreep(crm, spawn, id_crolet) {
     let 
@@ -159,7 +161,7 @@ Memory.log_level['global'] = 3;
 
 u.log('new global');
 
-regClasses(allClasses);
+//regClasses(allClasses);
 
 config.updateConfig();
 
@@ -167,8 +169,10 @@ config.updateConfig();
 module.exports = {
     loop : function() {
 
+	/*
 	if(!glb)
 	    initGlb();
+	*/
 
 	/*
 	if ((Game.time % 10000) == 0) {
