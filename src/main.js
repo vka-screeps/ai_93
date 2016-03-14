@@ -151,7 +151,7 @@ function planSpawnJobs(rm) {
 function assignSpawnJobs() {
 
     for(let i1 in Game.spawns) {
-	let spawn = Game.spawns[i];
+	let spawn = Game.spawns[i1];
 	if(!spawn.my)
 	    continue;
 
@@ -190,6 +190,8 @@ function assignSpawnJobs() {
 
 	    cjob = f.make(job, null);
 	    // cjob.do_work();
+
+	    break;
 	}
     }    
 }
