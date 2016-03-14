@@ -129,14 +129,14 @@ function planSpawnJobs(rm) {
 
 	if(bal_ln.count > bal_ln.curCount) {
 	    let job_id = bal_ln.id;
-	    if(!lst[new_job]) {
+	    if(!lst[job_id]) {
 		let new_job = {
 		    id: job_id,
 		    design: bal_ln.design
 		};
 
-		u.log("New JobSpawn: " + job_id, u.LOG_INFO); 		
-		lst.push(new_job);
+		u.log("New JobSpawn: " + job_id, u.LOG_INFO);
+		lst[job_id] = new_job;
 	    }
 	}
 
