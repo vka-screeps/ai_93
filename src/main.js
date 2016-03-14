@@ -185,9 +185,9 @@ module.exports = {
 	// collect stats
 	myroom();
 
-	planGoals();
+	// planGoals();
 
-	runGoals();
+	// runGoals();
 
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
