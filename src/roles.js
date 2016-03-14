@@ -4,7 +4,7 @@ var u = require('utils');
 module.exports = {
     init: function() { m_init() },
     f : f,
-    cf : F
+    cf : F,
 }
 
 
@@ -22,7 +22,7 @@ var F = class {
     make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    u.log("Instantiating: " + d.cname, u.LOG_INFO);	    
+	    u.log("Instantiating: " + d.cname, u.LOG_INFO); 
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
@@ -87,7 +87,15 @@ class JobCarrier extends Job {
 	super(d, parent);
     }
 
-    static cname() { return 'JobCarrier'; }    
+    static cname() { return 'JobCarrier'; }
+}
+
+class JobSpawn extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobSpawn'; }
 }
 
 // class CCreep extends CMemObj {
@@ -98,4 +106,28 @@ class JobCarrier extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn ];
+
+
+///////////////////////////////////////////////////////
+function planSpawnJobs(rm) {
+    let jobs = rm.memory.jobs;
+    if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
+    let lst = jobs['JobSpawn'];
+    
+    for(let i in rm.memory.balance) {
+	let bal_ln = rm.memory.balance[i];
+	if(bal_ln.count > bal_ln.curCount) {
+	    let job_id = bal_ln.id;
+	    if(!lst[new_job]) {
+		let new_job = {
+		    id: job_id,
+		    design: bal_ln.design;
+		};
+
+		u.log("New JobSpawn: " + job_id, u.LOG_INFO); 		
+		lst.push(new_job);
+	    }
+	}
+    }
+}

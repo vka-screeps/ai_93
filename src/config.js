@@ -160,6 +160,8 @@ function setConfigSim() {
 	{id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	{id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
     ];
+
+    jobs = { };
 	
 
     /*
