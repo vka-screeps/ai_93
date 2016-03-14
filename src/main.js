@@ -182,6 +182,7 @@ function assignSpawnJobs() {
 	    // is the job done ?
 
 	    // release the job
+	    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
 	    let job = lst[spawn.memory.role.job_id];
 	    if(job != null) {
 		lst[spawn.memory.role.job_id] = null;
