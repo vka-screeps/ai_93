@@ -113,7 +113,7 @@ class JobSpawn extends Job {
 
     static cname() { return 'JobSpawn'; }
 
-    do_work(rm) {
+    start_work(rm) {
 	let d = this.d;
 	let spawn = Game.getObjectById(d.taken_by_id);
 	let mem = {
@@ -140,10 +140,20 @@ class JobSpawn extends Job {
 	else {
 	    if( result !== d.workStatus) {
 		console.log('Spawn error: '+result);
-		d.workStatus = d.workStatus;
+		d.workStatus = result;
 	    }
 	}
+    }
 
+    finish_work(rm, success) {
+	let d = this.d;
+	let spawn = Game.getObjectById(d.taken_by_id);
+
+	// update balance
+	if(success) {
+	    rm.memory.balance[d.bal_id].curCount++;
+	} else {
+	}
     }
 }
 
@@ -237,6 +247,9 @@ function assignSpawnJobs() {
 		    // release the job
 		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
 
+		    let cjob = f.make(job, null);
+		    cjob.finish_work(spawn.room);
+
 		    delete lst[spawn.memory.role.job_id];
 
 		    spawn.memory.role.job_id = null;
@@ -262,7 +275,7 @@ function assignSpawnJobs() {
 	    // work on it
 
 	    let cjob = f.make(job, null);
-	    cjob.do_work(spawn.room);
+	    cjob.start_work(spawn.room);
 
 	    break;
 	}
