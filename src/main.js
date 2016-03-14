@@ -166,6 +166,7 @@ function assignSpawnJobs(rm) {
 	if(!lst)
 	    continue;
 
+	/*
 	if(!spawn.memory.role) {
 	    // init role
 	    spawn.memory.role = {
@@ -189,6 +190,7 @@ function assignSpawnJobs(rm) {
 	    cjob = f.make(job, null);
 	    // cjob.do_work();
 	}
+*/
     }    
 }
 
