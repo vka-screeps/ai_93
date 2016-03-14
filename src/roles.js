@@ -16,7 +16,7 @@ var F = class {
 
     reg(c) {
 	u.log("Registering: " + c.cname, u.LOG_INFO);
-	this.tbl[c.name()] = c;
+	this.tbl[c.cname()] = c;
     }
 
     make(d, parent) {
