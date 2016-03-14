@@ -12,6 +12,7 @@ var r = {
     f : f,
     cf : F,
     planSpawnJobs : planSpawnJobs,
+    assignSpawnJobs : assignSpawnJobs,
 }
 
 
@@ -147,7 +148,7 @@ function planSpawnJobs(rm) {
     }
 }
 
-function assignSpawnJobs(rm) {
+function assignSpawnJobs() {
 
     for(let i1 in Game.spawns) {
 	let spawn = Game.spawns[i];
@@ -376,6 +377,8 @@ module.exports = {
 	myroom();
 
 	r.planSpawnJobs(Game.rooms['sim']);
+
+	r.assignSpawnJobs();
 
 	// planGoals();
 
