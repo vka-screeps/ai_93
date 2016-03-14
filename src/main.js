@@ -181,6 +181,9 @@ function assignSpawnJobs() {
 	for(let i2 in lst) {
 	    let job = lst[i2];
 
+	    if(job.taken_by_id != null)
+		continue;
+
 	    // take the job
 	    u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
 	    spawn.memory.role.job_id = job.id;
