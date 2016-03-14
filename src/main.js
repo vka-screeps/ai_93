@@ -221,15 +221,31 @@ function assignSpawnJobs() {
 	}
 
 	if(spawn.memory.role.job_id != null) {
-	    // is the job done ?
-
-	    // release the job
-	    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
+	    // The spawn is not creating anything ...
+	    
 	    let job = lst[spawn.memory.role.job_id];
-	    if(job != null) {
-		delete lst[spawn.memory.role.job_id];
+
+	    if(!job) {
+		u.log("Job not found " + spawn.memory.role.job_id, u.LOG_ERR);
+		spawn.memory.role.job_id = null;
+		spawn.memory.role.workStatus = null;
+	    } else {
+
+		// is the job done ?
+		if(_.isString(job.workStatus)) {
+
+		    // release the job
+		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
+
+		    delete lst[spawn.memory.role.job_id];
+
+		    spawn.memory.role.job_id = null;
+		    spawn.memory.role.workStatus = null;
+		} else {
+		    u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
+		    continue;
+		}
 	    }
-	    spawn.memory.role.job_id = null;
 	}
 
 	for(let i2 in lst) {
