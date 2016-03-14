@@ -11,7 +11,7 @@ var r = {
     init: function() { m_init() },
     f : f,
     cf : F,
-//    planSpawnJobs : planSpawnJobs,
+    planSpawnJobs : planSpawnJobs,
 }
 
 
@@ -123,9 +123,10 @@ function planSpawnJobs(rm) {
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
     let lst = jobs['JobSpawn'];
 
-    /*
     for(let i in rm.memory.balance) {
 	let bal_ln = rm.memory.balance[i];
+
+	/*
 	if(bal_ln.count > bal_ln.curCount) {
 	    let job_id = bal_ln.id;
 	    if(!lst[new_job]) {
@@ -138,8 +139,9 @@ function planSpawnJobs(rm) {
 		lst.push(new_job);
 	    }
 	}
-    }
 */
+    }
+
 }
 
 
