@@ -114,7 +114,7 @@ class JobSpawn extends Job {
     static cname() { return 'JobSpawn'; }
 
     do_work(rm) {
-
+	let d = this.d;
 	let spawn = Game.getObjectById(d.taken_by_id);
 	let mem = {
 	    bal_id : d.bal_id,
