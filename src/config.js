@@ -161,7 +161,7 @@ function setConfigSim() {
 	{id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
     ];
 
-    jobs = { };
+    Memory.rooms['sim'].jobs = { };
 	
 
     /*
