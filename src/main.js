@@ -619,7 +619,7 @@ module.exports = {
 	u.log('new tick');
 	
 	// collect stats
-	myroom();
+	// myroom();
 
 	r.planSpawnJobs(Game.rooms['sim']);
 
