@@ -489,6 +489,7 @@ function planCreepJobs() {
 
 function assignCreepJobs() {
 
+    console.log('assignCreepJobs - entry');
     for(let room_idx in Game.rooms) {
 	let rm = Game.rooms[room_idx];
 
@@ -562,6 +563,7 @@ function assignCreepJobs() {
 	}
     }
 
+    console.log('assignCreepJobs - exit');
 }
 
 
