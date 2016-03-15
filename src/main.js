@@ -369,7 +369,7 @@ function assignSpawnJobs() {
 }
 
 function assignCreepJobs() {
-    /*
+
     for(let room_idx in Game.rooms) {
 	rm = Game.rooms[room_idx];
 
@@ -439,7 +439,7 @@ function assignCreepJobs() {
 	    }
 	}
     }
-*/
+
 }
 
 
