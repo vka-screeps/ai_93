@@ -368,6 +368,7 @@ function assignSpawnJobs() {
 }
 
 function assignCreepJobs() {
+    /*
     for(let room_idx in Game.rooms) {
 	rm = Game.rooms[room_idx];
 
@@ -437,6 +438,7 @@ function assignCreepJobs() {
 	    }
 	}
     }
+*/
 }
 
 
@@ -619,7 +621,7 @@ module.exports = {
 	u.log('new tick');
 	
 	// collect stats
-	// myroom();
+	myroom();
 
 	r.planSpawnJobs(Game.rooms['sim']);
 
