@@ -33,7 +33,7 @@ var F = class {
     make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    // u.log("Instantiating: " + d.cname, u.LOG_INFO); 
+	    u.log("Instantiating: " + d.cname, u.LOG_INFO); 
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
@@ -87,6 +87,7 @@ class Job extends CMemObj {
     unassign(rm) {
 	let d = this.d;
 	if(d.taken_by_id) {
+	    u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
 	    let cr = Game.getObjectById(d.taken_by_id);
 	    let role = cr ? cr.memory.role : null;
 	    if(role) {
