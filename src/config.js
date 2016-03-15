@@ -142,12 +142,19 @@ function setConfigSim() {
 			       res_pos : {x: 35, y: 20},
 			       drop_id: null,
 			       drop_name: 'Spawn1',
+			     },
+		       'j2': { id : 'j2',
+			       cname: 'JobMiner',
+			       taken_by_id: null,
+			       priority : 1,
+			       res_id: null,
+			       res_pos : {x: 35, y: 20},
 			     }
 		     },
     };
 
     Memory.rooms['sim'].creeplist = {};
-	
+    Memory.rooms['sim'].recoveryMode = true;
 
     /*
     Memory.rooms['sim'].strategy_data =[

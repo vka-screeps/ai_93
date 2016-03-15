@@ -2,7 +2,7 @@ var u = require('utils');
 var _ = require('lodash');
 var harvester = require('harvest');
 var cr = require('cr');
-//var myroom = require('myroom');
+var myroom = require('myroom');
 var config = require('config');
 var stat = require('stat');
 //var r = require('roles');
@@ -81,6 +81,40 @@ class Job extends CMemObj {
     }
 
     static cname() { return 'Job'; }
+
+    unassign(rm) {
+	let d = this.d;
+	if(d.taken_by_id) {
+	    let cr = Game.getObjectById(d.taken_by_id);
+	    let role = cr ? cr.memory.role : null;
+	    if(role) {
+		role.job_id = null;
+		role.workStatus = null;
+	    } else {
+		// find the creep's memory
+		u.log( "Performance warning - Can't find creep with id - " + d.taken_by_id, u.LOG_WARN);
+
+		for(let nm in Memory.creeps) {
+		    let role = Memory.creeps[nm].role;
+		    if(role) {
+			if(role.job_id === d.id) {
+			    role.job_id = null;
+			    role.workStatus = null;
+			    break;
+			}
+		    }
+		}
+	    }
+	    d.taken_by_id = null;
+	}
+    }
+
+    assign(rm, cr) {
+	unassign(rm);
+	let d = this.d;
+	d.taken_by_id = cr.id;
+	cr.memory.role.job_id = d.id;
+    }
 }
 
 class JobMiner extends Job {
@@ -376,6 +410,35 @@ function assignSpawnJobs() {
     }    
 }
 
+function detectRecoveryMode(rm) {
+    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount == 0);
+    if(rm.memory.recoveryMode) {
+	u.log("Roome " + rm.name + " in RECOVERY MODE", u.LOG_WARN);
+    }
+}
+
+function planCreepJobs() {
+    for(let room_idx in Game.rooms) {
+	let rm = Game.rooms[room_idx];
+
+	if(!rm.memory.creeplist) continue;
+
+	// Enable/disable the 'j1' job - JobMinerBasic
+	//	if(rm.memory.balance.c1.curCount > 0) {
+	if(!rm.memory.recoveryMode) {
+	    if(!rm.memory.jobs.j1.onhold) {
+		rm.memory.jobs.j1.onhold = true;
+		let cjob = f.make(rm.memory.jobs.j1);
+		cjob.unassign(rm);
+	    }
+	} else {
+	    if(rm.memory.jobs.j1.onhold) {
+		delete rm.memory.jobs.j1.onhold;
+	    }
+	}
+    }    
+}
+
 function assignCreepJobs() {
 
     for(let room_idx in Game.rooms) {
@@ -430,6 +493,9 @@ function assignCreepJobs() {
 	    for(let job_id in jobs) {
 		let job = jobs[job_id];
 		if(job.taken_by_id != null)
+		    continue;
+
+		if(job.onhold)
 		    continue;
 		
 		// found a job
@@ -630,7 +696,9 @@ module.exports = {
 	u.log('new tick');
 	
 	// collect stats
-	// myroom();
+	myroom();
+
+	detectRecoveryMode(Game.rooms['sim']);
 
 	r.planSpawnJobs(Game.rooms['sim']);
 
