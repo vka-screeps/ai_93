@@ -89,6 +89,7 @@ class Job extends CMemObj {
 
 	let d = this.d;
 	if(d.taken_by_id) {
+	    /*
 	    u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
 	    let cr = Game.getObjectById(d.taken_by_id);
 
@@ -96,7 +97,8 @@ class Job extends CMemObj {
 		let role = cr.memory.role;
 		role.job_id = null;
 		role.workStatus = null;
-	    } /*else {
+	    } */
+	    /*else {
 		// find the creep's memory
 		u.log( "Performance warning - Can't find creep with id - " + d.taken_by_id, u.LOG_WARN);
 
