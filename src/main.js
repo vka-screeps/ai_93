@@ -84,8 +84,9 @@ class Job extends CMemObj {
 
     static cname() { return 'Job'; }
 
-    /*
     unassign(rm) {
+	console.log('unassign - entry');
+	/*
 	let d = this.d;
 	if(d.taken_by_id) {
 	    u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
@@ -111,8 +112,9 @@ class Job extends CMemObj {
 	    }
 	    d.taken_by_id = null;
 	}
+	*/
     }
-
+    /*
     assign(rm, cr) {
 	unassign(rm);
 	let d = this.d;
@@ -479,7 +481,7 @@ function planCreepJobs() {
 	    if(!rm.memory.jobs.JobMiner.j1.onhold) {
 		rm.memory.jobs.JobMiner.j1.onhold = {};
 		let cjob = f.make(rm.memory.jobs.JobMiner.j1);
-		// cjob.unassign(rm);
+		cjob.unassign(rm);
 	    }
 	} else {
 	    if(rm.memory.jobs.JobMiner.j1.onhold) {
