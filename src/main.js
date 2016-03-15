@@ -86,7 +86,7 @@ class Job extends CMemObj {
 
     unassign(rm) {
 	console.log('unassign - entry');
-	/*
+
 	let d = this.d;
 	if(d.taken_by_id) {
 	    u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
@@ -112,7 +112,8 @@ class Job extends CMemObj {
 	    }
 	    d.taken_by_id = null;
 	}
-	*/
+
+	console.log('unassign - exit');
     }
     /*
     assign(rm, cr) {
