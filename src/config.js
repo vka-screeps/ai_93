@@ -17,34 +17,6 @@ module.exports = {
 var initMemVars = function() {
     if(!Memory.next_id)
 	Memory.next_id = 1;
-    // job
-//    if(!Memory.job_by_id)
-    Memory.job_by_id = {};
-    Memory.jobs_del=[];
-
-    //    if(!Memory.job_by_pri)
-    {
-	Memory.job_by_pri = {};
-	u.vTable['CPriorityQ'].cons(Memory.job_by_pri, 'job_by_id', 'CPriorityQ');
-    }
-
-    //    if(!Memory.job_by_tgt)
-    {
-	Memory.job_by_tgt = {};
-	u.vTable['CTargetQ'].cons(Memory.job_by_tgt, 'job_by_id', 'CTargetQ');
-    }
-
-    // wrk
-    /*
-    if(!Memory.wrk_by_id)
-	Memory.wrk_by_id = {};
-
-    if(!Memory.wrk_by_role)
-	Memory.wrk_by_role = new CRoleQ(Memory.wrk_by_id);
-
-    if(!Memory.wrk_by_creep_id)
-	Memory.wrk_by_creep_id = new CCreepIdQ(Memory.wrk_by_id);
-    */
 };
 
 
