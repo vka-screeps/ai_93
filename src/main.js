@@ -91,6 +91,7 @@ class Job extends CMemObj {
 	if(d.taken_by_id) {
 	    u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
 	    let cr = Game.getObjectById(d.taken_by_id);
+	    /*
 	    let role = cr ? cr.memory.role : null;
 	    if(role) {
 		role.job_id = null;
@@ -111,6 +112,7 @@ class Job extends CMemObj {
 		}
 	    }
 	    d.taken_by_id = null;
+	    */
 	}
 
 	console.log('unassign - exit');
