@@ -138,7 +138,8 @@ function setConfigSim() {
 			       cname: 'JobMinerBasic',
 			       taken_by_id: null,
 			       priority : 0,
-			       res_id: 'id550660',
+			       res_id: null,
+			       res_pos : {x: 35, y: 20},
 			       drop_id: null,
 			       drop_name: 'Spawn1',
 			     }

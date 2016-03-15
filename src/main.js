@@ -107,6 +107,14 @@ class JobMinerBasic extends Job {
 	if(!d.drop_id) {
 	    d.drop_id = Game.spawns[d.drop_name].id;
 	}
+
+	if(!d.res_id) {
+	    if(d.res_pos) {
+		let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+		d.res_id = source.id;
+	    }
+	}
 	
 	role.workStatus = {
 	    step: 0
