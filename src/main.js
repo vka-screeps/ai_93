@@ -473,14 +473,14 @@ function planCreepJobs() {
 	// Enable/disable the 'j1' job - JobMinerBasic
 	//	if(rm.memory.balance.c1.curCount > 0) {
 	if(!rm.memory.recoveryMode) {
-	    if(!rm.memory.jobs.j1.onhold) {
-		rm.memory.jobs.j1.onhold = true;
+	    if(!rm.memory.jobs.JobMiner.j1.onhold) {
+		rm.memory.jobs.JobMiner.j1.onhold = true;
 		let cjob = f.make(rm.memory.jobs.j1);
 		cjob.unassign(rm);
 	    }
 	} else {
-	    if(rm.memory.jobs.j1.onhold) {
-		delete rm.memory.jobs.j1.onhold;
+	    if(rm.memory.jobs.JobMiner.j1.onhold) {
+		delete rm.memory.jobs.JobMiner.j1.onhold;
 	    }
 	}
     }    
