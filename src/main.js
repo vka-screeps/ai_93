@@ -371,12 +371,12 @@ function assignSpawnJobs() {
 function assignCreepJobs() {
 
     for(let room_idx in Game.rooms) {
-	rm = Game.rooms[room_idx];
+	let rm = Game.rooms[room_idx];
 
 	if(!rm.memory.creeplist) continue;
 
 	for(let cr_name in rm.memory.creeplist) {
-	    cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+	    let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 	    if(!cr) {
 		u.log( "Creep " + cr_name + " is not found", u.LOG_INFO );
 		
