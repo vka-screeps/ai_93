@@ -98,6 +98,7 @@ class JobMinerBasic extends Job {
 
     static cname() { return 'JobMinerBasic'; }
 
+    /*
     start_work(rm) {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
@@ -165,6 +166,7 @@ class JobMinerBasic extends Job {
 	}
 	
     }
+*/
 }
 
 class JobCarrier extends Job {
