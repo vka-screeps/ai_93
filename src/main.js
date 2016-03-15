@@ -13,6 +13,8 @@ var r = {
     cf : F,
     planSpawnJobs : planSpawnJobs,
     assignSpawnJobs : assignSpawnJobs,
+    
+    planCreepJobs : planCreepJobs,
     assignCreepJobs : assignCreepJobs,
 }
 
@@ -31,7 +33,7 @@ var F = class {
     make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    u.log("Instantiating: " + d.cname, u.LOG_INFO); 
+	    // u.log("Instantiating: " + d.cname, u.LOG_INFO); 
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
@@ -123,6 +125,52 @@ class JobMiner extends Job {
     }
 
     static cname() { return 'JobMiner'; }
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	if(!d.res_id) {
+	    if(d.res_pos) {
+		let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+		d.res_id = source.id;
+	    }
+	}
+	
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+    }
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+	let res = Game.getObjectById(d.res_id);
+	let drop = Game.getObjectById(d.drop_id);
+
+	while( true ) {
+	    if(role.workStatus.step === 0) {
+		if(cr.pos.getRangeTo(res) > 1) {
+		    cr.moveTo(res);
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 1) {
+		cr.harvest(res);
+		cr.drop(RESOURCE_ENERGY);
+	    }
+	}
+	
+    }    
 }
 
 class JobMinerBasic extends Job {
@@ -381,8 +429,7 @@ function assignSpawnJobs() {
 		    spawn.memory.role.job_id = null;
 		    spawn.memory.role.workStatus = null;
 		} else {
-		    
-		    u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
+		    // u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
 		    cjob.start_work(spawn.room);
 		    continue;
 		}
@@ -701,8 +748,9 @@ module.exports = {
 	detectRecoveryMode(Game.rooms['sim']);
 
 	r.planSpawnJobs(Game.rooms['sim']);
-
 	r.assignSpawnJobs();
+
+	r.planCreepJobs();
 	r.assignCreepJobs();
 
 	// planGoals();
