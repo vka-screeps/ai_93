@@ -878,350 +878,350 @@ var genNamePrefix = function (creep, id) {
     return newName;
 };
 
-var vTable = module.exports.vTable;
+// var vTable = module.exports.vTable;
 
-// CPriorityQ
-var CPriorityQ = function( ) {
-};
+// // CPriorityQ
+// var CPriorityQ = function( ) {
+// };
 
-vTable['CPriorityQ'] = new CPriorityQ();
+// vTable['CPriorityQ'] = new CPriorityQ();
 
-CPriorityQ.prototype.cons = function(this_, store, class_) {
-    console.log('CPriorityQ.prototype.cons( ' + class_ + ')');
-    // var this_ = {};
-    if(class_)
-	this_.class_ = class_;
-    else
-	this_.class_ = 'CPriorityQ';
-    this_.q = [];
-    for(var i =0; i<100; ++i)
-	this_.q[i] = [];
-    this_.store = store;
-    return this;
-}
+// CPriorityQ.prototype.cons = function(this_, store, class_) {
+//     console.log('CPriorityQ.prototype.cons( ' + class_ + ')');
+//     // var this_ = {};
+//     if(class_)
+// 	this_.class_ = class_;
+//     else
+// 	this_.class_ = 'CPriorityQ';
+//     this_.q = [];
+//     for(var i =0; i<100; ++i)
+// 	this_.q[i] = [];
+//     this_.store = store;
+//     return this;
+// }
 
-function getPriority(this_, o) { return vTable[this_.class_].getPriority(this_, o); }
-CPriorityQ.prototype.getPriority = function(this_, o) {
-    return o.p.priority;
-};
+// function getPriority(this_, o) { return vTable[this_.class_].getPriority(this_, o); }
+// CPriorityQ.prototype.getPriority = function(this_, o) {
+//     return o.p.priority;
+// };
 
-function setPriority(this_, o, priority) { return vTable[this_.class_].setPriority(this_, o, priority); }
-CPriorityQ.prototype.setPriority = function(this_, o, priority) {
-    o.p.priority = priority;
-};
+// function setPriority(this_, o, priority) { return vTable[this_.class_].setPriority(this_, o, priority); }
+// CPriorityQ.prototype.setPriority = function(this_, o, priority) {
+//     o.p.priority = priority;
+// };
 
-function printQ(this_) { return vTable[this_.class_].printQ(this_); }
-CPriorityQ.prototype.printQ = function(this_) {
-    console.log('printQ: ' + this_.q.length);
-    for(var qi in this_.q ){
-	var qq = this_.q[qi];
-	if(qq.length)
-	    console.log('pri: ' + qi);
-	if(qq) {
-	    for(var qqi in qq) {
-		console.log('    ' + qq[qqi]);
-	    }
-	}
-    }
-}
+// function printQ(this_) { return vTable[this_.class_].printQ(this_); }
+// CPriorityQ.prototype.printQ = function(this_) {
+//     console.log('printQ: ' + this_.q.length);
+//     for(var qi in this_.q ){
+// 	var qq = this_.q[qi];
+// 	if(qq.length)
+// 	    console.log('pri: ' + qi);
+// 	if(qq) {
+// 	    for(var qqi in qq) {
+// 		console.log('    ' + qq[qqi]);
+// 	    }
+// 	}
+//     }
+// }
 
-function getId(this_, o) { return vTable[this_.class_].getId(this_, o); }
-CPriorityQ.prototype.getId = function(this_, o) {
-    return o.id;
-};
+// function getId(this_, o) { return vTable[this_.class_].getId(this_, o); }
+// CPriorityQ.prototype.getId = function(this_, o) {
+//     return o.id;
+// };
 
-function getById(this_, id) { return vTable[this_.class_].getById(this_, id); }
-CPriorityQ.prototype.getById = function(this_, id) {
-    return Memory[this_.store][id];
-};
+// function getById(this_, id) { return vTable[this_.class_].getById(this_, id); }
+// CPriorityQ.prototype.getById = function(this_, id) {
+//     return Memory[this_.store][id];
+// };
 
-function put(this_, o) { return vTable[this_.class_].put(this_, o); }
-CPriorityQ.prototype.put = function(this_, o) {
-    // console.log('CPriorityQ.prototype.put');
-    var pri = getPriority(this_, o);
-    var id = getId(this_, o);
-    if(!pri) {
-	console.log('invalid pri - ' + pri + ' for ' + o.p.priority);
-    }
-    var qq = this_.q[pri];
-    if(!qq)
-	this_.q[pri] = [id];
-    else
-	qq.push(id);
-};
+// function put(this_, o) { return vTable[this_.class_].put(this_, o); }
+// CPriorityQ.prototype.put = function(this_, o) {
+//     // console.log('CPriorityQ.prototype.put');
+//     var pri = getPriority(this_, o);
+//     var id = getId(this_, o);
+//     if(!pri) {
+// 	console.log('invalid pri - ' + pri + ' for ' + o.p.priority);
+//     }
+//     var qq = this_.q[pri];
+//     if(!qq)
+// 	this_.q[pri] = [id];
+//     else
+// 	qq.push(id);
+// };
 
-function remove(this_, o) { return vTable[this_.class_].remove(this_, o); }
-CPriorityQ.prototype.remove = function(this_, o) {
-    var id = getId(this_, o);
-    var qq = this_.q[getPriority(this_, o)];
+// function remove(this_, o) { return vTable[this_.class_].remove(this_, o); }
+// CPriorityQ.prototype.remove = function(this_, o) {
+//     var id = getId(this_, o);
+//     var qq = this_.q[getPriority(this_, o)];
     
-    if(qq) {
-	for(var qqi in qq) {
-	    if(qq[qqi] == id) {
-		//console.log('1. splice ' + qq.length);
-		// printObjectFnc(qq);
-		qq.splice(qqi, 1);
-		//console.log('2. splice ' + qq.length);
-		// printObjectFnc(qq);
-		break;
-	    }
-	}
-    }
-};
+//     if(qq) {
+// 	for(var qqi in qq) {
+// 	    if(qq[qqi] == id) {
+// 		//console.log('1. splice ' + qq.length);
+// 		// printObjectFnc(qq);
+// 		qq.splice(qqi, 1);
+// 		//console.log('2. splice ' + qq.length);
+// 		// printObjectFnc(qq);
+// 		break;
+// 	    }
+// 	}
+//     }
+// };
 
-function changePriority(this_, o, pri) { return vTable[this_.class_].changePriority(this_, o, pri); }
-CPriorityQ.prototype.changePriority = function(this_, o, pri) {
+// function changePriority(this_, o, pri) { return vTable[this_.class_].changePriority(this_, o, pri); }
+// CPriorityQ.prototype.changePriority = function(this_, o, pri) {
 
-//    console.log('CPriorityQ.prototype.changePriority 1');
-    if(getPriority(this_, o) == pri)
-	return;
+// //    console.log('CPriorityQ.prototype.changePriority 1');
+//     if(getPriority(this_, o) == pri)
+// 	return;
 
-    var id = getId(this_, o);
-    var qq = this_.q[getPriority(this_, o)];
+//     var id = getId(this_, o);
+//     var qq = this_.q[getPriority(this_, o)];
 
-//    console.log('CPriorityQ.prototype.changePriority ' + id);
+// //    console.log('CPriorityQ.prototype.changePriority ' + id);
     
-    if(qq) {
-	for(var qqi in qq) {
-	    if(qq[qqi] == id) {
-		// console.log('1. splice ' + qq.length);
-		// printObjectFnc(qq);
-		qq.splice(qqi, 1);
-		// console.log('2. splice ' + qq.length);
-		// printObjectFnc(qq);
-		break;
-	    }
-	}
-    }
+//     if(qq) {
+// 	for(var qqi in qq) {
+// 	    if(qq[qqi] == id) {
+// 		// console.log('1. splice ' + qq.length);
+// 		// printObjectFnc(qq);
+// 		qq.splice(qqi, 1);
+// 		// console.log('2. splice ' + qq.length);
+// 		// printObjectFnc(qq);
+// 		break;
+// 	    }
+// 	}
+//     }
 
-    setPriority(this_, o, pri);
-    put(this_, o);
-};
+//     setPriority(this_, o, pri);
+//     put(this_, o);
+// };
 
-function iterByPriority(this_, f) { return vTable[this_.class_].iterByPriority(this_, f); }
-CPriorityQ.prototype.iterByPriority = function(this_, f) {
-    for(var qi in this_.q) {
-	var qq = this_.q[qi];
-	for(var qqi in qq) {
-	    var ret = f( getById(this_, qq[qqi]) );
-	    if(ret)
-		return ret;
-	}
-    }
-    return null;
-};
+// function iterByPriority(this_, f) { return vTable[this_.class_].iterByPriority(this_, f); }
+// CPriorityQ.prototype.iterByPriority = function(this_, f) {
+//     for(var qi in this_.q) {
+// 	var qq = this_.q[qi];
+// 	for(var qqi in qq) {
+// 	    var ret = f( getById(this_, qq[qqi]) );
+// 	    if(ret)
+// 		return ret;
+// 	}
+//     }
+//     return null;
+// };
 
-// return [object]
-function findByPriority(this_, pri) { return vTable[this_.class_].findByPriority(this_, pri); }
-CPriorityQ.prototype.findByPriority = function(this_, pri) {
-    var qq = this_.q[pri];
-    var ret = [];
+// // return [object]
+// function findByPriority(this_, pri) { return vTable[this_.class_].findByPriority(this_, pri); }
+// CPriorityQ.prototype.findByPriority = function(this_, pri) {
+//     var qq = this_.q[pri];
+//     var ret = [];
     
-    if(!qq)
-	return ret;
+//     if(!qq)
+// 	return ret;
 
-    for(var qqi in qq) {
-	ret.push( getById(this_, qq[qqi]) );
-    }    
-    return ret;
-};
-
-
-// CTargetQ
-function CTargetQ() {
-    CPriorityQ.call(this);
-};
-
-CTargetQ.prototype = Object.create(CPriorityQ.prototype);
-CTargetQ.prototype.constructor = CTargetQ;
-
-CTargetQ.prototype.getPriority = function(this_, o) {
-    return o.p.target_id;
-};
-
-vTable['CTargetQ'] = new CTargetQ();
-
-// CRoleQ
-function CRoleQ() {
-    CPriorityQ.call(this);
-};
-vTable['CRoleQ'] = new CRoleQ();
-CRoleQ.prototype = Object.create(CPriorityQ.prototype);
-CRoleQ.prototype.constructor = CRoleQ;
-
-CRoleQ.prototype.getPriority = function(this_, o) {
-    return o.p.role;
-};
-
-// CCreepIdQ
-function CCreepIdQ() {
-    CPriorityQ.call(this);
-};
-vTable['CCreepIdQ'] = new CCreepIdQ();
-
-CCreepIdQ.prototype = Object.create(CPriorityQ.prototype);
-CCreepIdQ.prototype.constructor = CCreepIdQ;
-
-CCreepIdQ.prototype.getPriority = function(this_, o) {
-    return o.p.id;
-};
+//     for(var qqi in qq) {
+// 	ret.push( getById(this_, qq[qqi]) );
+//     }    
+//     return ret;
+// };
 
 
-///
+// // CTargetQ
+// function CTargetQ() {
+//     CPriorityQ.call(this);
+// };
 
-// id, target_id, priority, count, taken_by, cost{e}, role
-var CJob = function(prop) {
+// CTargetQ.prototype = Object.create(CPriorityQ.prototype);
+// CTargetQ.prototype.constructor = CTargetQ;
+
+// CTargetQ.prototype.getPriority = function(this_, o) {
+//     return o.p.target_id;
+// };
+
+// vTable['CTargetQ'] = new CTargetQ();
+
+// // CRoleQ
+// function CRoleQ() {
+//     CPriorityQ.call(this);
+// };
+// vTable['CRoleQ'] = new CRoleQ();
+// CRoleQ.prototype = Object.create(CPriorityQ.prototype);
+// CRoleQ.prototype.constructor = CRoleQ;
+
+// CRoleQ.prototype.getPriority = function(this_, o) {
+//     return o.p.role;
+// };
+
+// // CCreepIdQ
+// function CCreepIdQ() {
+//     CPriorityQ.call(this);
+// };
+// vTable['CCreepIdQ'] = new CCreepIdQ();
+
+// CCreepIdQ.prototype = Object.create(CPriorityQ.prototype);
+// CCreepIdQ.prototype.constructor = CCreepIdQ;
+
+// CCreepIdQ.prototype.getPriority = function(this_, o) {
+//     return o.p.id;
+// };
+
+
+// ///
+
+// // id, target_id, priority, count, taken_by, cost{e}, role
+// var CJob = function(prop) {
     
-    this.id = prop.id; //'job_' + Memory.next_id++;
-    this.p = prop;
-    if(!this.p.taken_by)
-	this.p.taken_by = [];
-    if(!this.p.cost)
-	this.p.cost = {e:0};
-};
+//     this.id = prop.id; //'job_' + Memory.next_id++;
+//     this.p = prop;
+//     if(!this.p.taken_by)
+// 	this.p.taken_by = [];
+//     if(!this.p.cost)
+// 	this.p.cost = {e:0};
+// };
 
-var registerJob = function(this_) {
-    console.log('Adding new job - ' + this_.id);
+// var registerJob = function(this_) {
+//     console.log('Adding new job - ' + this_.id);
 
-    if(Memory.job_by_id[this_.id])
-	removeJob(this_);
+//     if(Memory.job_by_id[this_.id])
+// 	removeJob(this_);
     
-    // console.log('CJob.prototype.register');
+//     // console.log('CJob.prototype.register');
     
-    // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
-    // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
+//     // Memory.job_by_pri.__proto__ = CPriorityQ.prototype;
+//     // Memory.job_by_tgt.__proto__ = CTargetQ.prototype;
     
-    Memory.job_by_id[this_.id] = this_;
-    put(Memory.job_by_pri, this_);
-    put(Memory.job_by_tgt, this_);
-};
+//     Memory.job_by_id[this_.id] = this_;
+//     put(Memory.job_by_pri, this_);
+//     put(Memory.job_by_tgt, this_);
+// };
 
-var removeJob = function(this_) {
-    console.log('Remove job - ' + this_.id);
+// var removeJob = function(this_) {
+//     console.log('Remove job - ' + this_.id);
     
-    remove(Memory.job_by_tgt, this_);
-    remove(Memory.job_by_pri, this_);
-    delete Memory.job_by_id[this_.id];
-};
+//     remove(Memory.job_by_tgt, this_);
+//     remove(Memory.job_by_pri, this_);
+//     delete Memory.job_by_id[this_.id];
+// };
 
-function addJobNewCreep( rm, it, repl ) {
+// function addJobNewCreep( rm, it, repl ) {
     
-    var props = it.props ? it.props : { };
-    props.role = it.role;
-    if(it.role_id)
-	props.role_id = it.role_id;
+//     var props = it.props ? it.props : { };
+//     props.role = it.role;
+//     if(it.role_id)
+// 	props.role_id = it.role_id;
     
-    var jobId = 'newCreep_' + rm + '_' + genNamePrefix(props);
-    if(repl)
-	jobId += '_' + repl.id;
+//     var jobId = 'newCreep_' + rm + '_' + genNamePrefix(props);
+//     if(repl)
+// 	jobId += '_' + repl.id;
 
-    var job = Memory.job_by_id[jobId];
-    if(!job) {
-	var expTime = repl ? (Game.time + repl.ticksToLive) : Game.time;
-	var priority = expTime - Game.time;
-	if(priority <= 0)
-	    priority = 1;
+//     var job = Memory.job_by_id[jobId];
+//     if(!job) {
+// 	var expTime = repl ? (Game.time + repl.ticksToLive) : Game.time;
+// 	var priority = expTime - Game.time;
+// 	if(priority <= 0)
+// 	    priority = 1;
 	
-	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm, repl: repl.id });
-	registerJob(job);
-    } else {
-	var priority = job.p.expTime - Game.time;
-	if(priority <= 1) {
-	    removeJob( job );
-	}
-	else {
-	    // Memory.job_by_pri.changePriority(priority);
-	    changePriority( Memory.job_by_pri, job, priority );
-	}
-    }
+// 	job = new CJob({id: jobId, expTime : expTime, 'it': it, priority: priority, role: 'spawn', rm: rm, repl: repl.id });
+// 	registerJob(job);
+//     } else {
+// 	var priority = job.p.expTime - Game.time;
+// 	if(priority <= 1) {
+// 	    removeJob( job );
+// 	}
+// 	else {
+// 	    // Memory.job_by_pri.changePriority(priority);
+// 	    changePriority( Memory.job_by_pri, job, priority );
+// 	}
+//     }
 
-}
+// }
 
-function getNextJobForSpawn(sp) {
-//    console.log('getNextJobForSpawn');
+// function getNextJobForSpawn(sp) {
+// //    console.log('getNextJobForSpawn');
 
-    var jobs_del=[];
-    var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
-	if(job.p.role == 'spawn' && job.p.taken_by.length == 0) {
-//	    console.log(job.id);
+//     var jobs_del=[];
+//     var ret_job = iterByPriority(Memory.job_by_pri, function(job) {
+// 	if(job.p.role == 'spawn' && job.p.taken_by.length == 0) {
+// //	    console.log(job.id);
 
-	    if(!job.p.repl || job.p.repl && !Game.getObjectById(job.p.repl))
-		jobs_del.push(job.id); // expired job
-	    else /*if(job.rm == sp.room.id)*/ {
-		job.p.taken_by.push(sp.id);
-		return job;
-	    }
-	}
-    } );
+// 	    if(!job.p.repl || job.p.repl && !Game.getObjectById(job.p.repl))
+// 		jobs_del.push(job.id); // expired job
+// 	    else /*if(job.rm == sp.room.id)*/ {
+// 		job.p.taken_by.push(sp.id);
+// 		return job;
+// 	    }
+// 	}
+//     } );
 
-    for(var di in jobs_del) {
-//	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
-	removeJob( Memory.job_by_id[jobs_del[di]] );
-    }
+//     for(var di in jobs_del) {
+// //	console.log('deleting job - ' + Memory.job_by_id[jobs_del[di]].id);
+// 	removeJob( Memory.job_by_id[jobs_del[di]] );
+//     }
 
-    return ret_job;
-}
+//     return ret_job;
+// }
 
-function reviewCreeps() {
-    if( !Memory.myCreepList ) {
-	Memory.myCreepList = {};
-    }
+// function reviewCreeps() {
+//     if( !Memory.myCreepList ) {
+// 	Memory.myCreepList = {};
+//     }
 
-    var tempCreepList = Memory.myCreepList;
-    Memory.myCreepList = {};
-    for( var ci in Game.creeps ) {
-	var id = Game.creeps[ci].id;
-	if(tempCreepList[id]) {
-	    // existing object
-	    Memory.myCreepList[id] = tempCreepList[id];
-	    delete tempCreepList[id];
-	} else if(!Game.creeps[ci].spawning) {
-	    // new object
-	    Memory.myCreepList[id] = {};
-	}
-    }
+//     var tempCreepList = Memory.myCreepList;
+//     Memory.myCreepList = {};
+//     for( var ci in Game.creeps ) {
+// 	var id = Game.creeps[ci].id;
+// 	if(tempCreepList[id]) {
+// 	    // existing object
+// 	    Memory.myCreepList[id] = tempCreepList[id];
+// 	    delete tempCreepList[id];
+// 	} else if(!Game.creeps[ci].spawning) {
+// 	    // new object
+// 	    Memory.myCreepList[id] = {};
+// 	}
+//     }
 
-    for( var ci in tempCreepList ) {
-	// lost objects
+//     for( var ci in tempCreepList ) {
+// 	// lost objects
 	
-    }
-}
+//     }
+// }
 
 
-// id, role, 
-var CWorker = function(prop) {
-    this.id = 'wrk_' + Memory.next_id++;
-    this.p = prop;
-};
+// // id, role, 
+// var CWorker = function(prop) {
+//     this.id = 'wrk_' + Memory.next_id++;
+//     this.p = prop;
+// };
 
-CWorker.prototype.register = function() {
-    Memory.wrk_by_id[this.id] = this;
-    Memory.wrk_by_role.put(this)
-    Memory.wrk_by_creep_id.put(this)
-};
+// CWorker.prototype.register = function() {
+//     Memory.wrk_by_id[this.id] = this;
+//     Memory.wrk_by_role.put(this)
+//     Memory.wrk_by_creep_id.put(this)
+// };
 
-/*
-function updateWorkers(rm) {
-    var creeps = rm.find(FIND_MY_CREEPS);
+// /*
+// function updateWorkers(rm) {
+//     var creeps = rm.find(FIND_MY_CREEPS);
     
-    for(var ic in  creeps)
-    {
-	var c = creeps[ic];
+//     for(var ic in  creeps)
+//     {
+// 	var c = creeps[ic];
 	
-    }    
-}
+//     }    
+// }
 
-*/
+// */
 
-/*
-var CCreep = function (creep) {
-    this.id = creep.id;
-    this.role = creep.memory.role;
-};
+// /*
+// var CCreep = function (creep) {
+//     this.id = creep.id;
+//     this.role = creep.memory.role;
+// };
 
-CCreep.prototype.isConsumer() {
-    return false;
-}
+// CCreep.prototype.isConsumer() {
+//     return false;
+// }
 
-*/
+// */
 
