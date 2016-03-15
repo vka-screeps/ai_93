@@ -161,7 +161,17 @@ function setConfigSim() {
 	c1: {id:'c1', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' }
     };
 
-    Memory.rooms['sim'].jobs = { };
+    Memory.rooms['sim'].jobs = {
+	'JobMiner' : { 'j1': { id : 'j1',
+			       cname: 'JobMinerBasic',
+			       taken_by_id: null,
+			       priority : 0,
+			       res_id: 'id550660',
+			       drop_id: null,
+			       drop_name: 'Spawn1',
+			     }
+		     },
+    };
 	
 
     /*

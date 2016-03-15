@@ -13,6 +13,7 @@ var r = {
     cf : F,
     planSpawnJobs : planSpawnJobs,
     assignSpawnJobs : assignSpawnJobs,
+    assignCreepJobs : assignCreepJobs,
 }
 
 
@@ -101,6 +102,10 @@ class JobMinerBasic extends Job {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
+
+	if(!d.drop_id) {
+	    d.drop_id = Game.spawns[d.drop_name].id;
+	}
 	
 	role.workStatus = {
 	    step: 0
@@ -221,10 +226,12 @@ class JobSpawn extends Job {
     finish_work(rm, success) {
 	let d = this.d;
 	let spawn = Game.getObjectById(d.taken_by_id);
+	let role = spawn.memory.role;
 
 	// update balance
 	if(success) {
-	    // TODO - Update curCount in the creep's do_work function instead.
+	    let cr = Game.creeps[role.workStatus];
+	    rm.memory.creeplist[cr.name]={id: cr.id};
 	    rm.memory.balance[d.bal_id].curCount++;
 	} else {
 	}
@@ -358,6 +365,78 @@ function assignSpawnJobs() {
 	    break;
 	}
     }    
+}
+
+function assignCreepJobs() {
+    for(let room_idx in Game.rooms) {
+	rm = Game.rooms[room_idx];
+
+	if(!rm.memory.creeplist) continue;
+
+	for(let cr_name in rm.memory.creeplist) {
+	    cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+	    if(!cr) {
+		u.log( "Creep " + cr_name + " is not found", u.LOG_INFO );
+		
+		// remove creep assignment
+		if(Memory.creeps[cr_name]) {
+		    if(Memory.creeps[cr_name].role) {
+			let role = Memory.creeps[cr_name].role;
+			if(role.job_id) {
+			    let jobs = rm.memory.jobs[role.name];
+			    let job = jobs[role.job_id];
+			    job.taken_by_id = null;
+			}
+		    }
+		    rm.memory.balance[Memory.creeps[cr_name].bal_id].curCount--;
+		    delete Memory.creeps[cr_name];
+		}
+		
+		delete rm.memory.creeplist[cr_name];
+		continue;
+	    }
+
+	    if(cr.spawning)
+		continue;
+
+	    let role = cr.memory.role;
+	    if(!role)
+		continue;
+	    let jobs = rm.memory.jobs[role.name];
+	    if(!jobs) {
+		u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_INFO );
+		continue;
+	    }
+
+	    if(role.job_id) {
+		// already has a job
+		let job = jobs[role.job_id];
+		let cjob = f.make(job, null);
+		
+		cjob.do_work(rm);
+		continue;
+	    }
+
+	    for(let job_id in jobs) {
+		let job = jobs[job_id];
+		if(job.taken_by_id != null)
+		    continue;
+		
+		// found a job
+		
+		// take the job
+		u.log("Creep " + cr.name + " takes " + job.id, u.LOG_INFO);
+		role.job_id = job.id;
+		job.taken_by_id = cr.id;
+
+		// work on it
+		let cjob = f.make(job, null);
+		cjob.start_work(rm);
+		cjob.do_work(rm);
+		break;
+	    }
+	}
+    }
 }
 
 
@@ -545,6 +624,7 @@ module.exports = {
 	r.planSpawnJobs(Game.rooms['sim']);
 
 	r.assignSpawnJobs();
+	r.assignCreepJobs();
 
 	// planGoals();
 

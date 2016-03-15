@@ -663,7 +663,7 @@ var str_do_smth = function( cr, where, what )
 		}
 	    }
 
-	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
+p	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
 					{ filter: function(o) { return o.energy>50 &&
 								cr.pos.getRangeTo(o.pos)<10; } });
 
