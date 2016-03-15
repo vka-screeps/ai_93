@@ -144,6 +144,8 @@ function setConfigSim() {
 			     }
 		     },
     };
+
+    Memory.rooms['sim'].creeplist = {};
 	
 
     /*
