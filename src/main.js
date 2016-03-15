@@ -84,6 +84,7 @@ class Job extends CMemObj {
 
     static cname() { return 'Job'; }
 
+    /*
     unassign(rm) {
 	let d = this.d;
 	if(d.taken_by_id) {
@@ -118,6 +119,7 @@ class Job extends CMemObj {
 	d.taken_by_id = cr.id;
 	cr.memory.role.job_id = d.id;
     }
+    */
 }
 
 class JobMiner extends Job {
@@ -477,7 +479,7 @@ function planCreepJobs() {
 	    if(!rm.memory.jobs.JobMiner.j1.onhold) {
 		rm.memory.jobs.JobMiner.j1.onhold = {};
 		let cjob = f.make(rm.memory.jobs.JobMiner.j1);
-		cjob.unassign(rm);
+		// cjob.unassign(rm);
 	    }
 	} else {
 	    if(rm.memory.jobs.JobMiner.j1.onhold) {
