@@ -540,6 +540,7 @@ var printObjectFnc = function(o) {
     console.log(out);
 };
 
+
 var str_do_smth = function( cr, where, what )
 {
     var rm = cr.room;
@@ -663,7 +664,7 @@ var str_do_smth = function( cr, where, what )
 		}
 	    }
 
-p	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
+	    target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, 
 					{ filter: function(o) { return o.energy>50 &&
 								cr.pos.getRangeTo(o.pos)<10; } });
 
