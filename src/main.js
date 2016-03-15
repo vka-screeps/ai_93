@@ -85,8 +85,6 @@ class Job extends CMemObj {
     static cname() { return 'Job'; }
 
     unassign(rm) {
-	console.log('unassign - entry');
-
 	let d = this.d;
 	if(d.taken_by_id) {
 
@@ -98,7 +96,7 @@ class Job extends CMemObj {
 		role.job_id = null;
 		role.workStatus = null;
 	    }
-	    /*else {
+	    else {
 		// find the creep's memory
 		u.log( "Performance warning - Can't find creep with id - " + d.taken_by_id, u.LOG_WARN);
 
@@ -113,12 +111,10 @@ class Job extends CMemObj {
 		    }
 		}
 	    }
-	      */
+
 	    d.taken_by_id = null;
 
 	}
-
-	console.log('unassign - exit');
     }
     /*
     assign(rm, cr) {
@@ -178,6 +174,7 @@ class JobMiner extends Job {
 	    if(role.workStatus.step === 1) {
 		cr.harvest(res);
 		cr.drop(RESOURCE_ENERGY);
+		break;
 	    }
 	}
 	
