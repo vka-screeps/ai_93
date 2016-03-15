@@ -475,7 +475,7 @@ function planCreepJobs() {
 	if(!rm.memory.recoveryMode) {
 	    if(!rm.memory.jobs.JobMiner.j1.onhold) {
 		rm.memory.jobs.JobMiner.j1.onhold = true;
-		let cjob = f.make(rm.memory.jobs.j1);
+		let cjob = f.make(rm.memory.jobs.JobMiner.j1);
 		cjob.unassign(rm);
 	    }
 	} else {
