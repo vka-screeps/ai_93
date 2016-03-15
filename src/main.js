@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var harvester = require('harvest');
 var cr = require('cr');
-var myroom = require('myroom');
+//var myroom = require('myroom');
 var u = require('utils');
 var config = require('config');
 var stat = require('stat');
@@ -623,7 +623,7 @@ module.exports = {
 	u.log('new tick');
 	
 	// collect stats
-	myroom();
+	// myroom();
 
 	r.planSpawnJobs(Game.rooms['sim']);
 
