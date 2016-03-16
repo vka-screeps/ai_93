@@ -159,7 +159,7 @@ function setConfigSim() {
 						  x: 35,
 						  y: 20, },
 				   take_to : { cname: 'AddrBuilding',
-					       name: 'Spawn1', },
+					       spawnName: 'Spawn1', },
 				 },
 			 
 		       },

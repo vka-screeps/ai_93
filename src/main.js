@@ -126,6 +126,113 @@ class Job extends CMemObj {
     */
 }
 
+class Addr extends CMemObj {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'Addr'; }
+
+    init() {};
+    move_to(cr) { return true; }
+    take(cr) { return true; }
+    give(cr) { return true; }
+}
+
+class AddrHarvester extends Addr {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrHarvester'; }
+
+    init() { };
+
+    move_to(cr) {
+	let d = this.d;
+	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+	    cr.moveTo(d.x, d.y);
+	    return true;
+	}
+	return false;
+    }
+    
+    take(cr) {
+	if(cr.carry[RESOURCE_ENERGY] > 0)
+	    return false;
+	
+	let d = this.d;	
+	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
+	if(target) {
+	    cr.pickup(target);
+
+	} 
+	return true;
+    }
+    
+    give(cr) {
+	u.log("AddrHarvester - cannot give " + cr.name, u.LOG_WARN);
+	return false;
+    }
+}
+
+class AddrBuilding extends Addr {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrBuilding'; }
+
+    init() {
+	let d = this.d;	
+	if(!d.tgt_id) {
+	    d.tgt_id = Game.spawns[d.spawnName].id;
+	}
+    };
+
+    move_to(cr) {
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);
+	if(cr.pos.getRangeTo(tgt) > 1) {
+	    cr.moveTo(tgt);
+	    return true;
+	}
+	return false;
+    }
+    
+    take(cr) {
+	if(cr.carry[RESOURCE_ENERGY] > 0)
+	    return false;
+	
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);	
+
+	if(tgt) {
+	    tgt.transferEnergy(cr);
+	} else {
+	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
+	}
+	return true;
+    }
+    
+    give(cr) {
+	if(cr.carry[RESOURCE_ENERGY] === 0)
+	    return false;
+	
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);	
+
+	if(tgt) {
+	    cr.transfer(tgt, RESOURCE_ENERGY);
+	} else {
+	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
+	}
+	
+	return true;
+    }
+}
+
+
 class JobMiner extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -272,6 +379,76 @@ class JobCarrier extends Job {
     }
 
     static cname() { return 'JobCarrier'; }
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	{
+	    let tf = f.make(d.take_from);
+	    tf.init();
+	}
+	{
+	    let tt = f.make(d.take_to);
+	    tt.init();
+	}
+
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+    }
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	while( true ) {
+	    if(role.workStatus.step === 0) {
+		let tf = f.make(d.take_from);
+		if(tf.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 1) {
+		let tf = f.make(d.take_from);
+		if(tf.take(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 2) {
+		let tt = f.make(d.take_to);
+		if(tf.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 3) {
+		let tt = f.make(d.take_to);
+		if(tt.give(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+	    
+	    if(role.workStatus.step === 4) {
+		role.workStatus.step = 0;
+	    }
+	}
+    }    
 }
 
 function getDesign( design, sp, rm ) {
