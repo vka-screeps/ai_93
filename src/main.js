@@ -139,6 +139,48 @@ class Addr extends CMemObj {
     give(cr) { return true; }
 }
 
+class AddrPos extends Addr {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrPos'; }
+
+    init() { };
+
+    move_to(cr) {
+	let d = this.d;
+	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+	    cr.moveTo(d.x, d.y);
+	    return true;
+	}
+	return false;
+    }
+    
+    take(cr) {
+	let d = this.d;		
+	if(d.full) {
+	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+		return false;
+	} else {
+	    if(cr.carry[RESOURCE_ENERGY] > 0)
+		return false;
+	}
+
+	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
+	if(target) {
+	    cr.pickup(target);
+
+	} 
+	return true;
+    }
+    
+    give(cr) {
+	u.log("AddrPos - cannot give " + cr.name, u.LOG_WARN);
+	return false;
+    }
+}
+
 class AddrHarvester extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -456,11 +498,64 @@ class JobCarrier extends Job {
     }    
 }
 
+class JobDefender extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobDefender'; }
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	{
+	    let tf = f.make(d.def_pos);
+	    tf.init();
+	}
+
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+    }
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	let tgt = cr.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+	if(tgt) {
+	    cr.attack(tgt);
+	} else {
+	    let def_pos = cr.pos;
+	    tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 3);
+	    if(tgt) {
+		cr.moveTo(tgt);
+	    } else {
+		let def_pos = rm.getPositionAt(d.def_pos.x, d.def_pos.y);
+		tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 20);
+		if(tgt) {
+		    cr.moveTo(tgt);
+		} else {
+		    if(cr.pos.getRangeTo(def_pos) > 0) {
+			cr.moveTo(def_pos);
+		    }
+		}
+	    }
+	}
+    }    
+}
+
 var designRegistry = {
     'd_h1' : [ WORK, WORK, CARRY, MOVE, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     'd_c1' : [ CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE ],
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
-    'd_def1' : [ ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE],
+    'd_def1' : [ TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ]
 };
 
 var costRegistry = {
@@ -583,7 +678,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, Addr, AddrHarvester, AddrBuilding ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos,  ];
 
 
 ///////////////////////////////////////////////////////

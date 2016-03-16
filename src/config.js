@@ -166,6 +166,15 @@ function setConfigSim() {
 				 },
 			 
 		       },
+	'JobDefender' : { 'jd1': { id: 'jd1',
+				   cname: 'JobDefender',
+				   taken_by_id: null,
+				   priority : 0,
+				   def_pos : {cname: 'AddrPos',
+					      x: 27,
+					      y: 25 },
+				 },
+			},
     };
 
     Memory.rooms['sim'].creeplist = {};
