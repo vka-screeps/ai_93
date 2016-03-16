@@ -528,30 +528,23 @@ class JobDefender extends Job {
 	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 	
-	console.log('do_work ');
-
 	let tgt = cr.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
 	if(tgt.length > 0) {
-	    console.log('attacking');
 	    cr.attack(tgt[0]);
 	} else {
 	    let def_pos = cr.pos;
 	    tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 3);
 	    if(tgt.length>0) {
-		console.log('moving');
 		cr.moveTo(tgt[0]);
 	    } else {
 		let def_pos = rm.getPositionAt(d.def_pos.x, d.def_pos.y);
 		tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 20);
 		if(tgt.length>0) {
-		    console.log('moving 2');
 		    cr.moveTo(tgt[0]);
 		} else {
 		    if(cr.pos.getRangeTo(def_pos) > 0) {
-			console.log('moving 3');
 			cr.moveTo(def_pos);
 		    } else {
-			console.log('staying');
 		    }
 		}
 	    }
