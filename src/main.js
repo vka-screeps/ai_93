@@ -33,7 +33,7 @@ var F = class {
     make(d, parent) {
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    u.log("Instantiating: " + d.cname, u.LOG_INFO); 
+	    // u.log("Instantiating: " + d.cname, u.LOG_INFO); 
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
