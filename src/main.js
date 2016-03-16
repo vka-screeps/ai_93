@@ -158,10 +158,15 @@ class AddrHarvester extends Addr {
     }
     
     take(cr) {
-	if(cr.carry[RESOURCE_ENERGY] > 0)
-	    return false;
-	
-	let d = this.d;	
+	let d = this.d;		
+	if(d.full) {
+	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+		return false;
+	} else {
+	    if(cr.carry[RESOURCE_ENERGY] > 0)
+		return false;
+	}
+
 	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
 	if(target) {
 	    cr.pickup(target);
@@ -428,7 +433,7 @@ class JobCarrier extends Job {
 
 	    if(role.workStatus.step === 2) {
 		let tt = f.make(d.take_to);
-		if(tf.move_to(cr)) {
+		if(tt.move_to(cr)) {
 		    break;
 		} else {
 		    role.workStatus.step++;

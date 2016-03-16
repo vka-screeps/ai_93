@@ -158,7 +158,8 @@ function setConfigSim() {
 
 				   take_from :  { cname: 'AddrHarvester',
 						  x: 35,
-						  y: 20, },
+						  y: 20,
+						  full: true },
 				   take_to : { cname: 'AddrBuilding',
 					       spawnName: 'Spawn1', },
 				 },
