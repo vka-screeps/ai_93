@@ -673,7 +673,6 @@ function planCreepJobs() {
 
 function assignCreepJobs() {
 
-    console.log('assignCreepJobs - entry');
     for(let room_idx in Game.rooms) {
 	let rm = Game.rooms[room_idx];
 
@@ -747,7 +746,6 @@ function assignCreepJobs() {
 	}
     }
 
-    console.log('assignCreepJobs - exit');
 }
 
 
@@ -926,7 +924,6 @@ module.exports = {
 	    stat.clear();
 	}
 	*/
-	console.log('loop - entry');
 	u.log('new tick');
 	
 	// collect stats
@@ -943,8 +940,6 @@ module.exports = {
 	// planGoals();
 
 	// runGoals();
-
-	console.log('loop - exit');
     },
 
     printAll : function() {

@@ -152,6 +152,7 @@ function setConfigSim() {
 			     }
 		     },
 	'JobCarrier' : { 'jc1' : { id : 'jc1',
+				   cname: 'JobCarrier',
 				   taken_by_id: null,
 				   priority : 0,
 
