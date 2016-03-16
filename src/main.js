@@ -524,7 +524,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, Addr, AddrHarvester, AddrBuilding ];
 
 
 ///////////////////////////////////////////////////////
