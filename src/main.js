@@ -485,6 +485,8 @@ function getDesign( design, sp, rm ) {
     }
 
     let energy = rm.energyCapacityAvailable;
+    console.log("energy = " + energy);
+    
     let proto = designRegistry[design];
     if(!proto) {
 	u.log("Can't find design: " + design, u.LOG_WARN);
@@ -500,6 +502,8 @@ function getDesign( design, sp, rm ) {
 	    break;
 
 	cost = cost + costRegistry[next];
+	console.log("cost of " + next + ' = ' + cost);
+	
 	if(cost >= energy)
 	    break;
 
