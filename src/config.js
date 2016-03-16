@@ -151,6 +151,18 @@ function setConfigSim() {
 			       res_pos : {x: 35, y: 20},
 			     }
 		     },
+	'JobCarrier' : { 'jc1' : { id : 'jc1',
+				   taken_by_id: null,
+				   priority : 0,
+
+				   take_from :  { cname: 'AddrHarvester',
+						  x: 35,
+						  y: 20, },
+				   take_to : { cname: 'AddrBuilding',
+					       name: 'Spawn1', },
+				 },
+			 
+		       },
     };
 
     Memory.rooms['sim'].creeplist = {};
