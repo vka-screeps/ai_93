@@ -528,7 +528,7 @@ class JobDefender extends Job {
 	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 	
-	console.out('do_work ');
+	console.log('do_work ');
 
 	let tgt = cr.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
 	if(tgt) {
