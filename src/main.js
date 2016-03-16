@@ -478,7 +478,7 @@ function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
 	if(design == 'd_h1') {
-	    return [WORK, WORK, CARRY, MOVE];
+	    return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
 	    return [CARRY, CARRY, MOVE];
 	} 
