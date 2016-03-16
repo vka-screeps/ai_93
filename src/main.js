@@ -456,12 +456,63 @@ class JobCarrier extends Job {
     }    
 }
 
+var designRegistry = {
+    'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE],
+    'd_c1' : [ CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE ],
+    'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
+    'd_def1' : [ ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE, ATTACK, MOVE],
+};
+
+var costRegistry = {
+    MOVE: 50,
+    WORK: 100,
+    CARRY: 50,
+    ATTACK: 80,
+    RANGED_ATTACK: 150,
+    HEAL: 250,
+    CLAIM: 600,
+    TOUGH: 10
+}
+
 function getDesign( design, sp, rm ) {
-    if(design == 'h1') {
-	return [WORK, CARRY, MOVE];
+
+    if(rm.memory.recoveryMode) {
+	if(design == 'd_h1') {
+	    return [WORK, WORK, CARRY, MOVE];
+	} else if (design == 'd_c1') {
+	    return [CARRY, CARRY, MOVE];
+	} 
     }
 
-    return [WORK, CARRY, MOVE];
+    let energy = rm.energyCapacityAvailable;
+    let proto = designRegistry[design];
+    if(!proto) {
+	u.log("Can't find design: " + design, u.LOG_WARN);
+	return [WORK, WORK, CARRY, MOVE];	
+    }
+
+    let i=0;
+    let cost = 0;
+    let ret = [ ];
+    while(cost < energy) {
+	let next =  proto[i++];
+	if(!next)
+	    break;
+
+	cost = cost + costRegistry[next];
+	if(cost >= energy)
+	    break;
+
+	if(next === TOUGH) {
+	    ret = [TOUGH].concat(ret);
+	} else {
+	    ret.push(next);
+	}
+    }
+
+    u.log("Design for " + design + " - " + ret, u.LOG_INFO);
+    
+    return ret;
 }
 
 class JobSpawn extends Job {
