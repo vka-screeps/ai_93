@@ -131,8 +131,8 @@ function setConfigSim() {
     Memory.rooms['sim'].balance = {
 	h1: {id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
-	d1: {id:'d1', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
-	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
+	d1: {id:'d1', count: 2, curCount: 0, design: 'd_def1', role: 'JobDefender' },
+//	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
     };
 
     Memory.rooms['sim'].jobs = {
@@ -168,6 +168,14 @@ function setConfigSim() {
 			 
 		       },
 	'JobDefender' : { 'jd1': { id: 'jd1',
+				   cname: 'JobDefender',
+				   taken_by_id: null,
+				   priority : 0,
+				   def_pos : {cname: 'AddrPos',
+					      x: 27,
+					      y: 25 },
+				 },
+			},{ 'jd2': { id: 'jd2',
 				   cname: 'JobDefender',
 				   taken_by_id: null,
 				   priority : 0,

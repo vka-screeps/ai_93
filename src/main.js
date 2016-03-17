@@ -538,7 +538,7 @@ class JobDefender extends Job {
 		cr.moveTo(tgt[0]);
 	    } else {
 		let def_pos = rm.getPositionAt(d.def_pos.x, d.def_pos.y);
-		tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 20);
+		tgt = def_pos.findInRange(FIND_HOSTILE_CREEPS, 10);
 		if(tgt.length>0) {
 		    cr.moveTo(tgt[0]);
 		} else {
