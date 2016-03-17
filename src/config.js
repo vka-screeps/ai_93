@@ -175,7 +175,7 @@ function setConfigSim() {
 					      x: 27,
 					      y: 25 },
 				 },
-			}, 'jd2': { id: 'jd2',
+			  'jd2': { id: 'jd2',
 				   cname: 'JobDefender',
 				   taken_by_id: null,
 				   priority : 0,
@@ -183,6 +183,7 @@ function setConfigSim() {
 					      x: 27,
 					      y: 25 },
 				 },
+			}
 
     };
 
