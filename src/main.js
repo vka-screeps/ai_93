@@ -551,7 +551,7 @@ class JobBuilder extends Job {
 	while( true ) {
 	    if(role.workStatus.step === 0) {
 		if(!role.workStatus.take_from) {
-		    let spawns = rm.findClosestByRange(FIND_MY_SPAWNS);
+		    let spawns = cr.pos.findClosestByRange(FIND_MY_SPAWNS);
 		    if(spawns.length == 0)
 		    {
 			u.log("Can't find energy", LOG_INFO);
