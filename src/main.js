@@ -554,10 +554,10 @@ class JobBuilder extends Job {
 			u.log("Can't find energy", LOG_INFO);
 			break;
 		    }
-		    role.workStatus.take_from = AddrBuilding.create(spawns[0].id, null);
+		    role.workStatus.take_from = AddrBuilding.create(spawns[0].id, null).d;
 		}
 
-		let tf = f.make(role.workStatus..take_from);
+		let tf = f.make(role.workStatus.take_from);
 		if(tf.move_to(cr)) {
 		    break;
 		} else {
