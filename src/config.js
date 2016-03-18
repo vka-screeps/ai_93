@@ -154,6 +154,13 @@ function setConfigSim() {
 			       priority : 1,
 			       res_id: null,
 			       res_pos : {x: 35, y: 20},
+			     },
+		       'j3': { id : 'j3',
+			       cname: 'JobMiner',
+			       taken_by_id: null,
+			       priority : 1,
+			       res_id: null,
+			       res_pos : {x: 35, y: 20},
 			     }
 		     },
 	'JobCarrier' : { 'jc1' : { id : 'jc1',
