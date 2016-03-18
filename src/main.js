@@ -230,6 +230,11 @@ class AddrBuilding extends Addr {
 
     static cname() { return 'AddrBuilding'; }
 
+    static create(tgt_id, parent) {
+	return f.make( { cname: 'AddrBuilding',
+			 tgt_id: tgt_id }, parent );
+    }
+
     init() {
 	let d = this.d;	
 	if(!d.tgt_id) {
@@ -277,6 +282,23 @@ class AddrBuilding extends Addr {
 	
 	return true;
     }
+
+    build(cr) {
+	if(cr.carry[RESOURCE_ENERGY] === 0)
+	    return false;
+	
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);	
+
+	if(tgt) {
+	    cr.build(tgt);
+	    // todo - analyze error code
+	} else {
+	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
+	}
+	
+	return true;
+    }    
 }
 
 
@@ -498,6 +520,86 @@ class JobCarrier extends Job {
     }    
 }
 
+class JobBuilder extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobBuilder'; }
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+    }
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	while( true ) {
+	    if(role.workStatus.step === 0) {
+		if(!role.workStatus.take_from) {
+		    let spawns = rm.findClosestByRange(FIND_MY_SPAWNS);
+		    if(spawns.length == 0)
+		    {
+			u.log("Can't find energy", LOG_INFO);
+			break;
+		    }
+		    role.workStatus.take_from = AddrBuilding.create(spawns[0].id, null);
+		}
+
+		let tf = f.make(role.workStatus..take_from);
+		if(tf.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+		
+	    }
+
+	    if(role.workStatus.step === 1) {
+		let tf = f.make(role.workStatus..take_from);
+		if(tf.take(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 2) {
+		let tt = f.make(d.take_to);
+		if(tt.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 3) {
+		let tt = f.make(d.take_to);
+		if(tt.build(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+	    
+	    if(role.workStatus.step === 4) {
+		role.workStatus.step = 0;
+	    }
+	}
+    }    
+}
+
 class JobDefender extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -679,7 +781,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos,  ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder];
 
 
 ///////////////////////////////////////////////////////
@@ -855,7 +957,8 @@ function planCreepJobs(rm) {
 			cname: 'JobBuilder',
 			taken_by_id: null,
 			priority : 0,
-			tgt_id: con.id
+			take_to: { cname: 'AddrBuilding',
+				   tgt_id: con.id },
 		      };
 
 	    rm.memory.jobs.JobBuilder[con_job_id] = job;

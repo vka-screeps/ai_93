@@ -131,7 +131,7 @@ function setConfigSim() {
     Memory.rooms['sim'].balance = {
 	h1: {id:'h1', count: 1, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
-	d1: {id:'d1', count: 3, curCount: 0, design: 'd_def1', role: 'JobDefender' },
+	d1: {id:'d1', count: 2, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
 
 //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
