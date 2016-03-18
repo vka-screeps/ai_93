@@ -863,6 +863,9 @@ function assignSpawnJobs(rm) {
 	    } else {
 		let cjob = f.make(job, null);
 
+		// TODO: just in case, they are out of sync
+		job.taken_by_id = spawn.id;
+
 		// is the job done ?
 		if(_.isString(spawn.memory.role.workStatus)) {
 
