@@ -1070,7 +1070,7 @@ function assignCreepJobs(rm) {
 		    continue;
 
 		if(job.done) {
-		    delete job;
+		    delete jobs[job_id];
 		    continue;
 		}
 		
