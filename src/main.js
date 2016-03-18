@@ -520,6 +520,7 @@ class JobCarrier extends Job {
     }    
 }
 
+
 class JobBuilder extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -527,6 +528,7 @@ class JobBuilder extends Job {
 
     static cname() { return 'JobBuilder'; }
 
+    /*
     start_work(rm) {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
@@ -597,8 +599,10 @@ class JobBuilder extends Job {
 		role.workStatus.step = 0;
 	    }
 	}
-    }    
+    }
+*/    
 }
+
 
 class JobDefender extends Job {
     constructor(d, parent) {
