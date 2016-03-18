@@ -528,7 +528,7 @@ class JobBuilder extends Job {
 
     static cname() { return 'JobBuilder'; }
 
-    /*
+
     start_work(rm) {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
@@ -542,6 +542,7 @@ class JobBuilder extends Job {
     finish_work(rm) {
     }
 
+    /*
     do_work(rm) {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
