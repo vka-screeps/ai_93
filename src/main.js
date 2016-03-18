@@ -351,8 +351,7 @@ class JobMiner extends Job {
 	while( true ) {
 	    if(role.workStatus.step === 0) {
 		if(cr.pos.getRangeTo(res) > 1) {
-		    console.log('Creep ' + cr.name + ' moves to ' + res.id);
-		    cr.moveTo(res.pos.x, res.pos.y);
+		    cr.moveTo(res);
 		    break;
 		} else {
 		    role.workStatus.step++;
@@ -733,7 +732,7 @@ function getDesign( design, sp, rm ) {
 	cost = cost + costRegistry[next];
 	console.log("cost of " + next + ' = ' + cost);
 	
-	if(cost >= energy)
+	if(cost > energy)
 	    break;
 
 	if(next === TOUGH) {
