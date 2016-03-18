@@ -551,13 +551,13 @@ class JobBuilder extends Job {
 	while( true ) {
 	    if(role.workStatus.step === 0) {
 		if(!role.workStatus.take_from) {
-		    let spawns = cr.pos.findClosestByRange(FIND_MY_SPAWNS);
-		    if(spawns.length == 0)
+		    let spawn = cr.pos.findClosestByRange(FIND_MY_SPAWNS);
+		    if(!spawn)
 		    {
 			u.log("Can't find energy", LOG_INFO);
 			break;
 		    }
-		    role.workStatus.take_from = AddrBuilding.create(spawns[0].id, null).d;
+		    role.workStatus.take_from = AddrBuilding.create(spawn.id, null).d;
 		}
 
 		let tf = f.make(role.workStatus.take_from);
