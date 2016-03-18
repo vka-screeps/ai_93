@@ -552,10 +552,9 @@ class JobBuilder extends Job {
 
     finish_work(rm) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	
 	d.done = true;
-	unassign(cr);
+	this.unassign(rm);
     }
 
 
