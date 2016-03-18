@@ -850,7 +850,7 @@ function planCreepJobs(rm) {
     for(let con_i in con_lst) {
 	let con = con_lst[con_i];
 	let con_job_id = 'con_' + con.id;
-	if(!rm.jobs.JobBuilder[con_job_id]) {
+	if(!rm.memory.jobs.JobBuilder[con_job_id]) {
 	    let job = { id: con_job_id,
 			cname: 'JobBuilder',
 			taken_by_id: null,
@@ -858,7 +858,7 @@ function planCreepJobs(rm) {
 			tgt_id: con.id
 		      };
 
-	    rm.jobs.JobBuilder[con_job_id] = job;
+	    rm.memory.jobs.JobBuilder[con_job_id] = job;
 	}
     }
 }
