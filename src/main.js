@@ -245,11 +245,16 @@ class AddrBuilding extends Addr {
     move_to(cr) {
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
-	if(cr.pos.getRangeTo(tgt) > 1) {
-	    cr.moveTo(tgt);
+	if(tgt) {
+	    if(cr.pos.getRangeTo(tgt) > 1) {
+		cr.moveTo(tgt);
+		return true;
+	    }
+	    return false;
+	} else {
+	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);
 	    return true;
 	}
-	return false;
     }
     
     take(cr) {
@@ -298,7 +303,13 @@ class AddrBuilding extends Addr {
 	}
 	
 	return true;
-    }    
+    }
+
+    exists() {
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);	
+	return (tgt != null);
+    }
 }
 
 
@@ -540,6 +551,11 @@ class JobBuilder extends Job {
     }
 
     finish_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	
+	d.done = true;
+	unassign(cr);
     }
 
 
@@ -580,6 +596,11 @@ class JobBuilder extends Job {
 
 	    if(role.workStatus.step === 2) {
 		let tt = f.make(d.take_to);
+		if(!tt.exists())
+		{
+		    finish_work();
+		    return;
+		}
 		if(tt.move_to(cr)) {
 		    break;
 		} else {
@@ -589,6 +610,11 @@ class JobBuilder extends Job {
 
 	    if(role.workStatus.step === 3) {
 		let tt = f.make(d.take_to);
+		if(!tt.exists())
+		{
+		    finish_work();
+		    return;
+		}		
 		if(tt.build(cr)) {
 		    break;
 		} else {
@@ -1042,6 +1068,11 @@ function assignCreepJobs(rm) {
 
 		if(job.onhold)
 		    continue;
+
+		if(job.done) {
+		    delete job;
+		    continue;
+		}
 		
 		// found a job
 		
