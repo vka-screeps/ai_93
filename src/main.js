@@ -351,6 +351,7 @@ class JobMiner extends Job {
 	while( true ) {
 	    if(role.workStatus.step === 0) {
 		if(cr.pos.getRangeTo(res) > 1) {
+		    console.log('Creep ' + cr.name + ' moves to ' + res.id);
 		    cr.moveTo(res);
 		    break;
 		} else {
@@ -1308,5 +1309,9 @@ module.exports = {
 
     printAll : function() {
 	u.printObject(glb);
+    },
+
+    clearJobs: function() {
+	
     }
 }
