@@ -542,7 +542,7 @@ class JobBuilder extends Job {
     finish_work(rm) {
     }
 
-    /*
+
     do_work(rm) {
 	let d = this.d;
 	let cr = Game.getObjectById(d.taken_by_id);
@@ -568,7 +568,7 @@ class JobBuilder extends Job {
 		}
 		
 	    }
-
+/*
 	    if(role.workStatus.step === 1) {
 		let tf = f.make(role.workStatus..take_from);
 		if(tf.take(cr)) {
@@ -599,9 +599,10 @@ class JobBuilder extends Job {
 	    if(role.workStatus.step === 4) {
 		role.workStatus.step = 0;
 	    }
+*/
 	}
     }
-*/    
+
 }
 
 
