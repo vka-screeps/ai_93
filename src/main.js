@@ -598,7 +598,7 @@ class JobBuilder extends Job {
 		let tt = f.make(d.take_to);
 		if(!tt.exists())
 		{
-		    finish_work();
+		    this.finish_work(rm);
 		    return;
 		}
 		if(tt.move_to(cr)) {
@@ -612,7 +612,7 @@ class JobBuilder extends Job {
 		let tt = f.make(d.take_to);
 		if(!tt.exists())
 		{
-		    finish_work();
+		    this.finish_work(rm);
 		    return;
 		}		
 		if(tt.build(cr)) {
