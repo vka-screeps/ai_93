@@ -352,7 +352,7 @@ class JobMiner extends Job {
 	    if(role.workStatus.step === 0) {
 		if(cr.pos.getRangeTo(res) > 1) {
 		    console.log('Creep ' + cr.name + ' moves to ' + res.id);
-		    cr.moveTo(res);
+		    cr.moveTo(res.pos.x, res.pos.y);
 		    break;
 		} else {
 		    role.workStatus.step++;
