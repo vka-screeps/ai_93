@@ -684,6 +684,8 @@ var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefend
 
 ///////////////////////////////////////////////////////
 
+
+// Convert balance into JobSpawn jobs
 function planSpawnJobs(rm) {
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
@@ -714,12 +716,11 @@ function planSpawnJobs(rm) {
     }
 }
 
-function assignSpawnJobs() {
-
-    for(let i1 in Game.spawns) {
-	let spawn = Game.spawns[i1];
-	if(!spawn.my)
-	    continue;
+function assignSpawnJobs(rm) {
+    let spawns = rm.find(FIND_MY_SPAWNS);
+    
+    for(let i1 in spawns) {
+	let spawn = spawns[i1];
 
 	if(spawn.spawning != null)
 	    continue;
@@ -804,57 +805,101 @@ function detectRecoveryMode(rm) {
     }
 }
 
-function planCreepJobs() {
-    for(let room_idx in Game.rooms) {
-	let rm = Game.rooms[room_idx];
+function nextTickPlanning(rm) {
+    // increase defenders count, based on the number of defence jobs
 
-	if(!rm.memory.creeplist) continue;
+    // increase builder's count, based on the number of defence jobs
+    /*
+    if(!rm.memory.creeplist) return;
 
-	// Enable/disable the 'j1' job - JobMinerBasic
-	//	if(rm.memory.balance.c1.curCount > 0) {
-	if(!rm.memory.recoveryMode) {
-	    if(!rm.memory.jobs.JobMiner.j1.onhold) {
-		rm.memory.jobs.JobMiner.j1.onhold = {};
-		let cjob = f.make(rm.memory.jobs.JobMiner.j1);
-		cjob.unassign(rm);
-	    }
-	} else {
-	    if(rm.memory.jobs.JobMiner.j1.onhold) {
-		delete rm.memory.jobs.JobMiner.j1.onhold;
-	    }
+    for(let cr_name in rm.memory.creeplist) {
+	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+    }
+    */
+    {
+	let jobs = rm.memory.jobs.JobBuilder;
+	if(jobs) {
+	    let jobs_cnt = Object.keys(jobs).length;
+	    jobs_cnt = jobs_cnt/2;
+	    if(jobs_cnt>4)
+		jobs_cnt = 4;
+	    rm.memory.balance.b1.count = jobs_cnt;
 	}
-    }    
+    }
 }
 
-function assignCreepJobs() {
 
-    for(let room_idx in Game.rooms) {
-	let rm = Game.rooms[room_idx];
+// Put the JobMinerBasic on hold, after leaving the recovery mode
+function planCreepJobs(rm) {
+    // Enable/disable the 'j1' job - JobMinerBasic
+    //	if(rm.memory.balance.c1.curCount > 0) {
+    if(!rm.memory.recoveryMode) {
+	if(!rm.memory.jobs.JobMiner.j1.onhold) {
+	    rm.memory.jobs.JobMiner.j1.onhold = {};
+	    let cjob = f.make(rm.memory.jobs.JobMiner.j1);
+	    cjob.unassign(rm);
+	}
+    } else {
+	if(rm.memory.jobs.JobMiner.j1.onhold) {
+	    delete rm.memory.jobs.JobMiner.j1.onhold;
+	}
+    }
 
-	if(!rm.memory.creeplist) continue;
+
+    let con_lst = rm.find(FIND_MY_CONSTRUCTION_SITES);
+    for(let con_i in con_lst) {
+	let con = con_lst[con_i];
+	let con_job_id = 'con_' + con.id;
+	if(!rm.jobs.JobBuilder[con_job_id]) {
+	    let job = { id: con_job_id,
+			cname: 'JobBuilder',
+			taken_by_id: null,
+			priority : 0,
+			tgt_id: con.id
+		      };
+
+	    rm.jobs.JobBuilder[con_job_id] = job;
+	}
+    }
+}
+
+function cleanUpDeadCreeps(rm) {
+
+    for(let cr_name in rm.memory.creeplist) {
+	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+	if(!cr) {
+	    u.log( "Creep " + cr_name + " is not found", u.LOG_INFO );
+	    
+	    // remove creep assignment
+	    if(Memory.creeps[cr_name]) {
+		if(Memory.creeps[cr_name].role) {
+		    let role = Memory.creeps[cr_name].role;
+		    if(role.job_id) {
+			let jobs = rm.memory.jobs[role.name];
+			let job = jobs[role.job_id];
+			job.taken_by_id = null;
+		    }
+		}
+		rm.memory.balance[Memory.creeps[cr_name].bal_id].curCount--;
+		delete Memory.creeps[cr_name];
+	    }
+	    
+	    delete rm.memory.creeplist[cr_name];
+	    continue;
+	}
+    }
+}
+
+// 1. Unassign and remove creeps that no longer exist
+// 2. If already has a job - do_work()
+// 3. Assign a new job, otherwise - start_work(), do_work()
+function assignCreepJobs(rm) {
+
+    // for(let room_idx in Game.rooms) {
+    // 	let rm = Game.rooms[room_idx];
 
 	for(let cr_name in rm.memory.creeplist) {
 	    let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
-	    if(!cr) {
-		u.log( "Creep " + cr_name + " is not found", u.LOG_INFO );
-		
-		// remove creep assignment
-		if(Memory.creeps[cr_name]) {
-		    if(Memory.creeps[cr_name].role) {
-			let role = Memory.creeps[cr_name].role;
-			if(role.job_id) {
-			    let jobs = rm.memory.jobs[role.name];
-			    let job = jobs[role.job_id];
-			    job.taken_by_id = null;
-			}
-		    }
-		    rm.memory.balance[Memory.creeps[cr_name].bal_id].curCount--;
-		    delete Memory.creeps[cr_name];
-		}
-		
-		delete rm.memory.creeplist[cr_name];
-		continue;
-	    }
 
 	    if(cr.spawning)
 		continue;
@@ -877,6 +922,7 @@ function assignCreepJobs() {
 		continue;
 	    }
 
+	    // TODO: don't start over again and again, use Object.keys(jobs)
 	    for(let job_id in jobs) {
 		let job = jobs[job_id];
 		if(job.taken_by_id != null)
@@ -899,9 +945,27 @@ function assignCreepJobs() {
 		break;
 	    }
 	}
-    }
-
+//    }
 }
+
+function processRoom(rm) {
+    if(!rm.memory.creeplist)
+	return;
+
+    cleanUpDeadCreeps(rm);
+    detectRecoveryMode(rm);
+    
+    planCreepJobs(rm); // new jobs for builders
+    nextTickPlanning(rm); // adjust the number of creeps on the balance
+
+    planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
+    assignSpawnJobs(rm);
+    
+    assignCreepJobs(rm);
+}
+
+
+
 
 
 
@@ -1079,11 +1143,14 @@ module.exports = {
 	    stat.clear();
 	}
 	*/
-	u.log('new tick');
+	u.log('new tick:' + Game.time);
 	
 	// collect stats
 	myroom();
 
+	processRoom(Game.rooms['sim']);
+
+	/*
 	detectRecoveryMode(Game.rooms['sim']);
 
 	r.planSpawnJobs(Game.rooms['sim']);
@@ -1091,7 +1158,7 @@ module.exports = {
 
 	r.planCreepJobs();
 	r.assignCreepJobs();
-
+	*/
 	// planGoals();
 
 	// runGoals();
