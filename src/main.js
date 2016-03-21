@@ -664,6 +664,8 @@ class JobBuilder extends Job {
 	let role = cr.memory.role;
 
 	while( true ) {
+
+	    let tt = f.make(d.take_to);
 	    if(!tt.exists())
 	    {
 		this.finish_work(rm);
@@ -690,7 +692,6 @@ class JobBuilder extends Job {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		let tt = f.make(d.take_to);
 		if(tt.move_to(cr)) {
 		    break;
 		} else {
@@ -699,7 +700,6 @@ class JobBuilder extends Job {
 	    }
 
 	    if(role.workStatus.step === 3) {
-		let tt = f.make(d.take_to);
 		if(tt.build(cr)) {
 		    break;
 		} else {
@@ -747,6 +747,14 @@ class JobSupplyBulder extends Job {
 	let role = cr.memory.role;
 
 	while( true ) {
+
+	    let tt = f.make(d.take_to);
+	    if(!tt.exists())
+	    {
+		this.finish_work(rm);
+		return;
+	    }
+	    
 	    if(role.workStatus.step === 0) {
 		let tf = f.make(d.take_from);
 		if(tf.move_to(cr)) {
@@ -767,7 +775,6 @@ class JobSupplyBulder extends Job {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		let tt = f.make(d.take_to);
 		if(!tt.exists())
 		{
 		    this.finish_work(rm);
