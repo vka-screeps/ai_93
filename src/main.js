@@ -1051,6 +1051,25 @@ function planCreepJobs(rm) {
 	}
     }
 
+    if(!rm.memory.jobs.JobBuilder['ctrlr']) {
+	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTAINER } });
+	if(ctrlrs.length > 0) {
+	    let con = ctrlrs[0];
+	    let con_job_id = 'ctrlr';
+	    if(!rm.memory.jobs.JobBuilder[con_job_id]) {
+		let job = { id: con_job_id,
+			    cname: 'JobBuilder',
+			    taken_by_id: null,
+			    priority : 0,
+			    take_from: rm.memory.harv_point,
+			    take_to: { cname: 'AddrBuilding',
+				       tgt_id: con.id },
+			  };
+
+		rm.memory.jobs.JobBuilder[con_job_id] = job;
+	    }
+	}
+    }
 
     let con_lst = rm.find(FIND_MY_CONSTRUCTION_SITES);
     for(let con_i in con_lst) {
@@ -1184,159 +1203,6 @@ function processRoom(rm) {
     assignCreepJobs(rm);
 }
 
-
-
-
-
-
-//config.rooms = [];
-
-
-//u.init();
-
-// Factory
-/*
-var F = class {
-    constructor() {
-	this.tbl={}
-    }
-
-    reg(c) {
-	this.tbl[c.name] = c;
-    }
-
-    make(d, parent) {
-	let cls = this.tbl[d.cname];
-	if ( cls  ) {
-	    return new cls(d, parent);
-	} else {
-	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
-	}
-	
-    }
-};
-
-
-var f; //  =new F()
-
-var glb; // = {};
-
-class MemList {
-
-    // d - e.g. Memory.rooms
-    // cn - e.g. 'CRoom' - default class name, if none exists. TODO: use a function.
-    // coll - e.g. Game.rooms - helps to find out the obj's id. 
-    constructor(parent, d, cn, coll) {
-	this.list = {};
-	this.d = d;
-	this.parent = parent;
-	
-	for ( let oi in d ) {
-	    let o = d[oi];
-	    if(!o.cname) {
-		o.cname = cn;
-		o.name = oi;
-		o.id = coll[o.name].id;
-	    }
-	    this.list[o.id] = f.make(o, this);
-	}
-    }
-}
-
-
-// TODO - delete unused code
-class Goals {
-    constructor(d) {
-	this.d = d;
-	this.list = [];
-
-	this.d.goals.forEach( function(goal) {
-	    this.list.push( f.make(goal) );
-	} );
-    }
-}
-
-
-class CMemObj {
-    constructor(d, parent) {
-	this.d = d;
-	this.parent = parent;
-    }
-
-    getObjLogName() {
-	return this.d.cname + "(" + this.d.name + ", " + this.d.id + ")";
-    }
-
-    getObj() {
-	if( this.d && this.d.id )
-	    return Game.getObjectById(this.d.id);
-
-	u.log( "Can't find object - " + this.getObjLogName(), u.LOG_WARN);
-	return null;
-    }
-}
-
-class CRoom extends CMemObj {
-    constructor(d, parent) {
-	super(d, parent);
-    }
-}
-
-class CCreep extends CMemObj {
-    constructor(d, parent) {
-	super(d, parent);
-	this.croom = this.parent.parent.rooms[d.id_room];
-	this.role = f.make(d.role, this);
-    }
-}
-
-class CRole {
-    constructor(d, parent) {
-	this.d = d;
-	this.parent = parent;
-
-	let croom = this.parent.croom;
-	this.crolet = croom.lst_crolet[this.d.id_rolet];
-    }
-
-    process(ccreep) {
-	u.log( "CRole.process (" + ccreep.d.name + ")" );
-    }
-}
-
-
-var allClasses = [ Goals, Goal, GoalStart, GoalDefence, CRoom, CCreep, CRole ];
-
-
-
-
-var allGoals = {
-    "g_start" : new GoalStart(),
-    "g_def" : new GoalDefence()
-};
-
-
-
-function initStrDataMemory(rm_name) {
-    Memory.rooms[rm_name].str_data = {
-	curRoleTable : [],
-	curGoals : {},
-	specialization : ""
-    };
-}
-
-function initGlb() {
-    glb = {};
-    glb.rooms = new MemList( glb, Memory.rooms, 'CRoom', Game.rooms ); // must go 1st
-    glb.creeps = new MemList( glb, Memory.creeps, 'CCreep', Game.creeps );
-}
-
-*/
-/*
-function makeNewCreep(crm, spawn, id_crolet) {
-    let 
-}
-*/
 
 u.initLog();
 Memory.log_level['global'] = 3;
