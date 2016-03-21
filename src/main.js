@@ -167,11 +167,22 @@ class AddrPos extends Addr {
 		return false;
 	}
 
-	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
-	if(target) {
-	    cr.pickup(target);
-
-	} 
+	let rm = Game.rooms[cr.pos.roomName];
+	let p = rm.getPositionAt(d.x, d.y);
+	// look for dropped energy
+	{
+	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
+	    if(targets.length > 0) {
+		let target = cr.pos.findClosestByRange(targets);
+		if(cr.pos.getRangeTo(target)>1){
+		    cr.moveTo(target);
+		} else {
+		    cr.pickup(target);
+		}
+		return true;
+	    }
+	}	
+ 
 	return true;
     }
     
@@ -639,7 +650,6 @@ class JobBuilder extends Job {
 	}
 
 	// create JobSupplyBulder for this job
-	u.log('creating job for carrier', u.LOG_INFO);
 	let car_jobs = rm.memory.jobs['JobCarrier'];
 	let car_job_id = 'help_' + d.id;
 	if(!car_jobs[car_job_id]) {
@@ -648,6 +658,18 @@ class JobBuilder extends Job {
 	    job.cname = 'JobSupplyBulder';
 	    job.id = car_job_id;
 	    car_jobs[car_job_id] = job;
+	}
+
+	// save target pos into take_from_local
+	{
+	    let tgt = Game.getObjectById(d.take_to.tgt_id);
+	    if(tgt) {
+		let p = tgt.pos;
+		d.take_from_local = { cname: 'AddrPos',
+				      x: p.x,
+				      y: p.y };
+		
+	    }
 	}
     }
 
@@ -672,19 +694,28 @@ class JobBuilder extends Job {
 		this.finish_work(rm);
 		return;
 	    }
+
+	    let tf = f.make(d.take_from);
+	    let car_jobs = rm.memory.jobs['JobCarrier'];
+	    let car_job_id = 'help_' + d.id;
+	    
+	    if(car_jobs[car_job_id]) {
+		if(car_jobs[car_job_id].taken_by_id) {
+		    // someone is carrying resources
+		    
+		    tf = f.make(d.take_from_local);
+		}
+	    }
 	    
 	    if(role.workStatus.step === 0) {
-		let tf = f.make(d.take_from);
 		if(tf.move_to(cr)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
 		}
-		
 	    }
 
 	    if(role.workStatus.step === 1) {
-		let tf = f.make(d.take_from);		
 		if(tf.take(cr)) {
 		    break;
 		} else {
@@ -711,7 +742,6 @@ class JobBuilder extends Job {
 	    if(role.workStatus.step === 4) {
 		role.workStatus.step = 0;
 	    }
-
 	}
     }
 
@@ -776,12 +806,7 @@ class JobSupplyBulder extends Job {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		if(!tt.exists())
-		{
-		    this.finish_work(rm);
-		    return;
-		}
-		if(tt.move_to(cr)) {
+		if(tt.move_to(cr, 2)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
