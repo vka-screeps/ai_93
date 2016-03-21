@@ -660,17 +660,6 @@ class JobBuilder extends Job {
 	    car_jobs[car_job_id] = job;
 	}
 
-	// save target pos into take_from_local
-	{
-	    let tgt = Game.getObjectById(d.take_to.tgt_id);
-	    if(tgt) {
-		let p = tgt.pos;
-		d.take_from_local = { cname: 'AddrPos',
-				      x: p.x,
-				      y: p.y };
-		
-	    }
-	}
     }
 
     finish_work(rm) {
@@ -702,6 +691,17 @@ class JobBuilder extends Job {
 	    if(car_jobs[car_job_id]) {
 		if(car_jobs[car_job_id].taken_by_id) {
 		    // someone is carrying resources
+		    if(!d.take_from_local) {
+			// save target pos into take_from_local
+			let tgt = Game.getObjectById(d.take_to.tgt_id);
+			if(tgt) {
+			    let p = tgt.pos;
+			    d.take_from_local = { cname: 'AddrPos',
+						  x: p.x,
+						  y: p.y };
+			    
+			}
+		    }
 		    
 		    tf = f.make(d.take_from_local);
 		}
