@@ -616,7 +616,7 @@ function helper_clone(o) {
     var newObj = {};
 
     Object.keys(o).forEach(function(key) {
-	newObj[ key ] = settings[ key ];
+	newObj[ key ] = o[ key ];
     });
     return newObj;
 }
