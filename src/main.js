@@ -181,6 +181,71 @@ class AddrPos extends Addr {
     }
 }
 
+class AddrHarvPoint extends Addr {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrHarvPoint'; }
+
+    init() { };
+
+    move_to(cr) {
+	let d = this.d;
+	if(cr.pos.getRangeTo(d.x, d.y) > 3) {
+	    cr.moveTo(d.x, d.y);
+	    return true;
+	}
+	return false;
+    }
+    
+    take(cr) {
+	let d = this.d;		
+	if(d.full) {
+	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+		return false;
+	} else {
+	    if(cr.carry[RESOURCE_ENERGY] > 0)
+		return false;
+	}
+
+	let rm = Game.rooms[cr.pos.roomName];
+	let p = rm.getPositionAt(d.x, d.y);
+	// look for dropped energy
+	{
+	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2);
+	    if(targets.length > 0) {
+		let target = cr.pos.findClosestByRange(targets);
+		if(cr.pos.getRangeTo(target)>1){
+		    cr.moveTo(target);
+		} else {
+		    cr.pickup(target);
+		}
+		return true;
+	    }
+	}
+	// look for containers
+	{
+	    let targets = p.findInRange(FIND_MY_STRUCTURES, 3, { filter: { structureType: STRUCTURE_CONTAINER } });
+	    if(targets.length > 0) {
+		let target = cr.pos.findClosestByRange(targets);
+		if(cr.pos.getRangeTo(target)>1){
+		    cr.moveTo(target);
+		} else {
+		    target.transferEnergy(cr);
+		}
+		return true;
+	    }
+	}
+	return true;
+    }
+    
+    give(cr) {
+	u.log("AddrHarvPoint - cannot give " + cr.name, u.LOG_WARN);
+	return false;
+    }
+}
+
 class AddrHarvester extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -565,17 +630,7 @@ class JobBuilder extends Job {
 
 	while( true ) {
 	    if(role.workStatus.step === 0) {
-		if(!role.workStatus.take_from) {
-		    let spawn = cr.pos.findClosestByRange(FIND_MY_SPAWNS);
-		    if(!spawn)
-		    {
-			u.log("Can't find energy", LOG_INFO);
-			break;
-		    }
-		    role.workStatus.take_from = AddrBuilding.create(spawn.id, null).d;
-		}
-
-		let tf = f.make(role.workStatus.take_from);
+		let tf = f.make(d.take_from);
 		if(tf.move_to(cr)) {
 		    break;
 		} else {
@@ -585,7 +640,7 @@ class JobBuilder extends Job {
 	    }
 
 	    if(role.workStatus.step === 1) {
-		let tf = f.make(role.workStatus.take_from);
+		let tf = f.make(d.take_from);		
 		if(tf.take(cr)) {
 		    break;
 		} else {
@@ -812,7 +867,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint ];
 
 
 ///////////////////////////////////////////////////////
@@ -991,6 +1046,7 @@ function planCreepJobs(rm) {
 			cname: 'JobBuilder',
 			taken_by_id: null,
 			priority : 0,
+			take_from: rm.memory.harv_point,
 			take_to: { cname: 'AddrBuilding',
 				   tgt_id: con.id },
 		      };

@@ -138,6 +138,11 @@ function setConfigSim() {
 //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
     };
 
+    Memory.rooms['sim'].harv_point = { cname: 'AddrHarvPoint',
+				       x: 35,
+				       y: 20,
+				       full: true };
+
     Memory.rooms['sim'].jobs = {
 	'JobMiner' : { 'j1': { id : 'j1',
 			       cname: 'JobMinerBasic',
@@ -168,10 +173,11 @@ function setConfigSim() {
 				   taken_by_id: null,
 				   priority : 0,
 
-				   take_from :  { cname: 'AddrHarvester',
-						  x: 35,
-						  y: 20,
-						  full: true },
+				   take_from :  Memory.rooms['sim'].harv_point,
+				   // { cname: 'AddrHarvPoint',
+				   // 		  x: 35,
+				   // 		  y: 20,
+				   // 		  full: true },
 				   take_to : { cname: 'AddrBuilding',
 					       spawnName: 'Spawn1', },
 				 },
@@ -205,6 +211,7 @@ function setConfigSim() {
 	'JobBuilder' : {},
 
     };
+
 
     Memory.rooms['sim'].creeplist = {};
     Memory.rooms['sim'].recoveryMode = true;
