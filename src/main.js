@@ -365,7 +365,12 @@ class AddrBuilding extends Addr {
 	let tgt = Game.getObjectById(d.tgt_id);	
 
 	if(tgt) {
-	    let ret = cr.build(tgt);
+	    let ret = 0;
+	    if(tgt.structureType === STRUCTURE_CONTROLLER) {
+		ret = cr.upgradeController(tgt);
+	    } else {
+		ret = cr.build(tgt);
+	    }
 	    if( ret == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
 	    } else if (ret == ERR_INVALID_TARGET) {
