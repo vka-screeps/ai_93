@@ -814,6 +814,18 @@ class JobSupplyBulder extends Job {
 	    }
 
 	    if(role.workStatus.step === 3) {
+
+	    // let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
+	    // if(targets.length > 0) {
+	    // 	let target = cr.pos.findClosestByRange(targets);
+	    // 	if(cr.pos.getRangeTo(target)>1){
+	    // 	    cr.moveTo(target);
+	    // 	} else {
+	    // 	    cr.pickup(target);
+	    // 	}
+	    // 	return true;
+	    // }
+		
 		if(cr.carry[RESOURCE_ENERGY] > 0) {
 		    cr.drop(RESOURCE_ENERGY);		    
 		    break;
@@ -1161,8 +1173,8 @@ function nextTickPlanning(rm) {
 	let jobs = rm.memory.jobs.JobBuilder;
 	if(jobs) {
 	    let jobs_cnt = Object.keys(jobs).length;
-	    jobs_cnt = jobs_cnt/2;
-	    if(jobs_cnt>4)
+	    // jobs_cnt = jobs_cnt/2;
+	    if(jobs_cnt>5)
 		jobs_cnt = 4;
 	    rm.memory.balance.b1.count = jobs_cnt;
 	}
