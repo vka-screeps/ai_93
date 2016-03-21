@@ -228,6 +228,11 @@ function setConfigSim() {
     Memory.rooms['sim'].creeplist = {};
     Memory.rooms['sim'].recoveryMode = true;
 
+    for(let cr_name in Memory.rooms['sim'].creeplist) {
+	Memory.creeps[cr_name].role.job_id = null
+	Memory.creeps[cr_name].workStatus = null;
+    }
+
     /*
     Memory.rooms['sim'].strategy_data =[
 	{ role_id : 'h1', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
