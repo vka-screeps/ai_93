@@ -311,7 +311,7 @@ class AddrBuilding extends Addr {
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
 	if(tgt) {
-	    if(cr.pos.getRangeTo(tgt) > 1) {
+	    if(cr.pos.getRangeTo(tgt) > 3) {
 		cr.moveTo(tgt);
 		return true;
 	    }
@@ -330,7 +330,9 @@ class AddrBuilding extends Addr {
 	let tgt = Game.getObjectById(d.tgt_id);	
 
 	if(tgt) {
-	    tgt.transferEnergy(cr);
+	    if( tgt.transferEnergy(cr) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+	    }
 	} else {
 	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
 	}
@@ -345,7 +347,9 @@ class AddrBuilding extends Addr {
 	let tgt = Game.getObjectById(d.tgt_id);	
 
 	if(tgt) {
-	    cr.transfer(tgt, RESOURCE_ENERGY);
+	    if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+	    }
 	} else {
 	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
 	}
@@ -361,7 +365,9 @@ class AddrBuilding extends Addr {
 	let tgt = Game.getObjectById(d.tgt_id);	
 
 	if(tgt) {
-	    cr.build(tgt);
+	    if( cr.build(tgt) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+	    }
 	    // todo - analyze error code
 	} else {
 	    u.log("AddrBuilding - cannot find target " + d.tgt_id, u.LOG_WARN);	    
