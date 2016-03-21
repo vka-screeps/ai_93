@@ -1175,7 +1175,7 @@ function nextTickPlanning(rm) {
 	    let jobs_cnt = Object.keys(jobs).length;
 	    // jobs_cnt = jobs_cnt/2;
 	    if(jobs_cnt>5)
-		jobs_cnt = 4;
+		jobs_cnt = 5;
 	    rm.memory.balance.b1.count = jobs_cnt;
 	}
     }
