@@ -639,6 +639,7 @@ class JobBuilder extends Job {
 	}
 
 	// create JobSupplyBulder for this job
+	u.log('creating job for carrier', u.LOG_INFO);
 	let car_jobs = rm.memory.jobs['JobCarrier'];
 	let car_job_id = 'help_' + d.id;
 	if(!car_jobs[car_job_id]) {
