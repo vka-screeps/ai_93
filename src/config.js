@@ -133,7 +133,7 @@ function setConfigSim() {
 	c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	d1: {id:'d1', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	h2: {id:'h2', count: 2, curCount: 0, design: 'd_h1', role: 'JobMiner' },
-	c2: {id:'c2', count: 2, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
+	c2: {id:'c2', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
 //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
     };
