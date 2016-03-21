@@ -644,7 +644,7 @@ class JobBuilder extends Job {
 	let car_job_id = 'help_' + d.id;
 	if(!car_jobs[car_job_id]) {
 	    let job = helper_clone(d);
-	    job.taken_by = null;
+	    job.taken_by_id = null;
 	    job.cname = 'JobSupplyBulder';
 	    job.id = car_job_id;
 	    car_jobs[car_job_id] = job;
