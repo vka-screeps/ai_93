@@ -1052,7 +1052,7 @@ function planCreepJobs(rm) {
     }
 
     if(!rm.memory.jobs.JobBuilder['ctrlr']) {
-	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTAINER } });
+	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
 	if(ctrlrs.length > 0) {
 	    let con = ctrlrs[0];
 	    let con_job_id = 'ctrlr';
