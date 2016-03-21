@@ -612,6 +612,14 @@ class JobCarrier extends Job {
     }    
 }
 
+function helper_clone(o) {
+    var newObj = {};
+
+    Object.keys(o).forEach(function(key) {
+	newObj[ key ] = settings[ key ];
+    });
+    return newObj;
+}
 
 class JobBuilder extends Job {
     constructor(d, parent) {
@@ -619,6 +627,101 @@ class JobBuilder extends Job {
     }
 
     static cname() { return 'JobBuilder'; }
+
+
+    start_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	role.workStatus = {
+	    step: 0
+	}
+
+	// create JobSupplyBulder for this job
+	let car_jobs = rm.memory.jobs['JobCarrier'];
+	let car_job_id = 'help_' + d.id;
+	if(!car_jobs[car_job_id]) {
+	    let job = helper_clone(d);
+	    job.taken_by = null;
+	    job.cname = 'JobSupplyBulder';
+	    job.id = car_job_id;
+	    car_jobs[car_job_id] = job;
+	}
+    }
+
+    finish_work(rm) {
+	let d = this.d;
+	
+	d.done = true;
+	this.unassign(rm);
+    }
+
+
+    do_work(rm) {
+	let d = this.d;
+	let cr = Game.getObjectById(d.taken_by_id);
+	let role = cr.memory.role;
+
+	while( true ) {
+	    if(!tt.exists())
+	    {
+		this.finish_work(rm);
+		return;
+	    }
+	    
+	    if(role.workStatus.step === 0) {
+		let tf = f.make(d.take_from);
+		if(tf.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+		
+	    }
+
+	    if(role.workStatus.step === 1) {
+		let tf = f.make(d.take_from);		
+		if(tf.take(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 2) {
+		let tt = f.make(d.take_to);
+		if(tt.move_to(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(role.workStatus.step === 3) {
+		let tt = f.make(d.take_to);
+		if(tt.build(cr)) {
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+	    
+	    if(role.workStatus.step === 4) {
+		role.workStatus.step = 0;
+	    }
+
+	}
+    }
+
+}
+
+class JobSupplyBulder extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobSupplyBulder'; }
 
 
     start_work(rm) {
@@ -637,7 +740,6 @@ class JobBuilder extends Job {
 	d.done = true;
 	this.unassign(rm);
     }
-
 
     do_work(rm) {
 	let d = this.d;
@@ -679,17 +781,12 @@ class JobBuilder extends Job {
 	    }
 
 	    if(role.workStatus.step === 3) {
-		let tt = f.make(d.take_to);
-		if(!tt.exists())
-		{
-		    this.finish_work(rm);
-		    return;
-		}		
-		if(tt.build(cr)) {
+		if(cr.carry[RESOURCE_ENERGY] > 0) {
+		    cr.drop(RESOURCE_ENERGY);		    
 		    break;
 		} else {
 		    role.workStatus.step++;
-		}
+		}	    
 	    }
 	    
 	    if(role.workStatus.step === 4) {
@@ -887,7 +984,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder ];
 
 
 ///////////////////////////////////////////////////////
@@ -1035,6 +1132,14 @@ function nextTickPlanning(rm) {
 	    if(jobs_cnt>4)
 		jobs_cnt = 4;
 	    rm.memory.balance.b1.count = jobs_cnt;
+	}
+    }
+
+    {
+	let jobs = rm.memory.jobs.JobCarrier;
+	if(jobs) {
+	    let jobs_cnt = Object.keys(jobs).length;
+	    rm.memory.balance.c2.count = jobs_cnt;
 	}
     }
 }
