@@ -1001,7 +1001,7 @@ function assignSpawnJobs(rm) {
 }
 
 function detectRecoveryMode(rm) {
-    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount == 0) ? 1 : 0;
+    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount == 0) ? 1 : 0;
     if(rm.memory.recoveryMode) {
 	u.log("Roome " + rm.name + " in RECOVERY MODE", u.LOG_WARN);
     }
