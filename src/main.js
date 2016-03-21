@@ -1102,59 +1102,66 @@ function assignCreepJobs(rm) {
     // for(let room_idx in Game.rooms) {
     // 	let rm = Game.rooms[room_idx];
 
-	for(let cr_name in rm.memory.creeplist) {
-	    let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+    let cwait_poit = f.make(rm.memory.wait_point, null);
 
-	    if(cr.spawning)
-		continue;
+    for(let cr_name in rm.memory.creeplist) {
+	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 
-	    let role = cr.memory.role;
-	    if(!role)
-		continue;
-	    let jobs = rm.memory.jobs[role.name];
-	    if(!jobs) {
-		u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_INFO );
-		continue;
-	    }
+	if(cr.spawning)
+	    continue;
 
-	    if(role.job_id) {
-		// already has a job
-		let job = jobs[role.job_id];
-		let cjob = f.make(job, null);
-		
-		cjob.do_work(rm);
-		continue;
-	    }
-
-	    // TODO: don't start over again and again, use Object.keys(jobs)
-	    for(let job_id in jobs) {
-		let job = jobs[job_id];
-		if(job.taken_by_id != null)
-		    continue;
-
-		if(job.onhold)
-		    continue;
-
-		if(job.done) {
-		    delete jobs[job_id];
-		    continue;
-		}
-		
-		// found a job
-		
-		// take the job
-		u.log("Creep " + cr.name + " takes " + job.id, u.LOG_INFO);
-		role.job_id = job.id;
-		job.taken_by_id = cr.id;
-
-		// work on it
-		let cjob = f.make(job, null);
-		cjob.start_work(rm);
-		cjob.do_work(rm);
-		break;
-	    }
+	let role = cr.memory.role;
+	if(!role)
+	    continue;
+	let jobs = rm.memory.jobs[role.name];
+	if(!jobs) {
+	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_INFO );
+	    continue;
 	}
-//    }
+
+	if(role.job_id) {
+	    // already has a job
+	    let job = jobs[role.job_id];
+	    let cjob = f.make(job, null);
+	    
+	    cjob.do_work(rm);
+	    continue;
+	}
+
+	// TODO: don't start over again and again, use Object.keys(jobs)
+	for(let job_id in jobs) {
+	    let job = jobs[job_id];
+	    if(job.taken_by_id != null)
+		continue;
+
+	    if(job.onhold)
+		continue;
+
+	    if(job.done) {
+		delete jobs[job_id];
+		continue;
+	    }
+	    
+	    // found a job
+	    
+	    // take the job
+	    u.log("Creep " + cr.name + " takes " + job.id, u.LOG_INFO);
+	    role.job_id = job.id;
+	    job.taken_by_id = cr.id;
+
+	    // work on it
+	    let cjob = f.make(job, null);
+	    cjob.start_work(rm);
+	    cjob.do_work(rm);
+	    break;
+	}
+
+	if(!role.job_id) {
+	    // no job - move to wait_point
+	    cwait_poit.move_to(cr);
+	}
+    }
+    //    }
 }
 
 function processRoom(rm) {

@@ -145,8 +145,8 @@ function setConfigSim() {
 
     Memory.rooms['sim'].wait_point = {cname: 'AddrPos',
 				      roomName: 'sim',
-				      x: 27,
-				      y: 25 };
+				      x: 25,
+				      y: 30 };
 
     Memory.rooms['sim'].jobs = {
 	'JobMiner' : { 'j1': { id : 'j1',
