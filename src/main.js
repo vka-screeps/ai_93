@@ -1032,6 +1032,10 @@ class JobSpawn extends Job {
 	}
     }
 
+    do_work(rm, cr) {
+	// nothing to do here
+    }
+
     finish_work(rm, spawn, success) {
 	let d = this.d;
 	let role = spawn.memory.role;
@@ -1371,6 +1375,17 @@ function assignCreepJobs(rm) {
     //    }
 }
 
+function doAllJobs(rm) {
+    for(let role_name in rm.memory.jobs) {
+	let jobs = rm.memory.jobs[role_name];
+	for(let job_id in jobs) {
+	    let job = jobs[job_id];
+	    let cjob = f.make(job, null);
+	    cjob.do_work_all(rm);
+	}
+    }
+}
+
 function processRoom(rm) {
     if(!rm.memory.creeplist)
 	return;
@@ -1385,6 +1400,7 @@ function processRoom(rm) {
     assignSpawnJobs(rm);
     
     assignCreepJobs(rm);
+    doAllJobs(rm);
 }
 
 
