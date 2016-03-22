@@ -221,7 +221,6 @@ function setConfigSim() {
 				 },
 			},
 	'JobBuilder' : {},
-
     };
 
 

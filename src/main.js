@@ -84,46 +84,88 @@ class Job extends CMemObj {
 
     static cname() { return 'Job'; }
 
-    unassign(rm) {
+    getCount() {
+	return  (d.taken_by_id) ? (Object.keys(d.taken_by_id).length) : 0;
+    }
+
+    isFull() {
+	let capacity = d.capacity ? d.capacity : 1;
+	return (getCount() >= capacity);
+    }
+
+    // cr - optional
+    unassign(rm, cr) {
 	let d = this.d;
 	if(d.taken_by_id) {
 
-	    // u.log( "Job.unassign id - " + d.id, u.LOG_INFO);
-	    let cr = Game.getObjectById(d.taken_by_id);
-
 	    if(cr) {
-		let role = cr.memory.role;
-		role.job_id = null;
-		role.workStatus = null;
-	    }
-	    else {
-		// find the creep's memory
-		u.log( "Performance warning - Can't find creep with id - " + d.taken_by_id, u.LOG_WARN);
+		delete d.taken_by_id[cr.id];
+	    } else {
+		Object.keys(d.taken_by_id).foreach(function(key) {
 
-		for(let nm in Memory.creeps) {
-		    let role = Memory.creeps[nm].role;
-		    if(role) {
-			if(role.job_id === d.id) {
-			    role.job_id = null;
-			    role.workStatus = null;
-			    break;
-			}
+		    let cr = Game.getObjectById(key);
+
+		    if(cr) {
+			let role = cr.memory.role;
+			role.job_id = null;
+			role.workStatus = null;
 		    }
+		    else {
+			// find the creep's memory
+			u.log( "Performance warning - Can't find creep with id - " + d.taken_by_id, u.LOG_WARN);
+
+			// for(let nm in Memory.creeps) {
+			// 	let role = Memory.creeps[nm].role;
+			// 	if(role) {
+			// 	    if(role.job_id === d.id) {
+			// 		role.job_id = null;
+			// 		role.workStatus = null;
+			// 		break;
+			// 	    }
+			// 	}
+			// }
+		    }
+		} );
+
+		d.taken_by_id = null;
+	    }
+	}
+    }
+
+    assign(rm, cr) {
+	let d = this.d;
+	if(cr.memory.role.job_id != null) {
+	    u.log( "Job.assign - creep already assigned " + cr.name, u.LOG_WARN);
+
+	    let jobs = rm.memory.jobs[cr.memory.role.name];
+	    if(jobs) {
+		let job = jobs[cr.memory.role.job_id];
+		if(job) {
+		    let cjob = f.make(job);
+		    cjob.unassign(rm, cr);
 		}
 	    }
 
-	    d.taken_by_id = null;
-
+	    cr.memory.role.job_id = null;
+	    cr.memory.workStatus = null;
 	}
-    }
-    /*
-    assign(rm, cr) {
-	unassign(rm);
-	let d = this.d;
-	d.taken_by_id = cr.id;
+
+	if(!d.taken_by_id) d.taken_by_id = {};
+	d.taken_by_id[cr.id] = 1;
 	cr.memory.role.job_id = d.id;
+
+	u.log( "Job " + d.id + " assigned to " + cr.name );
     }
-    */
+
+    do_work_all(rm) {
+	let d = this.d;
+	Object.keys(d.taken_by_id).foreach(function(key) {
+	    if(d.done) return;
+	    if(d.onhold) return;
+	    let cr = Game.getObjectById(key);
+	    do_work(rm, cr);
+	} );
+    }
 }
 
 class Addr extends CMemObj {
@@ -257,47 +299,47 @@ class AddrHarvPoint extends Addr {
     }
 }
 
-class AddrHarvester extends Addr {
-    constructor(d, parent) {
-	super(d, parent);
-    }
+// class AddrHarvester extends Addr {
+//     constructor(d, parent) {
+// 	super(d, parent);
+//     }
 
-    static cname() { return 'AddrHarvester'; }
+//     static cname() { return 'AddrHarvester'; }
 
-    init() { };
+//     init() { };
 
-    move_to(cr) {
-	let d = this.d;
-	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
-	    cr.moveTo(d.x, d.y);
-	    return true;
-	}
-	return false;
-    }
+//     move_to(cr) {
+// 	let d = this.d;
+// 	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+// 	    cr.moveTo(d.x, d.y);
+// 	    return true;
+// 	}
+// 	return false;
+//     }
     
-    take(cr) {
-	let d = this.d;		
-	if(d.full) {
-	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
-		return false;
-	} else {
-	    if(cr.carry[RESOURCE_ENERGY] > 0)
-		return false;
-	}
+//     take(cr) {
+// 	let d = this.d;		
+// 	if(d.full) {
+// 	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+// 		return false;
+// 	} else {
+// 	    if(cr.carry[RESOURCE_ENERGY] > 0)
+// 		return false;
+// 	}
 
-	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
-	if(target) {
-	    cr.pickup(target);
+// 	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
+// 	if(target) {
+// 	    cr.pickup(target);
 
-	} 
-	return true;
-    }
+// 	} 
+// 	return true;
+//     }
     
-    give(cr) {
-	u.log("AddrHarvester - cannot give " + cr.name, u.LOG_WARN);
-	return false;
-    }
-}
+//     give(cr) {
+// 	u.log("AddrHarvester - cannot give " + cr.name, u.LOG_WARN);
+// 	return false;
+//     }
+// }
 
 class AddrBuilding extends Addr {
     constructor(d, parent) {
@@ -412,9 +454,8 @@ class JobMiner extends Job {
 
     static cname() { return 'JobMiner'; }
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	if(!d.res_id) {
@@ -433,12 +474,11 @@ class JobMiner extends Job {
     finish_work(rm) {
     }
 
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 	let res = Game.getObjectById(d.res_id);
-	let drop = Game.getObjectById(d.drop_id);
+	// let drop = Game.getObjectById(d.drop_id);
 
 	while( true ) {
 	    if(role.workStatus.step === 0) {
@@ -456,8 +496,8 @@ class JobMiner extends Job {
 		break;
 	    }
 	}
-	
-    }    
+    }
+
 }
 
 class JobMinerBasic extends Job {
@@ -468,9 +508,8 @@ class JobMinerBasic extends Job {
     static cname() { return 'JobMinerBasic'; }
 
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	if(!d.drop_id) {
@@ -493,9 +532,8 @@ class JobMinerBasic extends Job {
     finish_work(rm) {
     }
 
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 	let res = Game.getObjectById(d.res_id);
 	let drop = Game.getObjectById(d.drop_id);
@@ -552,9 +590,8 @@ class JobCarrier extends Job {
 
     static cname() { return 'JobCarrier'; }
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	{
@@ -574,9 +611,8 @@ class JobCarrier extends Job {
     finish_work(rm) {
     }
 
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	while( true ) {
@@ -640,9 +676,8 @@ class JobBuilder extends Job {
     static cname() { return 'JobBuilder'; }
 
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	role.workStatus = {
@@ -653,13 +688,13 @@ class JobBuilder extends Job {
 	let car_jobs = rm.memory.jobs['JobCarrier'];
 	let car_job_id = 'help_' + d.id;
 	if(!car_jobs[car_job_id]) {
-	    let job = helper_clone(d);
-	    job.taken_by_id = null;
-	    job.cname = 'JobSupplyBulder';
-	    job.id = car_job_id;
+	    let job = JobSupplyBulder.create(car_job_id, d, null);
+		//helper_clone(d);
+	    // job.taken_by_id = null;
+	    // job.cname = 'JobSupplyBulder';
+	    // job.id = car_job_id;
 	    car_jobs[car_job_id] = job;
 	}
-
     }
 
     finish_work(rm) {
@@ -670,9 +705,8 @@ class JobBuilder extends Job {
     }
 
 
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	while( true ) {
@@ -689,7 +723,8 @@ class JobBuilder extends Job {
 	    let car_job_id = 'help_' + d.id;
 	    
 	    if(car_jobs[car_job_id]) {
-		if(car_jobs[car_job_id].taken_by_id) {
+		let help_job = f.make(car_jobs[car_job_id], null);
+		if(help_job.getCount() > 0) {
 		    // someone is carrying resources
 		    if(!d.take_from_local) {
 			// save target pos into take_from_local
@@ -755,9 +790,8 @@ class JobSupplyBulder extends Job {
     static cname() { return 'JobSupplyBulder'; }
 
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	role.workStatus = {
@@ -772,9 +806,8 @@ class JobSupplyBulder extends Job {
 	this.unassign(rm);
     }
 
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	while( true ) {
@@ -851,9 +884,8 @@ class JobDefender extends Job {
 
     static cname() { return 'JobDefender'; }
 
-    start_work(rm) {
+    start_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 
 	{
@@ -866,12 +898,8 @@ class JobDefender extends Job {
 	}
     }
 
-    finish_work(rm) {
-    }
-
-    do_work(rm) {
+    do_work(rm, cr) {
 	let d = this.d;
-	let cr = Game.getObjectById(d.taken_by_id);
 	let role = cr.memory.role;
 	
 	let tgt = cr.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
@@ -971,9 +999,8 @@ class JobSpawn extends Job {
 
     static cname() { return 'JobSpawn'; }
 
-    start_work(rm) {
+    start_work(rm, spawn) {
 	let d = this.d;
-	let spawn = Game.getObjectById(d.taken_by_id);
 	let role = spawn.memory.role;
 	let mem = {
 	    bal_id : d.bal_id,
@@ -984,7 +1011,6 @@ class JobSpawn extends Job {
 		workStatus: null,
 	    },
 	};
-
 
 	let body = getDesign(d.design, spawn, rm);
 	
@@ -1004,9 +1030,8 @@ class JobSpawn extends Job {
 	}
     }
 
-    finish_work(rm, success) {
+    finish_work(rm, spawn, success) {
 	let d = this.d;
-	let spawn = Game.getObjectById(d.taken_by_id);
 	let role = spawn.memory.role;
 
 	// update balance
@@ -1029,7 +1054,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrHarvester, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder ];
 
 
 ///////////////////////////////////////////////////////
@@ -1108,7 +1133,7 @@ function assignSpawnJobs(rm) {
 		let cjob = f.make(job, null);
 
 		// TODO: just in case, they are out of sync
-		job.taken_by_id = spawn.id;
+		// job.taken_by_id = spawn.id;
 
 		// is the job done ?
 		if(_.isString(spawn.memory.role.workStatus)) {
@@ -1132,23 +1157,23 @@ function assignSpawnJobs(rm) {
 
 	for(let i2 in lst) {
 	    let job = lst[i2];
+	    let cjob = f.make(job, null);
 
-	    if(job.taken_by_id != null)
+	    if(cjob.getCount()>0)
 		continue;
 
 	    // take the job
-	    u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
-	    spawn.memory.role.job_id = job.id;
-	    job.taken_by_id = spawn.id;
+	    // u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
+	    // spawn.memory.role.job_id = job.id;
+	    // job.taken_by_id = spawn.id;
+	    cjob.assign(rm, spawn);
 
 	    // work on it
-
-	    let cjob = f.make(job, null);
-	    cjob.start_work(spawn.room);
+	    cjob.start_work(spawn.room, spawn);
 
 	    break;
 	}
-    }    
+    }
 }
 
 function detectRecoveryMode(rm) {
@@ -1234,6 +1259,7 @@ function planCreepJobs(rm) {
 	    let job = { id: con_job_id,
 			cname: 'JobBuilder',
 			taken_by_id: null,
+			capacity: 2,
 			priority : 0,
 			take_from: rm.memory.harv_point,
 			take_to: { cname: 'AddrBuilding',
@@ -1248,7 +1274,8 @@ function planCreepJobs(rm) {
 function cleanUpDeadCreeps(rm) {
 
     for(let cr_name in rm.memory.creeplist) {
-	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+	let cr_id = rm.memory.creeplist[cr_name].id;
+	let cr = Game.getObjectById(cr_id);
 	if(!cr) {
 	    u.log( "Creep " + cr_name + " is not found", u.LOG_INFO );
 	    
@@ -1259,7 +1286,9 @@ function cleanUpDeadCreeps(rm) {
 		    if(role.job_id) {
 			let jobs = rm.memory.jobs[role.name];
 			let job = jobs[role.job_id];
-			job.taken_by_id = null;
+			if(job.taken_by_id){
+			    delete job.taken_by_id[cr_id];
+			}
 		    }
 		}
 		rm.memory.balance[Memory.creeps[cr_name].bal_id].curCount--;
@@ -1267,7 +1296,6 @@ function cleanUpDeadCreeps(rm) {
 	    }
 	    
 	    delete rm.memory.creeplist[cr_name];
-	    continue;
 	}
     }
 }
@@ -1309,28 +1337,27 @@ function assignCreepJobs(rm) {
 	// TODO: don't start over again and again, use Object.keys(jobs)
 	for(let job_id in jobs) {
 	    let job = jobs[job_id];
-	    if(job.taken_by_id != null)
-		continue;
-
-	    if(job.onhold)
-		continue;
+	    let cjob = f.make(job, null);
 
 	    if(job.done) {
+		cjob.unassign(rm);
 		delete jobs[job_id];
 		continue;
 	    }
+	    if(job.onhold)
+		continue;
+	    
+	    if(cjob.isFull())
+		continue;
 	    
 	    // found a job
 	    
 	    // take the job
-	    u.log("Creep " + cr.name + " takes " + job.id, u.LOG_INFO);
-	    role.job_id = job.id;
-	    job.taken_by_id = cr.id;
+	    cjob.assign(rm, cr);
 
 	    // work on it
-	    let cjob = f.make(job, null);
-	    cjob.start_work(rm);
-	    cjob.do_work(rm);
+	    cjob.start_work(rm, cr);
+	    // cjob.do_work(rm);
 	    break;
 	}
 
