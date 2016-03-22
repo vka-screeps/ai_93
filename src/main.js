@@ -161,6 +161,8 @@ class Job extends CMemObj {
 
     do_work_all(rm) {
 	let d = this.d;
+	if(!d.taken_by_id)
+	    return;
 	Object.keys(d.taken_by_id).foreach(function(key) {
 	    if(d.done) return;
 	    if(d.onhold) return;
