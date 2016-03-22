@@ -1151,7 +1151,7 @@ function assignSpawnJobs(rm) {
 		    spawn.memory.role.workStatus = null;
 		} else {
 		    // u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
-		    cjob.start_work(spawn.room);
+		    cjob.start_work(spawn.room, spawn);
 		    continue;
 		}
 	    }
