@@ -1329,10 +1329,10 @@ function assignCreepJobs(rm) {
 
 	if(role.job_id) {
 	    // already has a job
-	    let job = jobs[role.job_id];
-	    let cjob = f.make(job, null);
+	    // let job = jobs[role.job_id];
+	    // let cjob = f.make(job, null);
 	    
-	    cjob.do_work(rm);
+	    // cjob.do_work(rm);
 	    continue;
 	}
 
