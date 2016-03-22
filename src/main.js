@@ -800,9 +800,9 @@ class JobSupplyBulder extends Job {
 	    id: new_job_id,
 	    taken_by_id: null,
 	    capacity: 1, //parent.capacity ? parent.capacity : null,
-	    priority : parent.priority,
-	    take_from: parent.take_from,
-	    take_to: parent.take_to,
+	    priority : job_build.priority,
+	    take_from: job_build.take_from,
+	    take_to: job_build.take_to,
 	};
     }
     
