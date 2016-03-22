@@ -758,7 +758,7 @@ class JobBuilder extends Job {
 	    }
 	    
 	    if(role.workStatus.step === 0) {
-		if(tf.move_to(cr)) {
+		if(tf.move_to(cr, 3)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
