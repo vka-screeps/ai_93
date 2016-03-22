@@ -85,10 +85,12 @@ class Job extends CMemObj {
     static cname() { return 'Job'; }
 
     getCount() {
+	let d = this.d;
 	return  (d.taken_by_id) ? (Object.keys(d.taken_by_id).length) : 0;
     }
 
     isFull() {
+	let d = this.d;
 	let capacity = d.capacity ? d.capacity : 1;
 	return (getCount() >= capacity);
     }
