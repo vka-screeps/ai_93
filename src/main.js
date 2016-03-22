@@ -794,6 +794,20 @@ class JobSupplyBulder extends Job {
 
     static cname() { return 'JobSupplyBulder'; }
 
+    static create(new_job_id, job_build, parent){
+	return {
+	    cname: 'JobSupplyBulder',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: parent.capacity ? parent.capacity : null,
+	    priority : parent.priority,
+	    take_from: parent.take_from,
+	    take_to: parent.take_to,
+	};
+    }
+    
+    
+
 
     start_work(rm, cr) {
 	let d = this.d;
