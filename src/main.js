@@ -161,13 +161,14 @@ class Job extends CMemObj {
 
     do_work_all(rm) {
 	let d = this.d;
+	let obj = this;
 	if(!d.taken_by_id)
 	    return;
 	Object.keys(d.taken_by_id).forEach(function(key) {
 	    if(d.done) return;
 	    if(d.onhold) return;
 	    let cr = Game.getObjectById(key);
-	    this.do_work(rm, cr);
+	    obj.do_work(rm, cr);
 	} );
     }
 }
