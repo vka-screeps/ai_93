@@ -1143,7 +1143,7 @@ function assignSpawnJobs(rm) {
 		    // release the job
 		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
 
-		    cjob.finish_work(spawn.room, true);
+		    cjob.finish_work(spawn.room, spawn, true);
 
 		    delete lst[spawn.memory.role.job_id];
 
