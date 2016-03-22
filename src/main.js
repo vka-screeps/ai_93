@@ -192,6 +192,10 @@ class Addr extends CMemObj {
     give(cr) { return true; }
 }
 
+function defaultFor(a, val) {
+    return a = typeof a !== 'undefined' ? a : val;
+}
+
 class AddrPos extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -201,8 +205,8 @@ class AddrPos extends Addr {
 
     init() { };
 
-    move_to(cr, dist=1) {
-	
+    move_to(cr, dist) {
+	defaultFor(dist, 1);
 	let d = this.d;
 	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
 	    cr.moveTo(d.x, d.y);
