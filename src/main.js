@@ -375,11 +375,12 @@ class AddrBuilding extends Addr {
 	let d = this.d;	
 	if(!d.tgt_id) {
 	    d.tgt_id = Game.spawns[d.spawnName].id;
+	    d.isSpawn=1;
 	}
     };
 
     move_to(cr, dist) {
-	dist = defaultFor(dist, 3);
+	dist = defaultFor(dist, 1);
 	
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
@@ -631,6 +632,23 @@ class JobCarrier extends Job {
     finish_work(rm) {
     }
 
+    findTarget(rm, cr) {
+	var targets = rm.find(FIND_MY_SPAWNS, {				       
+	    filter: function(o) { return o.energy < o.energyCapacity; } } );
+
+	if(targets.length)
+	    return targets[0];
+
+	var target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+	    filter: function(o) { 
+		return (o.structureType == STRUCTURE_EXTENSION) && o.energy < o.energyCapacity; } } );
+
+	if(target)
+	    return target;
+	
+	return null;
+    }
+
     do_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
@@ -654,21 +672,36 @@ class JobCarrier extends Job {
 		}
 	    }
 
-	    if(role.workStatus.step === 2) {
-		let tt = f.make(d.take_to);
-		if(tt.move_to(cr)) {
-		    break;
+	    let tt = f.make(d.take_to);
+	    if(tt.d.isSpawn) {
+		if(cr.carry[RESOURCE_ENERGY] === 0) {
+		    role.workStatus.step = 0;
 		} else {
-		    role.workStatus.step++;
+		    let tgt = this.findTarget(rm, cr);
+		    if(tgt) {
+			if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
+			    cr.moveTo(tgt);
+			}			
+		    } else {
+			// todo - go to the wait point
+		    }
+		    break;
 		}
-	    }
+	    } else {
+		if(role.workStatus.step === 2) {
+		    if(tt.move_to(cr)) {
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }
+		}
 
-	    if(role.workStatus.step === 3) {
-		let tt = f.make(d.take_to);
-		if(tt.give(cr)) {
-		    break;
-		} else {
-		    role.workStatus.step++;
+		if(role.workStatus.step === 3) {
+		    if(tt.give(cr)) {
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }
 		}
 	    }
 	    
