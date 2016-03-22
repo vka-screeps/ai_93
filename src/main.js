@@ -103,7 +103,7 @@ class Job extends CMemObj {
 	    if(cr) {
 		delete d.taken_by_id[cr.id];
 	    } else {
-		Object.keys(d.taken_by_id).foreach(function(key) {
+		Object.keys(d.taken_by_id).forEach(function(key) {
 
 		    let cr = Game.getObjectById(key);
 
@@ -163,7 +163,7 @@ class Job extends CMemObj {
 	let d = this.d;
 	if(!d.taken_by_id)
 	    return;
-	Object.keys(d.taken_by_id).foreach(function(key) {
+	Object.keys(d.taken_by_id).forEach(function(key) {
 	    if(d.done) return;
 	    if(d.onhold) return;
 	    let cr = Game.getObjectById(key);
