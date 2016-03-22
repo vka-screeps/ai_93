@@ -92,7 +92,7 @@ class Job extends CMemObj {
     isFull() {
 	let d = this.d;
 	let capacity = d.capacity ? d.capacity : 1;
-	return (getCount() >= capacity);
+	return (this.getCount() >= capacity);
     }
 
     // cr - optional
