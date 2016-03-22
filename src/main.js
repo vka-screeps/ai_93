@@ -259,9 +259,11 @@ class AddrHarvPoint extends Addr {
 
     init() { };
 
-    move_to(cr) {
+    move_to(cr, dist) {
+	defaultFor(dist, 3);
+
 	let d = this.d;
-	if(cr.pos.getRangeTo(d.x, d.y) > 3) {
+	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
 	    cr.moveTo(d.x, d.y);
 	    return true;
 	}
@@ -376,11 +378,13 @@ class AddrBuilding extends Addr {
 	}
     };
 
-    move_to(cr) {
+    move_to(cr, dist) {
+	defaultFor(dist, 3);
+	
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
 	if(tgt) {
-	    if(cr.pos.getRangeTo(tgt) > 3) {
+	    if(cr.pos.getRangeTo(tgt) > dist) {
 		cr.moveTo(tgt);
 		return true;
 	    }
