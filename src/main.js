@@ -167,7 +167,7 @@ class Job extends CMemObj {
 	    if(d.done) return;
 	    if(d.onhold) return;
 	    let cr = Game.getObjectById(key);
-	    do_work(rm, cr);
+	    this.do_work(rm, cr);
 	} );
     }
 }
