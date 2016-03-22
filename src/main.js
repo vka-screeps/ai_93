@@ -201,11 +201,9 @@ class AddrPos extends Addr {
 
     init() { };
 
-    move_to(cr, dist) {
-	dist = typeof dist !== 'undefined' ? dist : 1;
+    move_to(cr) {
 	let d = this.d;
-	if(dist
-	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
+	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
 	    cr.moveTo(d.x, d.y);
 	    return true;
 	}
@@ -256,10 +254,9 @@ class AddrHarvPoint extends Addr {
 
     init() { };
 
-    move_to(cr, dist) {
-	dist = typeof dist !== 'undefined' ? dist : 3;
+    move_to(cr) {
 	let d = this.d;
-	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
+	if(cr.pos.getRangeTo(d.x, d.y) > 3) {
 	    cr.moveTo(d.x, d.y);
 	    return true;
 	}
@@ -374,12 +371,11 @@ class AddrBuilding extends Addr {
 	}
     };
 
-    move_to(cr, dist) {
-	dist = typeof dist !== 'undefined' ? dist : 3;
+    move_to(cr) {
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
 	if(tgt) {
-	    if(cr.pos.getRangeTo(tgt) > dist) {
+	    if(cr.pos.getRangeTo(tgt) > 3) {
 		cr.moveTo(tgt);
 		return true;
 	    }
@@ -758,7 +754,7 @@ class JobBuilder extends Job {
 	    }
 	    
 	    if(role.workStatus.step === 0) {
-		if(tf.move_to(cr, 3)) {
+		if(tf.move_to(cr)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
