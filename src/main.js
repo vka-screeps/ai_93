@@ -206,8 +206,8 @@ class AddrPos extends Addr {
     init() { };
 
     move_to(cr, dist) {
-	defaultFor(dist, 1);
 	let d = this.d;
+	dist = defaultFor(dist, defaultFor(d.dist, 1));
 	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
 	    cr.moveTo(d.x, d.y);
 	    return true;
@@ -260,7 +260,7 @@ class AddrHarvPoint extends Addr {
     init() { };
 
     move_to(cr, dist) {
-	defaultFor(dist, 3);
+	dist = defaultFor(dist, 3);
 
 	let d = this.d;
 	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
@@ -379,7 +379,7 @@ class AddrBuilding extends Addr {
     };
 
     move_to(cr, dist) {
-	defaultFor(dist, 3);
+	dist = defaultFor(dist, 3);
 	
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);
@@ -753,7 +753,8 @@ class JobBuilder extends Job {
 			    let p = tgt.pos;
 			    d.take_from_local = { cname: 'AddrPos',
 						  x: p.x,
-						  y: p.y };
+						  y: p.y,
+						  dist: 3};
 			    
 			}
 		    }
