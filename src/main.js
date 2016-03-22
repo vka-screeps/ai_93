@@ -89,10 +89,10 @@ class Job extends CMemObj {
 	return  (d.taken_by_id) ? (Object.keys(d.taken_by_id).length) : 0;
     }
 
-    getNeededCount() {
+    getCapacity() {
 	let d = this.d;
 	let capacity = d.capacity ? d.capacity : 1;
-	return (capacity - this.getCount());
+	return capacity;
     }
 
     isFull() {
@@ -1229,7 +1229,7 @@ function nextTickPlanning(rm) {
 	    let jobs_cnt = 0;
 	    Object.keys(jobs).forEach(function(key) {
 		let cjob = f.make(jobs[key], null);
-		jobs_cnt += cjob.getNeededCount();
+		jobs_cnt += cjob.getCapacity();
 	    });
 	    // jobs_cnt = jobs_cnt/2;
 	    if(jobs_cnt>5)
