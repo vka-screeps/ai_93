@@ -187,7 +187,7 @@ class Addr extends CMemObj {
     static cname() { return 'Addr'; }
 
     init() {};
-    move_to(cr) { return true; }
+    move_to(cr, dist) { return true; }
     take(cr) { return true; }
     give(cr) { return true; }
 }
@@ -201,9 +201,10 @@ class AddrPos extends Addr {
 
     init() { };
 
-    move_to(cr) {
+    move_to(cr, dist=1) {
+	
 	let d = this.d;
-	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
 	    cr.moveTo(d.x, d.y);
 	    return true;
 	}
