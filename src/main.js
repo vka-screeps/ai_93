@@ -284,7 +284,11 @@ class AddrHarvPoint extends Addr {
 	let p = rm.getPositionAt(d.x, d.y);
 	// look for dropped energy
 	{
-	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2);
+	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2, {
+		filter: function(o) {
+		    return (o.energy>50);
+		}
+	    });
 	    if(targets.length > 0) {
 		let target = cr.pos.findClosestByRange(targets);
 		if(cr.pos.getRangeTo(target)>1){
@@ -813,7 +817,7 @@ class JobBuilder extends Job {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		if(tt.move_to(cr)) {
+		if(tt.move_to(cr,3)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
@@ -996,7 +1000,7 @@ class JobDefender extends Job {
 
 var designRegistry = {
     'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],    
-    'd_h1' : [ WORK, WORK, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
+    'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     'd_c1' : [ CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE ],
     // builder
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
