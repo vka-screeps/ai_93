@@ -951,7 +951,10 @@ class JobSupplyBulder extends Job {
 			console.log(tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    } );
 		    
-		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) { return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity); } });
+		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) {
+			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
+			return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
+		    } });
 		    
 		    console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    
