@@ -947,6 +947,11 @@ class JobSupplyBulder extends Job {
 			return;
 		    }
 
+		    workersList = _.filter(workersList, function(c) {
+			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
+			return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
+		    } );
+
 		    workersList.forEach(function(tgt) {
 			console.log(tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    } );
