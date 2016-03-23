@@ -776,11 +776,8 @@ class JobBuilder extends Job {
 
 	let tfp = f.make(d.take_from).getPos(rm);
 	let ttp = f.make(d.take_to).getPos(rm);
-	console.log('tfp = ' + tfp);
-	console.log('ttp = ' + ttp);
-	console.log('range = ' + tfp.getRangeTo(ttp));	
 
-	if(tfp && ttp && tfp.getRangeTo(ttp) > 10) {
+	if(tfp && ttp && tfp.findPathTo(ttp).length > 10) {
 	    // create JobSupplyBulder for this job
 	    let car_jobs = rm.memory.jobs['JobCarrier'];
 	    let car_job_id = 'help_' + d.id;
