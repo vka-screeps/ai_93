@@ -93,6 +93,7 @@ class Job extends CMemObj {
 	let d = this.d;
 	let capacity = defaultFor(d.capacity, 1);
 	if(capacity === null) capacity = 1;
+	console.log('Capacity for ' + d.id + ' - ' + capacity);
 	return capacity;
     }
 
