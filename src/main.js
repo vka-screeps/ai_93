@@ -101,6 +101,15 @@ class Job extends CMemObj {
 	return (this.getCount() >= capacity);
     }
 
+    getWorkers() {
+	let ret = [];
+	Object.keys(d.taken_by_id).forEach(function(key) {
+	    let cr = Game.getObjectById(key);
+	    ret.add(cr);
+	} );
+	return ret;
+    }
+
     // cr - optional
     unassign(rm, cr) {
 	let d = this.d;
