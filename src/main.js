@@ -222,6 +222,11 @@ class AddrPos extends Addr {
 
     init() { };
 
+    getPos(rm) {
+	let d = this.d;	
+	return rm.getPositionAt(d.x, d.y);
+    }
+
     move_to(cr, dist) {
 	let d = this.d;
 	dist = defaultFor(dist, defaultFor(d.dist, 1));
@@ -243,7 +248,7 @@ class AddrPos extends Addr {
 	}
 
 	let rm = Game.rooms[cr.pos.roomName];
-	let p = rm.getPositionAt(d.x, d.y);
+	let p = this.getPos(rm);
 	// look for dropped energy
 	{
 	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
@@ -276,6 +281,11 @@ class AddrHarvPoint extends Addr {
 
     init() { };
 
+    getPos(rm) {
+	let d = this.d;	
+	return rm.getPositionAt(d.x, d.y);
+    }    
+
     move_to(cr, dist) {
 	dist = defaultFor(dist, 3);
 
@@ -298,7 +308,7 @@ class AddrHarvPoint extends Addr {
 	}
 
 	let rm = Game.rooms[cr.pos.roomName];
-	let p = rm.getPositionAt(d.x, d.y);
+	let p = this.getPos(rm);
 	// look for dropped energy
 	{
 	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2, {
@@ -399,6 +409,12 @@ class AddrBuilding extends Addr {
 	    d.isSpawn=1;
 	}
     };
+
+    getPos(rm) {
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);
+	return tgt ? tgt.pos : null;
+    }
 
     move_to(cr, dist) {
 	dist = defaultFor(dist, 1);
@@ -758,16 +774,17 @@ class JobBuilder extends Job {
 	    step: 0
 	}
 
-	// create JobSupplyBulder for this job
-	let car_jobs = rm.memory.jobs['JobCarrier'];
-	let car_job_id = 'help_' + d.id;
-	if(!car_jobs[car_job_id]) {
-	    let job = JobSupplyBulder.create(car_job_id, d, null);
-		//helper_clone(d);
-	    // job.taken_by_id = null;
-	    // job.cname = 'JobSupplyBulder';
-	    // job.id = car_job_id;
-	    car_jobs[car_job_id] = job;
+	let tfp = f.make(d.take_from).getPos();
+	let ttp = f.make(d.take_to).getPos();
+
+	if(tfp && ttp && tfp.getRangeTo(ttp) > 10) {
+	    // create JobSupplyBulder for this job
+	    let car_jobs = rm.memory.jobs['JobCarrier'];
+	    let car_job_id = 'help_' + d.id;
+	    if(!car_jobs[car_job_id]) {
+		let job = JobSupplyBulder.create(car_job_id, d, null);
+		car_jobs[car_job_id] = job;
+	    }
 	}
     }
 
