@@ -960,6 +960,9 @@ class JobSupplyBulder extends Job {
 			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
 			return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
 		    } });
+
+		    if(!tgt)
+			break;
 		    
 		    console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    
