@@ -103,10 +103,12 @@ class Job extends CMemObj {
 
     getWorkers() {
 	let ret = [];
-	Object.keys(d.taken_by_id).forEach(function(key) {
-	    let cr = Game.getObjectById(key);
-	    ret.add(cr);
-	} );
+	if(d.taken_by_id) {
+	    Object.keys(d.taken_by_id).forEach(function(key) {
+		let cr = Game.getObjectById(key);
+		ret.add(cr);
+	    } );
+	}
 	return ret;
     }
 
