@@ -1270,7 +1270,10 @@ function assignSpawnJobs(rm) {
 		u.log("Job not found " + spawn.memory.role.job_id, u.LOG_ERR);
 		spawn.memory.role.job_id = null;
 		spawn.memory.role.workStatus = null;
-	    }/* else {
+	    } else {
+		continue; // work in progress
+	    }
+		/* else {
 		let cjob = f.make(job, null);
 
 		// TODO: just in case, they are out of sync
