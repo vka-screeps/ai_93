@@ -1114,11 +1114,6 @@ class JobSpawn extends Job {
     static cname() { return 'JobSpawn'; }
 
     start_work(rm, spawn) {
-    }
-
-    do_work(rm, spawn) {
-	if(spawn.spawning != null)
-	    return;
 	let d = this.d;
 	let role = spawn.memory.role;
 	let mem = {
@@ -1136,11 +1131,11 @@ class JobSpawn extends Job {
 	u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
 	
 	let result = spawn.createCreep(body, undefined, mem);
-
+	role.workStatus = result;
+	
 	if(_.isString(result)) {
 	    console.log('The name is: '+result);
 	    role.workStatus = result;
-	    this.finish_work(rm, spawn, true);
 	}
 	else {
 	    this.finish_work(rm, spawn, false);
@@ -1149,6 +1144,13 @@ class JobSpawn extends Job {
 	    // }
 	    // role.workStatus = result;
 	}
+    }
+
+    do_work(rm, spawn) {
+	if(spawn.spawning != null)
+	    return;
+
+	this.finish_work(rm, spawn, true);
     }
 
     finish_work(rm, spawn, success) {
@@ -1163,9 +1165,9 @@ class JobSpawn extends Job {
 	    d.capacity--;
 	    if(d.capacity < 0)
 		d.capacity = 0;
-	    unassign(rm, spawn);
+	    this.unassign(rm, spawn);
 	} else {
-	    unassign(rm, spawn);
+	    this.unassign(rm, spawn);
 	}
     }
 
@@ -1268,7 +1270,7 @@ function assignSpawnJobs(rm) {
 		u.log("Job not found " + spawn.memory.role.job_id, u.LOG_ERR);
 		spawn.memory.role.job_id = null;
 		spawn.memory.role.workStatus = null;
-	    } else {
+	    }/* else {
 		let cjob = f.make(job, null);
 
 		// TODO: just in case, they are out of sync
@@ -1290,7 +1292,7 @@ function assignSpawnJobs(rm) {
 		    // cjob.start_work(spawn.room, spawn);
 		    continue;
 		}
-	    }
+	    } */
 	}
 
 	for(let i2 in lst) {
