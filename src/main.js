@@ -776,6 +776,9 @@ class JobBuilder extends Job {
 
 	let tfp = f.make(d.take_from).getPos();
 	let ttp = f.make(d.take_to).getPos();
+	console.log('tfp = ' + tfp);
+	console.log('ttp = ' + ttp);
+	console.log('range = ' + tfp.getRangeTo(ttp));	
 
 	if(tfp && ttp && tfp.getRangeTo(ttp) > 10) {
 	    // create JobSupplyBulder for this job
