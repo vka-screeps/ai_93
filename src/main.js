@@ -864,7 +864,7 @@ class JobSupplyBulder extends Job {
 	    cname: 'JobSupplyBulder',
 	    id: new_job_id,
 	    taken_by_id: null,
-	    capacity: parent.capacity ? parent.capacity : 1,
+	    capacity: parent.capacity;
 	    priority : job_build.priority,
 	    take_from: job_build.take_from,
 	    take_to: job_build.take_to,
