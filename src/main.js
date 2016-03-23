@@ -1001,7 +1001,8 @@ class JobDefender extends Job {
 var designRegistry = {
     'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],    
     'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
-    'd_c1' : [ CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE ],
+    //    'd_c1' : [ CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE ],
+    'd_c1' : [ CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE ],
     // builder
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
     // slow builder
@@ -1339,7 +1340,7 @@ function planCreepJobs(rm) {
 	    let job = { id: con_job_id,
 			cname: 'JobBuilder',
 			taken_by_id: null,
-			capacity: 2,
+			capacity: 1,
 			priority : 0,
 			take_from: rm.memory.harv_point,
 			take_to: { cname: 'AddrBuilding',
