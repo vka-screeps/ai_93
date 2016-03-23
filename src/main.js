@@ -1370,7 +1370,7 @@ function planCreepJobs(rm) {
 	    let job = { id: con_job_id,
 			cname: 'JobBuilder',
 			taken_by_id: null,
-			capacity: 1,
+			capacity: con_capacity,
 			priority : 0,
 			take_from: rm.memory.harv_point,
 			take_to: { cname: 'AddrBuilding',
