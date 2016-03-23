@@ -122,6 +122,9 @@ class Job extends CMemObj {
 
 	    if(cr) {
 		delete d.taken_by_id[cr.id];
+		let role = cr.memory.role;
+		role.job_id = null;
+		role.workStatus = null;
 	    } else {
 		Object.keys(d.taken_by_id).forEach(function(key) {
 
