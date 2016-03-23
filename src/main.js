@@ -286,7 +286,7 @@ class AddrHarvPoint extends Addr {
 	{
 	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2, {
 		filter: function(o) {
-		    return (o.energy>50);
+		    return (o.energy>20);
 		}
 	    });
 	    if(targets.length > 0) {
