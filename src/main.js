@@ -1317,6 +1317,13 @@ function nextTickPlanning(rm) {
     }
 }
 
+function getConstrBuildingCapacity(rm, con) {
+    if(con.structureType === STRUCTURE_CONTROLLER ||
+       con.structureType === STRUCTURE_ROAD) {
+	return 1;
+    }
+    return 2;
+}
 
 // Put the JobMinerBasic on hold, after leaving the recovery mode
 function planCreepJobs(rm) {
@@ -1357,6 +1364,7 @@ function planCreepJobs(rm) {
     let con_lst = rm.find(FIND_MY_CONSTRUCTION_SITES);
     for(let con_i in con_lst) {
 	let con = con_lst[con_i];
+	let con_capacity = getConstrBuildingCapacity(rm, con);
 	let con_job_id = 'con_' + con.id;
 	if(!rm.memory.jobs.JobBuilder[con_job_id]) {
 	    let job = { id: con_job_id,
