@@ -953,7 +953,7 @@ class JobSupplyBulder extends Job {
 		    
 		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) { return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity); } });
 		    
-		    console.log('Select - ' + tgt.name + ', ' + tgt.c.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
+		    console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    
 		    if(cr.pos.getRangeTo(tgt) > 7) {
 			break; // too far
