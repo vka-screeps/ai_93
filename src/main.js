@@ -946,7 +946,7 @@ class JobSupplyBulder extends Job {
 			this.unassign(rm);
 			return;
 		    }
-		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) { return ((c.carry[RESOURCE_ENERGY]+20) < c.carryCapacity); } });
+		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) { return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity); } });
 		    
 		    if(cr.pos.getRangeTo(tgt) > 7) {
 			break; // too far
