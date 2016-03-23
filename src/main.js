@@ -774,8 +774,8 @@ class JobBuilder extends Job {
 	    step: 0
 	}
 
-	let tfp = f.make(d.take_from).getPos();
-	let ttp = f.make(d.take_to).getPos();
+	let tfp = f.make(d.take_from).getPos(rm);
+	let ttp = f.make(d.take_to).getPos(rm);
 	console.log('tfp = ' + tfp);
 	console.log('ttp = ' + ttp);
 	console.log('range = ' + tfp.getRangeTo(ttp));	
