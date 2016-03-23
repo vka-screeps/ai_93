@@ -1188,13 +1188,17 @@ function planSpawnJobs(rm) {
 	let bal_ln = rm.memory.balance[i];
 	priority++;
 
-	if(bal_ln.count > bal_ln.curCount) {
-	    let job_id = bal_ln.id;
+	let job_id = bal_ln.id;
+	let job = lst[job_id];
+	let countInProgress = job ? job.capacity : 0;
+	
+	if(bal_ln.count > bal_ln.curCount + countInProgress) {
 	    if(!lst[job_id]) {
 		let new_job = {
 		    cname: 'JobSpawn',
 		    id: job_id,
 		    taken_by_id: null,
+		    capacity: (bal_ln.count - bal_ln.curCount),
 		    bal_id: bal_ln.id,
 		    priority: priority,
 		    design: bal_ln.design
@@ -1202,9 +1206,18 @@ function planSpawnJobs(rm) {
 
 		u.log("New JobSpawn: " + job_id, u.LOG_INFO);
 		lst[job_id] = new_job;
+	    } else {
+		job.capacity = bal_ln.count - bal_ln.curCount;
+		if (job.capacity<0)
+		    job.capacity = 0;
+	    }
+	} else if (bal_ln.count < bal_ln.curCount + countInProgress) {
+	    if(job) {
+		job.capacity = bal_ln.count - bal_ln.curCount;
+		if (job.capacity<0)
+		    job.capacity = 0;
 	    }
 	}
-
     }
 }
 
