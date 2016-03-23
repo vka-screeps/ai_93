@@ -1469,6 +1469,8 @@ function assignCreepJobs(rm) {
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
+    console.log('assignCreepJobs 1');
+
     for(let cr_name in rm.memory.creeplist) {
 	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 
@@ -1484,6 +1486,7 @@ function assignCreepJobs(rm) {
 	    continue;
 	}
 
+	console.log('assignCreepJobs 2');
 	if(role.job_id) {
 	    // already has a job
 	    // let job = jobs[role.job_id];
@@ -1498,6 +1501,8 @@ function assignCreepJobs(rm) {
 	    let job = jobs[job_id];
 	    let cjob = f.make(job, null);
 
+	    console.log('assignCreepJobs 3');
+	    
 	    if(job.done) {
 		cjob.unassign(rm);
 		delete jobs[job_id];
