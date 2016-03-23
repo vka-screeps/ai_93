@@ -102,6 +102,7 @@ class Job extends CMemObj {
     }
 
     getWorkers() {
+	let d = this.d;	
 	let ret = [];
 	if(d.taken_by_id) {
 	    Object.keys(d.taken_by_id).forEach(function(key) {
