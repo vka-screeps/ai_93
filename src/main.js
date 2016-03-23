@@ -1115,6 +1115,9 @@ class JobSpawn extends Job {
     static cname() { return 'JobSpawn'; }
 
     start_work(rm, spawn) {
+	let d = this.d;
+	let role = spawn.memory.role;
+	role.workStatus = null;
     }
 
     do_work(rm, spawn) {
@@ -1123,32 +1126,36 @@ class JobSpawn extends Job {
 
 	let d = this.d;
 	let role = spawn.memory.role;
-	let mem = {
-	    bal_id : d.bal_id,
-	    role: {
-		name: rm.memory.balance[d.bal_id].role,
-		job_id: null,
-		initTime: null,
-		workStatus: null,
-	    },
-	};
+	if(role.workStatus === null) {
+	    let mem = {
+		bal_id : d.bal_id,
+		role: {
+		    name: rm.memory.balance[d.bal_id].role,
+		    job_id: null,
+		    initTime: null,
+		    workStatus: null,
+		},
+	    };
 
-	let body = getDesign(d.design, spawn, rm);
-	
-	u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
-	
-	let result = spawn.createCreep(body, undefined, mem);
-	role.workStatus = result;
-	
-	if(_.isString(result)) {
-	    console.log('The name is: '+result);
-	}
-	else {
-	    this.finish_work(rm, spawn, false);
-	    // if( result !== d.workStatus) {
-	    // 	console.log('Spawn error: '+result);
-	    // }
-	    // role.workStatus = result;
+	    let body = getDesign(d.design, spawn, rm);
+	    
+	    u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
+	    
+	    let result = spawn.createCreep(body, undefined, mem);
+	    role.workStatus = result;
+	    
+	    if(_.isString(result)) {
+		console.log('The name is: '+result);
+	    }
+	    else {
+		this.finish_work(rm, spawn, false);
+		// if( result !== d.workStatus) {
+		// 	console.log('Spawn error: '+result);
+		// }
+		// role.workStatus = result;
+	    }
+	} else {
+	    this.finish_work(rm, spawn, true);
 	}
 	
 	// this.finish_work(rm, spawn, true);
