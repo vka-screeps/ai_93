@@ -91,13 +91,14 @@ class Job extends CMemObj {
 
     getCapacity() {
 	let d = this.d;
-	let capacity = d.capacity ? d.capacity : 1;
+	let capacity = defaultFor(d.capacity, 1);
+	if(capacity === null) capacity = 1;
 	return capacity;
     }
 
     isFull() {
 	let d = this.d;
-	let capacity = d.capacity ? d.capacity : 1;
+	let capacity = this.getCapacity();
 	return (this.getCount() >= capacity);
     }
 
@@ -1113,6 +1114,11 @@ class JobSpawn extends Job {
     static cname() { return 'JobSpawn'; }
 
     start_work(rm, spawn) {
+    }
+
+    do_work(rm, spawn) {
+	if(spawn.spawning != null)
+	    return;
 	let d = this.d;
 	let role = spawn.memory.role;
 	let mem = {
@@ -1134,17 +1140,15 @@ class JobSpawn extends Job {
 	if(_.isString(result)) {
 	    console.log('The name is: '+result);
 	    role.workStatus = result;
+	    this.finish_work(rm, spawn, true);
 	}
 	else {
-	    if( result !== d.workStatus) {
-		console.log('Spawn error: '+result);
-	    }
-	    role.workStatus = result;
+	    this.finish_work(rm, spawn, false);
+	    // if( result !== d.workStatus) {
+	    // 	console.log('Spawn error: '+result);
+	    // }
+	    // role.workStatus = result;
 	}
-    }
-
-    do_work(rm, cr) {
-	// nothing to do here
     }
 
     finish_work(rm, spawn, success) {
@@ -1156,7 +1160,12 @@ class JobSpawn extends Job {
 	    let cr = Game.creeps[role.workStatus];
 	    rm.memory.creeplist[cr.name]={id: cr.id};
 	    rm.memory.balance[d.bal_id].curCount++;
+	    d.capacity--;
+	    if(d.capacity < 0)
+		d.capacity = 0;
+	    unassign(rm, spawn);
 	} else {
+	    unassign(rm, spawn);
 	}
     }
 
@@ -1273,13 +1282,12 @@ function assignSpawnJobs(rm) {
 
 		    cjob.finish_work(spawn.room, spawn, true);
 
-		    delete lst[spawn.memory.role.job_id];
-
-		    spawn.memory.role.job_id = null;
-		    spawn.memory.role.workStatus = null;
+		    // delete lst[spawn.memory.role.job_id];
+		    // spawn.memory.role.job_id = null;
+		    // spawn.memory.role.workStatus = null;
 		} else {
 		    // u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
-		    cjob.start_work(spawn.room, spawn);
+		    // cjob.start_work(spawn.room, spawn);
 		    continue;
 		}
 	    }
@@ -1290,6 +1298,9 @@ function assignSpawnJobs(rm) {
 	    let cjob = f.make(job, null);
 
 	    if(cjob.getCount()>0)
+		continue;
+
+	    if(cjob.getCapacity() == 0)
 		continue;
 
 	    // take the job
