@@ -1555,8 +1555,9 @@ function processRoom(rm) {
     nextTickPlanning(rm); // adjust the number of creeps on the balance
 
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
+    console.log("processRoom - 1");
     assignSpawnJobs(rm);
-    
+    console.log("processRoom - 2");    
     assignCreepJobs(rm);
     doAllJobs(rm);
 }
