@@ -856,12 +856,10 @@ class JobSupplyBulder extends Job {
 	    priority : job_build.priority,
 	    take_from: job_build.take_from,
 	    take_to: job_build.take_to,
+	    main_job_id: job_build.id,
 	};
     }
     
-    
-
-
     start_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
@@ -920,19 +918,30 @@ class JobSupplyBulder extends Job {
 
 	    if(role.workStatus.step === 3) {
 
-	    // let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
-	    // if(targets.length > 0) {
-	    // 	let target = cr.pos.findClosestByRange(targets);
-	    // 	if(cr.pos.getRangeTo(target)>1){
-	    // 	    cr.moveTo(target);
-	    // 	} else {
-	    // 	    cr.pickup(target);
-	    // 	}
-	    // 	return true;
-	    // }
-		
 		if(cr.carry[RESOURCE_ENERGY] > 0) {
-		    cr.drop(RESOURCE_ENERGY);		    
+		    // cr.drop(RESOURCE_ENERGY);
+		    let bld_jobs = rm.memory.jobs['JobBuilder'];
+		    let wjob = bld_jobs[d.main_job_id];
+		    if(!wjob) {
+			u.log("JobSupplyBulder - Can't find job " + d.main_job_id, u.LOG_WARN);
+			this.unassign(rm);
+			return;
+		    }
+		    let cwjob = f.make(wjob, null);
+		    let workersList = cwjob.getWorkers(); // list of creeps
+		    if(!workersList || workersList.length == 0) {
+			u.log("JobSupplyBulder - No workers at " + d.main_job_id, u.LOG_WARN);
+			this.unassign(rm);
+			return;
+		    }
+		    let tgt = cr.pos.findClosestByRange(workersList);
+		    if(cr.pos.getRangeTo(tgt) > 7) {
+			break; // too far
+		    }
+		    if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
+			cr.moveTo(tgt);
+		    }		    
+		    
 		    break;
 		} else {
 		    role.workStatus.step++;
