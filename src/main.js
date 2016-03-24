@@ -93,7 +93,6 @@ class Job extends CMemObj {
 	let d = this.d;
 	let capacity = defaultFor(d.capacity, 1);
 	if(capacity === null) capacity = 1;
-	console.log('Capacity for ' + d.id + ' - ' + capacity);
 	return capacity;
     }
 
@@ -970,23 +969,18 @@ class JobSupplyBulder extends Job {
 		    }
 
 		    workersList = _.filter(workersList, function(c) {
-			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
 			return ((c.carry[RESOURCE_ENERGY]+10) < c.carryCapacity);
 		    } );
 
-		    workersList.forEach(function(tgt) {
-			console.log(tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
-		    } );
-		    
-		    let tgt = cr.pos.findClosestByRange(workersList, { filter: function(c) {
+		    let tgt = cr.pos.findClosestByRange(workersList/*, { filter: function(c) {
 			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
 			return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
-		    } });
+		    } }*/);
 
 		    if(!tgt)
 			break;
 		    
-		    console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
+		    // console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
 		    
 		    if(cr.pos.getRangeTo(tgt) > 7) {
 			break; // too far
@@ -1110,7 +1104,6 @@ function getDesign( design, sp, rm ) {
 	    break;
 
 	cost = cost + costRegistry[next];
-	console.log("cost of " + next + ' = ' + cost);
 	
 	if(cost > energy)
 	    break;
@@ -1496,8 +1489,6 @@ function assignCreepJobs(rm) {
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
-    console.log('assignCreepJobs 1');
-
     for(let cr_name in rm.memory.creeplist) {
 	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 
@@ -1513,7 +1504,6 @@ function assignCreepJobs(rm) {
 	    continue;
 	}
 
-	console.log('assignCreepJobs 2');
 	if(role.job_id) {
 	    // already has a job
 	    // let job = jobs[role.job_id];
@@ -1528,8 +1518,6 @@ function assignCreepJobs(rm) {
 	    let job = jobs[job_id];
 	    let cjob = f.make(job, null);
 
-	    console.log('assignCreepJobs 3');
-	    
 	    if(job.done) {
 		cjob.unassign(rm);
 		delete jobs[job_id];
@@ -1582,9 +1570,7 @@ function processRoom(rm) {
     nextTickPlanning(rm); // adjust the number of creeps on the balance
 
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
-    console.log("processRoom - 1");
     assignSpawnJobs(rm);
-    console.log("processRoom - 2");    
     assignCreepJobs(rm);
     doAllJobs(rm);
 }
