@@ -776,7 +776,7 @@ class JobBuilder extends Job {
 	let tfp = f.make(d.take_from).getPos(rm);
 	let ttp = f.make(d.take_to).getPos(rm);
 
-	console.log( 'tfp.findPathTo(ttp).length = ' + tfp.findPathTo(ttp) );
+	console.log( 'path ' + tfp + ', ' + ttp + ', ' + tfp.findPathTo(ttp) );
 
 	if(tfp && ttp && tfp.findPathTo(ttp).length > 10) {
 	    // create JobSupplyBulder for this job
