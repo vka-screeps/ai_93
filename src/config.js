@@ -138,10 +138,12 @@ function setConfigSim() {
 //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
     };
 
-    Memory.rooms['sim'].harv_point = { cname: 'AddrHarvPoint',
-				       x: 35,
-				       y: 20,
-				       full: true };
+    Memory.rooms['sim'].harvPoints = { 'hp1': { cname: 'AddrHarvPoint',
+						id: 'hp1',
+						x: 35,
+						y: 20,
+						full: true },
+				     }
 
     Memory.rooms['sim'].wait_point = {cname: 'AddrPos',
 				      roomName: 'sim',
@@ -149,12 +151,14 @@ function setConfigSim() {
 				      y: 30 };
 
     Memory.rooms['sim'].jobs = {
-	'JobMiner' : { 'j1': { id : 'j1',
+	'JobMiner' : {},
+/*	'JobMiner' : { 'j1': { id : 'j1',
 			       cname: 'JobMinerBasic',
 			       taken_by_id: null,
 			       priority : 0,
 			       res_id: null,
-			       res_pos : {x: 35, y: 20},
+			       res_pos : {cname: 'AddrHarvPointRef',
+						 id: 'hp1' }
 			       drop_id: null,
 			       drop_name: 'Spawn1',
 			     },
@@ -180,16 +184,14 @@ function setConfigSim() {
 			       res_pos : {x: 35, y: 20},
 			     }		       
 		     },
+*/
 	'JobCarrier' : { 'jc1' : { id : 'jc1',
 				   cname: 'JobCarrier',
 				   taken_by_id: null,
 				   priority : 0,
 
-				   take_from :  Memory.rooms['sim'].harv_point,
-				   // { cname: 'AddrHarvPoint',
-				   // 		  x: 35,
-				   // 		  y: 20,
-				   // 		  full: true },
+				   take_from :  {cname: 'AddrHarvPointRef',
+						 id: 'hp1' },
 				   take_to : { cname: 'AddrBuilding',
 					       spawnName: 'Spawn1', },
 				 },

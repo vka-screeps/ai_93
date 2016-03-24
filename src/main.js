@@ -347,6 +347,15 @@ class AddrHarvPoint extends Addr {
     }
 }
 
+class AddrHarvPointRef extends AddrHarvPoint {
+    constructor(d, parent) {
+	super(Memory.rooms[d.room_name].harvPoints[d.id], parent);
+	this.ref_d = d;
+    }
+
+    static cname() { return 'AddrHarvPointRef'; }
+}
+
 // class AddrHarvester extends Addr {
 //     constructor(d, parent) {
 // 	super(d, parent);
@@ -1206,7 +1215,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder, AddrHarvPointRef ];
 
 
 ///////////////////////////////////////////////////////
@@ -1400,6 +1409,7 @@ function getConstrBuildingCapacity(rm, con) {
 function planCreepJobs(rm) {
     // Enable/disable the 'j1' job - JobMinerBasic
     //	if(rm.memory.balance.c1.curCount > 0) {
+    /*
     if(!rm.memory.recoveryMode) {
 	if(!rm.memory.jobs.JobMiner.j1.onhold) {
 	    rm.memory.jobs.JobMiner.j1.onhold = {};
@@ -1409,6 +1419,27 @@ function planCreepJobs(rm) {
     } else {
 	if(rm.memory.jobs.JobMiner.j1.onhold) {
 	    delete rm.memory.jobs.JobMiner.j1.onhold;
+	}
+    }
+    */
+
+    {
+	let minerJobs = rm.memory.jobs.JobMiner;
+	for(let hp_id in rm.memory.harvPoints) {
+	    //let hp = rm.memory.harvPoints;
+	    if(!minerJobs.hp) {
+		let job = { id : hp_id,
+			    cname: 'JobMiner',
+			    taken_by_id: null,
+			    priority : -1,
+			    capacity: 1,
+			    res_id: null,
+			    res_pos : {cname: 'AddrHarvPointRef',
+				       id: hp_id },
+			    drop_id: null,
+			    drop_name: 'Spawn1',
+			  }
+	    }
 	}
     }
 
@@ -1422,7 +1453,7 @@ function planCreepJobs(rm) {
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
 			    priority : 0,
-			    take_from: rm.memory.harv_point,
+			    take_from: rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
 				       tgt_id: con.id },
 			  };
@@ -1443,7 +1474,7 @@ function planCreepJobs(rm) {
 			taken_by_id: null,
 			capacity: con_capacity,
 			priority : 0,
-			take_from: rm.memory.harv_point,
+			take_from: rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
 				   tgt_id: con.id },
 		      };
