@@ -1438,7 +1438,8 @@ function planCreepJobs(rm) {
 				       id: hp_id },
 			    drop_id: null,
 			    drop_name: 'Spawn1',
-			  }
+			  };
+		minerJobs[hp_id] = job;
 	    }
 	}
     }
