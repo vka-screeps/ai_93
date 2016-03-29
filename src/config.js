@@ -191,6 +191,7 @@ function setConfigSim() {
 				   priority : 0,
 
 				   take_from :  {cname: 'AddrHarvPointRef',
+						 roomName: 'sim',
 						 id: 'hp1' },
 				   take_to : { cname: 'AddrBuilding',
 					       spawnName: 'Spawn1', },
