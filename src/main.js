@@ -533,6 +533,10 @@ class JobMiner extends Job {
 		d.res_id = source.id;
 	    }
 	}
+
+	if(!d.drop_id) {
+	    d.drop_id = Game.spawns[d.drop_name].id;
+	}
 	
 	role.workStatus = {
 	    step: 0
@@ -548,79 +552,47 @@ class JobMiner extends Job {
 	let res = Game.getObjectById(d.res_id);
 	let drop = Game.getObjectById(d.drop_id);
 
-	while( true ) {
-	    if(role.workStatus.step === 0) {
-		if(cr.pos.getRangeTo(res) > 1) {
-		    cr.moveTo(res);
-		    break;
-		} else {
-		    role.workStatus.step++;
-		}
-	    }
-
-	    if(role.workStatus.step === 1) {
-		cr.harvest(res);
-		cr.drop(RESOURCE_ENERGY);
-		break;
-	    }
-	}
-
+	let needToCarry = rm.memory.recoveryMode; // || d.res_pos.hasContainer
+	
 	while( true ) {
 
-	    // harvest
-	    if(role.workStatus.step === 0) {
-		if( cr.carry[RESOURCE_ENERGY] < cr.carryCapacity || !rm.memory.recoveryMode ) {
-		    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
-			cr.moveTo(res);
-		    } else {
-			if(!rm.memory.recoveryMode) {
-			    cr.drop(RESOURCE_ENERGY);
+	    if(needToCarry) {
+		if(role.workStatus.step === 0) {
+		    if( cr.carry[RESOURCE_ENERGY] < cr.carryCapacity ) {
+			if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+			    cr.moveTo(res);
 			}
+			break;
+		    } else {
+			role.workStatus.step++;
 		    }
-		    break;
-		} else {
-		    role.workStatus.step++;
 		}
-	    }
 
-	    // deliver
-	    if(role.workStatus.step === 1) {
-		if(cr.carry[RESOURCE_ENERGY] > 0) {
-		    if(!rm.memory.recoveryMode) {
-			cr.drop(RESOURCE_ENERGY);
-		    }
-		} else {
-		    role.workStatus.step++;
-		}
-	    }
-
-	    if(rm.memory.recoveryMode) {
+		// deliver
 		if(role.workStatus.step === 1) {
-		    if(cr.carry[RESOURCE_ENERGY] < cr.carryCapacity) {
-			cr.harvest(res);		
-			break;
-		    } else {
-			role.workStatus.step++;
-		    }
-		}
-
-		if(role.workStatus.step === 2) {
-		    if(cr.pos.getRangeTo(drop) > 1) {
-			cr.moveTo(drop);
-			break;
-		    } else {
-			role.workStatus.step++;		
-		    }
-		}
-
-		if(role.workStatus.step === 3) {
 		    if(cr.carry[RESOURCE_ENERGY] > 0) {
-			cr.transferEnergy(drop);
+			let status = cr.transferEnergy(drop);
+			if(status == ERR_NOT_IN_RANGE ) {
+			    cr.moveTo(drop);
+			} else if(status == OK) {
+			} else {
+			    u.log( 'cr.transferEnergy(drop) returns ' + status, u.LOG_WARN );
+			}
 			break;
 		    } else {
 			role.workStatus.step++;
-		    }	    
+		    }
 		}
+
+		role.workStatus.step = 0;
+	    } else {
+		role.workStatus.step = 0;
+		if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+		    cr.moveTo(res);
+		} else {
+		    cr.drop(RESOURCE_ENERGY);
+		}
+		break;
 	    }
 	    
 	    role.workStatus.step = 0;
