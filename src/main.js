@@ -527,7 +527,7 @@ class JobMiner extends Job {
 	if(!d.res_id) {
 	    if(d.res_pos) {
 		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
-		let pos = f.make(d.res_pos, null).getPos();
+		let pos = f.make(d.res_pos, null).getPos(rm);
 		console.log( 'pos = ' + pos );
 		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
 		d.res_id = source.id;
