@@ -1478,7 +1478,7 @@ function planCreepJobs(rm) {
 		minerJobs[hp_id] = job;
 	    } else {
 		 // 400, 850
-		if(rm.energyCapacityAvailable > 850) {
+		if(rm.memory.recoveryMode || rm.energyCapacityAvailable > 850) {
 		    minerJobs[hp_id].capacity = 1;
 		} else if(rm.energyCapacityAvailable >=400){
 		    minerJobs[hp_id].capacity = 2;
