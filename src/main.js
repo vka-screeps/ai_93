@@ -349,7 +349,7 @@ class AddrHarvPoint extends Addr {
 
 class AddrHarvPointRef extends AddrHarvPoint {
     constructor(d, parent) {
-	super(Memory.rooms[d.room_name].harvPoints[d.id], parent);
+	super(Memory.rooms[d.roomName].harvPoints[d.id], parent);
 	this.ref_d = d;
     }
 
