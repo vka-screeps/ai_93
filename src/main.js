@@ -1476,6 +1476,15 @@ function planCreepJobs(rm) {
 			    drop_name: 'Spawn1',
 			  };
 		minerJobs[hp_id] = job;
+	    } else {
+		 // 400, 850
+		if(rm.energyCapacityAvailable > 850) {
+		    minerJobs[hp_id].capacity = 1;
+		} else if(rm.energyCapacityAvailable >=400){
+		    minerJobs[hp_id].capacity = 2;
+		} else {
+		    minerJobs[hp_id].capacity = 3;
+		}
 	    }
 	}
     }
