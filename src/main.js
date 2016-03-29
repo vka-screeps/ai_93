@@ -526,7 +526,9 @@ class JobMiner extends Job {
 
 	if(!d.res_id) {
 	    if(d.res_pos) {
-		let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+		let pos = f.make(d.res_pos, null).getPos();
+		console.log( 'pos = ' + pos );
 		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
 		d.res_id = source.id;
 	    }
@@ -544,7 +546,7 @@ class JobMiner extends Job {
 	let d = this.d;
 	let role = cr.memory.role;
 	let res = Game.getObjectById(d.res_id);
-	// let drop = Game.getObjectById(d.drop_id);
+	let drop = Game.getObjectById(d.drop_id);
 
 	while( true ) {
 	    if(role.workStatus.step === 0) {
@@ -561,6 +563,67 @@ class JobMiner extends Job {
 		cr.drop(RESOURCE_ENERGY);
 		break;
 	    }
+	}
+
+	while( true ) {
+
+	    // harvest
+	    if(role.workStatus.step === 0) {
+		if( cr.carry[RESOURCE_ENERGY] < cr.carryCapacity || !rm.memory.recoveryMode ) {
+		    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+			cr.moveTo(res);
+		    } else {
+			if(!rm.memory.recoveryMode) {
+			    cr.drop(RESOURCE_ENERGY);
+			}
+		    }
+		    break;
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    // deliver
+	    if(role.workStatus.step === 1) {
+		if(cr.carry[RESOURCE_ENERGY] > 0) {
+		    if(!rm.memory.recoveryMode) {
+			cr.drop(RESOURCE_ENERGY);
+		    }
+		} else {
+		    role.workStatus.step++;
+		}
+	    }
+
+	    if(rm.memory.recoveryMode) {
+		if(role.workStatus.step === 1) {
+		    if(cr.carry[RESOURCE_ENERGY] < cr.carryCapacity) {
+			cr.harvest(res);		
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }
+		}
+
+		if(role.workStatus.step === 2) {
+		    if(cr.pos.getRangeTo(drop) > 1) {
+			cr.moveTo(drop);
+			break;
+		    } else {
+			role.workStatus.step++;		
+		    }
+		}
+
+		if(role.workStatus.step === 3) {
+		    if(cr.carry[RESOURCE_ENERGY] > 0) {
+			cr.transferEnergy(drop);
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }	    
+		}
+	    }
+	    
+	    role.workStatus.step = 0;
 	}
     }
 
