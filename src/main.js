@@ -1397,6 +1397,17 @@ function detectRecoveryMode(rm) {
     }
 }
 
+function countTotalJobsCapacity(jobs) {
+    let count = 0;
+    for(let id in jobs) {
+	let job = jobs[id];
+	let capacity = defaultFor(job.capacity, 1);
+	if(capacity === null) capacity = 1;
+	count = count = capacity;
+    }
+    return capacity;
+}
+
 function nextTickPlanning(rm) {
     // increase defenders count, based on the number of defence jobs
 
@@ -1423,13 +1434,8 @@ function nextTickPlanning(rm) {
 	}
     }
 
-    {
-	let jobs = rm.memory.jobs.JobCarrier;
-	if(jobs) {
-	    let jobs_cnt = Object.keys(jobs).length;
-	    rm.memory.balance.c2.count = jobs_cnt;
-	}
-    }
+    rm.memory.balance.c2.count = countTotalJobsCapacity(rm.memory.jobs.JobCarrier);
+    rm.memory.balance.h2.count = countTotalJobsCapacity(rm.memory.jobs.JobMiner);
 }
 
 function getConstrBuildingCapacity(rm, con) {

@@ -189,7 +189,7 @@ function setConfigSim() {
 				   cname: 'JobCarrier',
 				   taken_by_id: null,
 				   priority : 0,
-				   capacity : 2,
+				   capacity : 1,
 				   take_from :  {cname: 'AddrHarvPointRef',
 						 roomName: 'sim',
 						 id: 'hp1' },
