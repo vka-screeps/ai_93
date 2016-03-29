@@ -1498,6 +1498,7 @@ function planCreepJobs(rm) {
 			    capacity: 1,
 			    res_id: null,
 			    res_pos : {cname: 'AddrHarvPointRef',
+				       roomName: rm.name,
 				       id: hp_id },
 			    drop_id: null,
 			    drop_name: 'Spawn1',
