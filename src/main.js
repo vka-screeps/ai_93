@@ -1434,7 +1434,7 @@ function nextTickPlanning(rm) {
 	}
     }
 
-    rm.memory.balance.c2.count = _.max([0, countTotalJobsCapacity(rm.memory.jobs.JobCarrier)-1]);
+    rm.memory.balance.c2.count = countTotalJobsCapacity(rm.memory.jobs.JobCarrier);
     rm.memory.balance.h2.count = _.max([0, countTotalJobsCapacity(rm.memory.jobs.JobMiner)-1]);
 }
 
