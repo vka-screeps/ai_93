@@ -1403,9 +1403,9 @@ function countTotalJobsCapacity(jobs) {
 	let job = jobs[id];
 	let capacity = defaultFor(job.capacity, 1);
 	if(capacity === null) capacity = 1;
-	count = count = capacity;
+	count = count + capacity;
     }
-    return capacity;
+    return count;
 }
 
 function nextTickPlanning(rm) {
