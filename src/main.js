@@ -1490,7 +1490,7 @@ function planCreepJobs(rm) {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	for(let hp_id in rm.memory.harvPoints) {
 	    //let hp = rm.memory.harvPoints;
-	    if(!minerJobs.hp) {
+	    if(!minerJobs[hp_id]) {
 		let job = { id : hp_id,
 			    cname: 'JobMiner',
 			    taken_by_id: null,
