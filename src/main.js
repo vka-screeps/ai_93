@@ -31,6 +31,14 @@ var F = class {
     }
 
     make(d, parent) {
+	while(d.cname === 'ObjRef') {
+	    let obj = Memory.objects[d.obj_id];
+	    if(!obj) {
+		u.log("Can't find object by id: " + d.obj_id, u.LOG_WARN);
+		return null;
+	    }
+	    d = obj;
+	}
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
 	    // u.log("Instantiating: " + d.cname, u.LOG_INFO); 
@@ -73,6 +81,16 @@ class CMemObj {
 	    return Game.getObjectById(this.d.id);
 
 	u.log( "Can't find object - " + this.getObjLogName(), u.LOG_WARN);
+	return null;
+    }
+
+    makeRef() {
+	if(this.d && this.d.obj_id) {
+	    return { cname: 'ObjRef',
+		     obj_id: this.d.obj_id };
+	} else {
+	    u.log( "Can't makeRef for " + this.getObjLogName(), u.LOG_WARN);
+	}
 	return null;
     }
 }
@@ -347,14 +365,14 @@ class AddrHarvPoint extends Addr {
     }
 }
 
-class AddrHarvPointRef extends AddrHarvPoint {
-    constructor(d, parent) {
-	super(Memory.rooms[d.roomName].harvPoints[d.id], parent);
-	this.ref_d = d;
-    }
+// class AddrHarvPointRef extends AddrHarvPoint {
+//     constructor(d, parent) {
+// 	super(Memory.rooms[d.roomName].harvPoints[d.id], parent);
+// 	this.ref_d = d;
+//     }
 
-    static cname() { return 'AddrHarvPointRef'; }
-}
+//     static cname() { return 'AddrHarvPointRef'; }
+// }
 
 // class AddrHarvester extends Addr {
 //     constructor(d, parent) {
@@ -1250,7 +1268,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder, AddrHarvPointRef ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder/*, AddrHarvPointRef*/ ];
 
 
 ///////////////////////////////////////////////////////
@@ -1468,6 +1486,7 @@ function planCreepJobs(rm) {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	for(let hp_id in rm.memory.harvPoints) {
 	    //let hp = rm.memory.harvPoints;
+	    let chp = f.make(rm.memory.harvPoints[hp_id], null);
 	    if(!minerJobs[hp_id]) {
 		let job = { id : hp_id,
 			    cname: 'JobMiner',
@@ -1475,9 +1494,7 @@ function planCreepJobs(rm) {
 			    priority : -1,
 			    capacity: 1,
 			    res_id: null,
-			    res_pos : {cname: 'AddrHarvPointRef',
-				       roomName: rm.name,
-				       id: hp_id },
+			    res_pos : chp.makeRef(),
 			    drop_id: null,
 			    drop_name: 'Spawn1',
 			  };

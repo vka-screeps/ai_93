@@ -135,6 +135,7 @@ function addObject( obj ) {
 	     obj_id: next_id };
 }
 
+
 function setConfigSim() {
 
     let room_name = 'sim';
@@ -194,9 +195,7 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       capacity : 1,
-				       take_from :  {cname: 'AddrHarvPointRef',
-						     roomName: 'sim',
-						     id: 'hp1' },
+				       take_from :  room_mem.harvPoints.hp1, // copy ref
 				       take_to : { cname: 'AddrBuilding',
 						   spawnName: 'Spawn1', },
 				     },
