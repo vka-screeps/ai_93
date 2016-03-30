@@ -119,7 +119,7 @@ function setConfig() {
 	Memory.next_creep_id = 1;
 };
 
-function addObj( obj ) {
+function addObject( obj ) {
 
     if(!Memory.objects) {
 	Memory.objects = {
