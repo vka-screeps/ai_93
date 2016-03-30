@@ -119,6 +119,21 @@ function setConfig() {
 	Memory.next_creep_id = 1;
 };
 
+function addObj( obj ) {
+
+    if(!Memory.objects) {
+	Memory.objects = {
+	    next_id: 1
+	};
+    }
+    let objects = Memory.objects;
+
+    let next_id = 'id_' + objects.next_id++;
+    obj.obj_id = next_id;
+    objects[next_id] = obj;
+    return { cname: 'ObjRef',
+	     obj_id: next_id };
+}
 
 function setConfigSim() {
 
@@ -132,12 +147,15 @@ function setConfigSim() {
     // SIM CONFIG
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = { cname: 'AddrStoragePoint',
+				  id: 'sp1',
 				  roomName: room_name,
 				  x: 28,
 				  y: 19,
 				  full: true,
 				  storage_id: null,
 				};
+
+	
     }
     
     if(!room_mem.balance) {
@@ -151,15 +169,13 @@ function setConfigSim() {
 	    //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	};
 
-	room_mem.harvPoints = { 'hp1': { cname: 'AddrHarvPoint',
-					 id: 'hp1',
-					 x: 35,
-					 y: 20,
-					 full: true },
-			      };
+	room_mem.objects = {};
 
-
-	
+	room_mem.harvPoints = { 'hp1': addObject( room_mem.objects, { cname: 'AddrHarvPoint',
+								      id: 'hp1',
+								      x: 35,
+								      y: 20,
+								      full: true } ) };
 
 	room_mem.wait_point = {cname: 'AddrPos',
 			       roomName: room_name,
@@ -168,39 +184,6 @@ function setConfigSim() {
 
 	room_mem.jobs = {
 	    'JobMiner' : {},
-	    /*	'JobMiner' : { 'j1': { id : 'j1',
-		cname: 'JobMinerBasic',
-		taken_by_id: null,
-		priority : 0,
-		res_id: null,
-		res_pos : {cname: 'AddrHarvPointRef',
-		id: 'hp1' }
-		drop_id: null,
-		drop_name: 'Spawn1',
-		},
-		'j2': { id : 'j2',
-		cname: 'JobMiner',
-		taken_by_id: null,
-		priority : 1,
-		res_id: null,
-		res_pos : {x: 35, y: 20},
-		},
-		'j3': { id : 'j3',
-		cname: 'JobMiner',
-		taken_by_id: null,
-		priority : 1,
-		res_id: null,
-		res_pos : {x: 35, y: 20},
-		},
-		'j4': { id : 'j4',
-		cname: 'JobMiner',
-		taken_by_id: null,
-		priority : 1,
-		res_id: null,
-		res_pos : {x: 35, y: 20},
-		}		       
-		},
-	    */
 	    'JobCarrier' : { 'jc1' : { id : 'jc1',
 				       cname: 'JobCarrier',
 				       taken_by_id: null,
