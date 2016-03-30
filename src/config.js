@@ -145,6 +145,7 @@ function setConfigSim() {
 
     // room_mem = {};
     // SIM CONFIG
+    /*
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = { cname: 'AddrStoragePoint',
 				  id: 'sp1',
@@ -157,6 +158,7 @@ function setConfigSim() {
 
 	
     }
+    */
     
     if(!room_mem.balance) {
 	room_mem.balance = {
@@ -171,11 +173,11 @@ function setConfigSim() {
 
 	room_mem.objects = {};
 
-	room_mem.harvPoints = { 'hp1': addObject( room_mem.objects, { cname: 'AddrHarvPoint',
-								      id: 'hp1',
-								      x: 35,
-								      y: 20,
-								      full: true } ) };
+	room_mem.harvPoints = { 'hp1': addObject({ cname: 'AddrHarvPoint',
+						   id: 'hp1',
+						   x: 35,
+						   y: 20,
+						   full: true }) };
 
 	room_mem.wait_point = {cname: 'AddrPos',
 			       roomName: room_name,
