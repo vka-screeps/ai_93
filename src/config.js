@@ -138,6 +138,9 @@ function addObj( obj ) {
 function setConfigSim() {
 
     let room_name = 'sim';
+    if(!Memory.rooms[room_name]) {
+	Memory.rooms[room_name] = {};
+    }
     let room_mem = Memory.rooms[room_name];
 
     initMemVars();
