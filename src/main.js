@@ -1588,7 +1588,7 @@ function planCreepJobs(rm) {
 			    priority : -1,
 			    capacity: 1, // todo
 			    take_from :  chp.makeRef(),
-			    take_to : room_mem.storagePoint,
+			    take_to : rm.memory.storagePoint,
 			  };
 		minerJobs[car_job_id] = job;
 	    }
