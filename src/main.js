@@ -1590,7 +1590,7 @@ function planCreepJobs(rm) {
 			    take_from :  chp.makeRef(),
 			    take_to : rm.memory.storagePoint,
 			  };
-		minerJobs[car_job_id] = job;
+		carrierJobs[car_job_id] = job;
 	    }
 	}
     }
