@@ -339,6 +339,8 @@ class AddrStoragePoint extends AddrPos {
     }
     
     give(cr) {
+	let d = this.d;		
+	
 	if(cr.carry[RESOURCE_ENERGY] === 0)
 	    return false;
 
@@ -347,6 +349,8 @@ class AddrStoragePoint extends AddrPos {
 	}
 
 	cr.drop(RESOURCE_ENERGY);
+	d.isActive = true;
+	
 	return true;
     }
 }
