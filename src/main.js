@@ -362,12 +362,25 @@ class AddrHarvPoint extends Addr {
 
     static cname() { return 'AddrHarvPoint'; }
 
-    init() { };
+    init() {
+	/*
+	let d = this.d;		
+	if(!d.res_id) {
+	    if(d.res_pos) {
+		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+		let rm = Game.rooms[d.roomName];
+		let pos = this.getPos(rm);
+		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+		d.res_id = source.id;
+	    }
+	}
+	*/
+    };
 
     getPos(rm) {
 	let d = this.d;	
 	return rm.getPositionAt(d.x, d.y);
-    }    
+    }
 
     move_to(cr, dist) {
 	dist = defaultFor(dist, 3);
@@ -390,7 +403,7 @@ class AddrHarvPoint extends Addr {
 		return false;
 	}
 
-	if(this.move_to(cr, 2)) {
+	if(this.move_to(cr, 1)) {
 	    return true;
 	}	
 

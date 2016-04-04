@@ -157,6 +157,7 @@ function setConfigSim() {
     {
 	room_mem.harvPoints.hp1 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp1',
+					      roomName: room_name,
 					      x: 35,
 					      y: 20,
 					      full: true })
