@@ -1604,7 +1604,7 @@ function planCreepJobs(rm) {
 		}
 
 		if(chp.d.maxCapacity && (chp.d.maxCapacity < minerJobs[hp_id].capacity))
-		    minerJobs[hp_id].capacity = chp.d.maxCapacity
+		    minerJobs[hp_id].capacity = chp.d.maxCapacity;
 	    }
 
 	    let car_job_id = 'carry_'+hp_id;
