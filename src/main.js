@@ -310,7 +310,7 @@ class AddrStoragePoint extends AddrPos {
 
 	if(d.isActive) {
 
-	    if(move_to(cr, 3)) {
+	    if(this.move_to(cr, 3)) {
 		return true;
 	    }
 
@@ -342,7 +342,7 @@ class AddrStoragePoint extends AddrPos {
 	if(cr.carry[RESOURCE_ENERGY] === 0)
 	    return false;
 
-	if(move_to(cr, 0)) {
+	if(this.move_to(cr, 0)) {
 	    return true;
 	}
 
@@ -386,7 +386,7 @@ class AddrHarvPoint extends Addr {
 		return false;
 	}
 
-	if(move_to(cr, 3)) {
+	if(this.move_to(cr, 3)) {
 	    return true;
 	}	
 
