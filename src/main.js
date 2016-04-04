@@ -408,7 +408,7 @@ class AddrHarvPoint extends Addr {
 		return false;
 	}
 
-	if(this.move_to(cr, 1)) {
+	if(this.move_to(cr, 3)) {
 	    return true;
 	}	
 
