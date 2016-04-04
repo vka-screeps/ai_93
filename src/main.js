@@ -365,13 +365,11 @@ class AddrHarvPoint extends Addr {
     init() {
 	let d = this.d;		
 	if(!d.res_id) {
-	    if(d.res_pos) {
-		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
-		let rm = Game.rooms[d.roomName];
-		let pos = this.getPos(rm);
-		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-		d.res_id = source.id;
-	    }
+	    // let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
+	    let rm = Game.rooms[d.roomName];
+	    let pos = this.getPos(rm);
+	    let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+	    d.res_id = source.id;
 	}
     };
 
