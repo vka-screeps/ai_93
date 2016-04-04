@@ -1609,7 +1609,7 @@ function planCreepJobs(rm) {
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
 			    priority : 0,
-			    take_from: rm.memory.harvPoints.hp1,
+			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
 				       tgt_id: con.id },
 			  };
@@ -1630,7 +1630,7 @@ function planCreepJobs(rm) {
 			taken_by_id: null,
 			capacity: con_capacity,
 			priority : 0,
-			take_from: rm.memory.harvPoints.hp1,
+			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
 				   tgt_id: con.id },
 		      };
