@@ -379,10 +379,8 @@ class AddrHarvPoint extends Addr {
     }
 
     move_to(cr, dist) {
-	u.log("move_to ", u.LOG_INFO);
 	dist = defaultFor(dist, 3);
 
-	this.init();
 	let d = this.d;
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
@@ -401,8 +399,6 @@ class AddrHarvPoint extends Addr {
     }
     
     take(cr) {
-	u.log("take ", u.LOG_INFO);
-	
 	let d = this.d;		
 	if(d.full) {
 	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
@@ -980,6 +976,7 @@ class JobBuilder extends Job {
 			if(tgt) {
 			    let p = tgt.pos;
 			    d.take_from_local = { cname: 'AddrPos',
+						  roomName: rm.name,
 						  x: p.x,
 						  y: p.y,
 						  dist: 3};
@@ -1633,6 +1630,7 @@ function planCreepJobs(rm) {
 			    priority : 0,
 			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
+				       roomName: rm.name,
 				       tgt_id: con.id },
 			  };
 
@@ -1654,6 +1652,7 @@ function planCreepJobs(rm) {
 			priority : 0,
 			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
+				   roomName: rm.name,
 				   tgt_id: con.id },
 		      };
 

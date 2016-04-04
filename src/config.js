@@ -204,6 +204,7 @@ function setConfigSim() {
 				       // take_from :  room_mem.harvPoints.hp1, // copy ref
 				       take_from :  room_mem.storagePoint,
 				       take_to : { cname: 'AddrBuilding',
+						   roomName: room_name,
 						   spawnName: 'Spawn1', },
 				     },
 			     
@@ -213,6 +214,7 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       def_pos : {cname: 'AddrPos',
+						  roomName: room_name,
 						  x: 29,
 						  y: 27 },
 				     },
@@ -221,6 +223,7 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       def_pos : {cname: 'AddrPos',
+						  roomName: room_name,
 						  x: 27,
 						  y: 25 },
 				     },
@@ -229,6 +232,7 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       def_pos : {cname: 'AddrPos',
+						  roomName: room_name,
 						  x: 27,
 						  y: 25 },
 				     },
