@@ -819,12 +819,13 @@ class JobCarrier extends Job {
 
 	while( true ) {
 	    if(role.workStatus.step === 0) {
-		let tf = f.make(d.take_from);
-		if(tf.move_to(cr)) {
-		    break;
-		} else {
-		    role.workStatus.step++;
-		}
+		// let tf = f.make(d.take_from);
+		// if(tf.move_to(cr)) {
+		//     break;
+		// } else {
+		//     role.workStatus.step++;
+		// }
+		role.workStatus.step++;
 	    }
 
 	    if(role.workStatus.step === 1) {
@@ -1054,13 +1055,13 @@ class JobSupplyBulder extends Job {
 	    }
 	    
 	    if(role.workStatus.step === 0) {
-		let tf = f.make(d.take_from);
-		if(tf.move_to(cr)) {
-		    break;
-		} else {
-		    role.workStatus.step++;
-		}
-		
+		// let tf = f.make(d.take_from);
+		// if(tf.move_to(cr)) {
+		//     break;
+		// } else {
+		//     role.workStatus.step++;
+		// }
+		role.workStatus.step++;
 	    }
 
 	    if(role.workStatus.step === 1) {
