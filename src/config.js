@@ -164,16 +164,16 @@ function setConfigSim() {
 
     
     if(!room_mem.storagePoint) {
-	room_mem.storagePoint = { cname: 'AddrStoragePoint',
-				  id: 'sp1',
-				  roomName: room_name,
-				  x: 28,
-				  y: 19,
-				  full: true,
-				  storage_id: null,
-				  isActive: false,
-				  backup_point: room_mem.harvPoints.hp1,
-				};
+	room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
+					     id: 'sp1',
+					     roomName: room_name,
+					     x: 28,
+					     y: 19,
+					     full: true,
+					     storage_id: null,
+					     isActive: false,
+					     backup_point: room_mem.harvPoints.hp1,
+					   } );
     }
     
     if(!room_mem.balance) {
