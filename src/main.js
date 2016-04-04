@@ -1552,6 +1552,8 @@ function planCreepJobs(rm) {
 
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
+	let carrierJobs = rm.memory.jobs.JobCarrier;
+	
 	for(let hp_id in rm.memory.harvPoints) {
 	    //let hp = rm.memory.harvPoints;
 	    let chp = f.make(rm.memory.harvPoints[hp_id], null);
@@ -1576,6 +1578,19 @@ function planCreepJobs(rm) {
 		} else {
 		    minerJobs[hp_id].capacity = 3;
 		}
+	    }
+
+	    let car_job_id = 'carry_'+hp_id;
+	    if(!carrierJobs[car_job_id]) {
+		let job = { id : car_job_id,
+			    cname: 'JobCarrier',
+			    taken_by_id: null,
+			    priority : -1,
+			    capacity: 1, // todo
+			    take_from :  chp.makeRef(),
+			    take_to : room_mem.storagePoint,
+			  };
+		minerJobs[car_job_id] = job;
 	    }
 	}
     }
