@@ -381,6 +381,7 @@ class AddrHarvPoint extends Addr {
     }
 
     move_to(cr, dist) {
+	u.log("move_to ", u.LOG_INFO);
 	dist = defaultFor(dist, 3);
 
 	this.init();
