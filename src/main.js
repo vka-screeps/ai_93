@@ -930,7 +930,7 @@ class JobBuilder extends Job {
 	// console.log( 'path ' + tfp + ', ' + ttp + ', ' + tfp.findPathTo(ttp) );
 
 	//	if(tfp && ttp && tfp.findPathTo(ttp).length > 10) {
-	if(tfp && ttp && tfp.getRangeTo(ttp) > 10) {
+	if(tfp && ttp && tfp.getRangeTo(ttp) > 8) {
 	    // create JobSupplyBulder for this job
 	    let car_jobs = rm.memory.jobs['JobCarrier'];
 	    let car_job_id = 'help_' + d.id;
