@@ -289,6 +289,68 @@ class AddrPos extends Addr {
     }
 }
 
+class AddrStoragePoint extends AddrPos {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrStoragePoint'; }
+
+    init() { };
+
+    take(cr) {
+	let d = this.d;		
+	if(d.full) {
+	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+		return false;
+	} else {
+	    if(cr.carry[RESOURCE_ENERGY] > 0)
+		return false;
+	}
+
+	if(d.isActive) {
+
+	    if(move_to(cr, 3)) {
+		return true;
+	    }
+
+	    let rm = Game.rooms[cr.pos.roomName];
+	    let p = this.getPos(rm);
+	    // look for dropped energy
+	    {
+		let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
+		if(targets.length > 0) {
+		    let target = cr.pos.findClosestByRange(targets);
+		    if(cr.pos.getRangeTo(target)>1){
+			cr.moveTo(target);
+		    } else {
+			cr.pickup(target);
+		    }
+		    return true;
+		}
+	    }	
+	    
+	    return true;
+	} else {
+	    // use backup position
+	    let cbackup = f.make(d.backup_point, null);
+	    return cbackup.take(cr);
+	}
+    }
+    
+    give(cr) {
+	if(cr.carry[RESOURCE_ENERGY] === 0)
+	    return false;
+
+	if(move_to(cr, 0)) {
+	    return true;
+	}
+
+	cr.drop(RESOURCE_ENERGY);
+	return true;
+    }
+}
+
 class AddrHarvPoint extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -323,6 +385,10 @@ class AddrHarvPoint extends Addr {
 	    if(cr.carry[RESOURCE_ENERGY] > 0)
 		return false;
 	}
+
+	if(move_to(cr, 3)) {
+	    return true;
+	}	
 
 	let rm = Game.rooms[cr.pos.roomName];
 	let p = this.getPos(rm);
@@ -1268,7 +1334,8 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder/*, AddrHarvPointRef*/ ];
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
+		   AddrStoragePoint/*, AddrHarvPointRef*/ ];
 
 
 ///////////////////////////////////////////////////////

@@ -149,7 +149,20 @@ function setConfigSim() {
 
     // room_mem = {};
     // SIM CONFIG
-    /*
+    if(!room_mem.harvPoints) {
+	room_mem.harvPoints = {};
+    }
+
+    if(!room_mem.harvPoints.hp1)
+    {
+	room_mem.harvPoints.hp1 = addObject({ cname: 'AddrHarvPoint',
+					      id: 'hp1',
+					      x: 35,
+					      y: 20,
+					      full: true })
+    }
+
+    
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = { cname: 'AddrStoragePoint',
 				  id: 'sp1',
@@ -158,11 +171,10 @@ function setConfigSim() {
 				  y: 19,
 				  full: true,
 				  storage_id: null,
+				  isActive: false,
+				  backup_point: room_mem.harvPoints.hp1,
 				};
-
-	
     }
-    */
     
     if(!room_mem.balance) {
 	room_mem.balance = {
@@ -175,13 +187,6 @@ function setConfigSim() {
 	    //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	};
 
-	room_mem.objects = {};
-
-	room_mem.harvPoints = { 'hp1': addObject({ cname: 'AddrHarvPoint',
-						   id: 'hp1',
-						   x: 35,
-						   y: 20,
-						   full: true }) };
 
 	room_mem.wait_point = {cname: 'AddrPos',
 			       roomName: room_name,
@@ -195,7 +200,8 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       capacity : 1,
-				       take_from :  room_mem.harvPoints.hp1, // copy ref
+				       // take_from :  room_mem.harvPoints.hp1, // copy ref
+				       take_from :  room_mem.storagePoint,
 				       take_to : { cname: 'AddrBuilding',
 						   spawnName: 'Spawn1', },
 				     },
