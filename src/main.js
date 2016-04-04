@@ -403,6 +403,8 @@ class AddrHarvPoint extends Addr {
     }
     
     take(cr) {
+	u.log("take ", u.LOG_INFO);
+	
 	let d = this.d;		
 	if(d.full) {
 	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
