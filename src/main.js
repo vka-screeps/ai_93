@@ -696,7 +696,8 @@ class JobMiner extends Job {
 		if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
 		    cr.moveTo(res);
 		} else {
-		    cr.drop(RESOURCE_ENERGY);
+		    if(cr.carry[RESOURCE_ENERGY] > 40)
+			cr.drop(RESOURCE_ENERGY);
 		}
 		break;
 	    }
