@@ -363,7 +363,6 @@ class AddrHarvPoint extends Addr {
     static cname() { return 'AddrHarvPoint'; }
 
     init() {
-	/*
 	let d = this.d;		
 	if(!d.res_id) {
 	    if(d.res_pos) {
@@ -374,7 +373,6 @@ class AddrHarvPoint extends Addr {
 		d.res_id = source.id;
 	    }
 	}
-	*/
     };
 
     getPos(rm) {
@@ -385,10 +383,20 @@ class AddrHarvPoint extends Addr {
     move_to(cr, dist) {
 	dist = defaultFor(dist, 3);
 
+	this.init();
 	let d = this.d;
-	if(cr.pos.getRangeTo(d.x, d.y) > dist) {
-	    cr.moveTo(d.x, d.y);
-	    return true;
+	if(d.res_id) {
+	    let res = Game.getObjectById(d.res_id);
+	    if(cr.pos.getRangeTo(res) > dist) {
+		u.log("Moving to object " + res, u.LOG_INFO);
+		cr.moveTo(res);
+		return true;
+	    }
+	} else {
+	    if(cr.pos.getRangeTo(d.x, d.y) > dist) {
+		cr.moveTo(d.x, d.y);
+		return true;
+	    }
 	}
 	return false;
     }
