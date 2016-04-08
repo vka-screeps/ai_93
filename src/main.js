@@ -308,33 +308,46 @@ class AddrStoragePoint extends AddrPos {
 		return false;
 	}
 
-	if(d.isActive) {
+	let threshold = 500;
+	let cjob = getCreepsJob(cr);
+	if(cjob && cjob.d.priority < 10) {
+	    threshold = 0;
+	}
 
-	    if(this.move_to(cr, 3)) {
-		return true;
-	    }
+	if(this.getAmount() > threshold) {
+	    if(d.isActive) {
 
-	    let rm = Game.rooms[cr.pos.roomName];
-	    let p = this.getPos(rm);
-	    // look for dropped energy
-	    {
-		let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
-		if(targets.length > 0) {
-		    let target = cr.pos.findClosestByRange(targets);
-		    if(cr.pos.getRangeTo(target)>1){
-			cr.moveTo(target);
-		    } else {
-			cr.pickup(target);
-		    }
+		if(this.move_to(cr, 3)) {
 		    return true;
 		}
-	    }	
-	    
-	    return true;
+
+		let rm = Game.rooms[d.roomName];
+		let p = this.getPos(rm);
+		// look for dropped energy
+		{
+		    let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
+		    if(targets.length > 0) {
+			let target = cr.pos.findClosestByRange(targets);
+			if(cr.pos.getRangeTo(target)>1){
+			    cr.moveTo(target);
+			} else {
+			    cr.pickup(target);
+			}
+			return true;
+		    }
+		}	
+		
+		return true;
+	    } else {
+		// use backup position
+		let cbackup = f.make(d.backup_point, null);
+		return cbackup.take(cr);
+	    }
 	} else {
-	    // use backup position
-	    let cbackup = f.make(d.backup_point, null);
-	    return cbackup.take(cr);
+	    let rm = Game.rooms[d.roomName];
+	    let cp = f.make(rm.memory.wait_point, null);
+	    cp.move_to(cr);
+	    return true; 
 	}
     }
 
@@ -354,6 +367,25 @@ class AddrStoragePoint extends AddrPos {
 	
 	return true;
     }
+
+    getAmount() {
+	let d = this.d;		
+
+	let rm = Game.rooms[d.roomName];
+	let p = this.getPos(rm);
+
+	if(Game.time != d.updTime) {
+	    // calculate amount
+	    d.updTime = Game.time;
+	    let energy = 0;
+	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 0);
+	    if(targets.length > 0) {
+		targets.forEach(function(e) { energy += e.energy } );
+	    }
+	}
+    }
+
+    
 }
 
 class AddrHarvPoint extends Addr {
@@ -1635,7 +1667,7 @@ function planCreepJobs(rm) {
 		let job = { id: con_job_id,
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
-			    priority : 0,
+			    priority : 20,
 			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
 				       roomName: rm.name,
@@ -1657,7 +1689,7 @@ function planCreepJobs(rm) {
 			cname: 'JobBuilder',
 			taken_by_id: null,
 			capacity: con_capacity,
-			priority : 0,
+			priority : 20,
 			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
 				   roomName: rm.name,
