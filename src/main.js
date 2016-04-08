@@ -953,6 +953,7 @@ function getCreepsJob(cr) {
 	    }
 	}
     }
+    u.log("Can't find job for creep " + cr.name, u.LOG_WARN);
     return null;
 }
 
