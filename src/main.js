@@ -374,7 +374,7 @@ class AddrStoragePoint extends AddrPos {
 	let rm = Game.rooms[d.roomName];
 	let p = this.getPos(rm);
 
-	if(Game.time != d.updTime) {
+	if(!d.updTime || (Game.time != d.updTime)) {
 	    // calculate amount
 	    d.updTime = Game.time;
 	    let energy = 0;
@@ -382,7 +382,10 @@ class AddrStoragePoint extends AddrPos {
 	    if(targets.length > 0) {
 		targets.forEach(function(e) { energy += e.energy } );
 	    }
+	    d.energy = energy;
 	}
+
+	return d.energy;
     }
 
     
