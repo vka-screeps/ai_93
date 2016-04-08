@@ -337,6 +337,7 @@ class AddrStoragePoint extends AddrPos {
 	    return cbackup.take(cr);
 	}
     }
+
     
     give(cr) {
 	let d = this.d;		
@@ -1529,6 +1530,7 @@ function nextTickPlanning(rm) {
 	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
     }
     */
+    /*
     {
 	let jobs = rm.memory.jobs.JobBuilder;
 	if(jobs) {
@@ -1538,12 +1540,14 @@ function nextTickPlanning(rm) {
 		jobs_cnt += cjob.getCapacity();
 	    });
 	    // jobs_cnt = jobs_cnt/2;
-	    if(jobs_cnt>5)
-		jobs_cnt = 5;
+	    if(jobs_cnt>3)
+		jobs_cnt = 3;
 	    rm.memory.balance.b1.count = jobs_cnt;
 	}
     }
+*/
 
+    rm.memory.balance.b1.count = _.min([3, countTotalJobsCapacity(rm.memory.jobs.JobBuilder)]);
     rm.memory.balance.c2.count = countTotalJobsCapacity(rm.memory.jobs.JobCarrier);
     rm.memory.balance.h2.count = _.max([0, countTotalJobsCapacity(rm.memory.jobs.JobMiner)-1]);
 }
@@ -1604,7 +1608,7 @@ function planCreepJobs(rm) {
 		}
 
 		if(chp.d.maxCapacity && (chp.d.maxCapacity < minerJobs[hp_id].capacity))
-		    minerJobs[hp_id].capacity = chp.d.maxCapacity
+		    minerJobs[hp_id].capacity = chp.d.maxCapacity;
 	    }
 
 	    let car_job_id = 'carry_'+hp_id;
