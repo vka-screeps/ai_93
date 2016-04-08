@@ -1099,7 +1099,7 @@ class JobSupplyBulder extends Job {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		if(tt.move_to(cr, 2)) {
+		if(tt.move_to(cr, 3)) {
 		    break;
 		} else {
 		    role.workStatus.step++;
