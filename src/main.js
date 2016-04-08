@@ -314,7 +314,7 @@ class AddrStoragePoint extends AddrPos {
 	    threshold = 0;
 	}
 
-	if(this.getAmount() > threshold) {
+	if(this.getAmount() >= threshold) {
 	    if(d.isActive) {
 
 		if(this.move_to(cr, 3)) {
