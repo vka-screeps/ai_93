@@ -933,6 +933,29 @@ class JobCarrier extends Job {
     }    
 }
 
+function getCreepRoom(cr) {
+    return Game.rooms[cr.pos.roomName];
+}
+
+function getCreepsJob(cr) {
+    let role = cr.memory.role;
+    let rm = getCreepRoom(cr);
+    
+    if(role) {
+	let job_id = role.job_id;
+	if(job_id) {
+	    let jobs = rm.memory.jobs[role.name];
+	    if(jobs) {
+		let job = jobs[role.job_id];
+		if(job) {
+		    return f.make(job, null);
+		}
+	    }
+	}
+    }
+    return null;
+}
+
 function helper_clone(o) {
     var newObj = {};
 
