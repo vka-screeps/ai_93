@@ -404,7 +404,7 @@ class AddrStoragePoint extends AddrPos {
 	    let containers = {};
 	    {
 		
-		let targets = p.findInRange(FIND_MY_STRUCTURES, 2
+		let targets = p.findInRange(FIND_STRUCTURES, 2
 					    // , { filter: { structureType: STRUCTURE_CONTAINER }}
 					   // { filter: { structureType: STRUCTURE_CONTAINER } }
 					   );
