@@ -334,6 +334,13 @@ class AddrStoragePoint extends AddrPos {
 			    cr.pickup(target);
 			}
 			return true;
+		    } else {
+			let tgt = _.find(d.containers, function(o) { return o.energy >50; });
+			if(tgt) {
+			    if( tgt.transferEnergy(cr) == ERR_NOT_IN_RANGE ) {
+				cr.moveTo(tgt);
+			    }			    
+			}
 		    }
 		}	
 		
@@ -353,17 +360,28 @@ class AddrStoragePoint extends AddrPos {
 
     
     give(cr) {
-	let d = this.d;		
-	
+	let d = this.d;
+
 	if(cr.carry[RESOURCE_ENERGY] === 0)
 	    return false;
 
-	if(this.move_to(cr, 0)) {
-	    return true;
-	}
+	this.getAmount(); // refresh cash data
 
-	cr.drop(RESOURCE_ENERGY);
-	d.isActive = true;
+	let tgt = _.find(d.containers, {isFull: false});
+	if(tgt) {
+	    if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+		return true;
+	    }
+	    d.isActive = true;
+	} else {
+	    if(this.move_to(cr, 0)) {
+		return true;
+	    }
+
+	    cr.drop(RESOURCE_ENERGY);
+	    d.isActive = true;
+	}
 	
 	return true;
     }
@@ -382,6 +400,21 @@ class AddrStoragePoint extends AddrPos {
 	    if(targets.length > 0) {
 		targets.forEach(function(e) { energy += e.energy } );
 	    }
+	    d.containers = {};
+	    let containers = {};
+	    {
+		let targets = p.findInRange(FIND_MY_STRUCTURES, 1, { filter: { structureType: STRUCTURE_CONTAINER } });
+		if(targets.length > 0) {
+		    targets.forEach(function(c) {
+			let e = c.store[RESOURCE_ENERGY];
+			containers[c.id] = { energy: e,
+					     isFull: _.sum(c.store) >= c.storeCapacity
+					   };
+			energy+= e;
+		    } );
+		};
+	    }
+	    d.containers = containers;
 	    d.energy = energy;
 	}
 
