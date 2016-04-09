@@ -403,11 +403,12 @@ class AddrStoragePoint extends AddrPos {
 	    d.containers = {};
 	    let containers = {};
 	    {
+		
 		let targets = p.findInRange(FIND_MY_STRUCTURES, 2
 					    // , { filter: { structureType: STRUCTURE_CONTAINER }}
 					   // { filter: { structureType: STRUCTURE_CONTAINER } }
 					   );
-		console.log(targets);
+		console.log("point " + p " - " + targets);
 		if(targets.length > 0) {
 		    targets.forEach(function(c) {
 			let e = c.store[RESOURCE_ENERGY];
