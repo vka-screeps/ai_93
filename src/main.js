@@ -335,7 +335,7 @@ class AddrStoragePoint extends AddrPos {
 			}
 			return true;
 		    } else {
-			let tgt1 = _.find(d.containers, function(o) { return o.energy >50; });
+			let tgt1 = _.find(d.containers, function(o) { return o.energy>0; });
 			if(tgt1) {
 			    let tgt = Game.getObjectById(tgt1.id);
 			    if( tgt.transfer(cr, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
