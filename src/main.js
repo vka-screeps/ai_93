@@ -370,7 +370,7 @@ class AddrStoragePoint extends AddrPos {
 	let tgt = _.find(d.containers, {isFull: false});
 	if(tgt) {
 	    let status = cr.transfer(tgt, RESOURCE_ENERGY);
-	    console.log( "transfer = " + status );
+	    console.log( "transfer = " + tgt + status );
 	    if(status == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
 		return true;
