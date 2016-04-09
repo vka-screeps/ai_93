@@ -335,8 +335,9 @@ class AddrStoragePoint extends AddrPos {
 			}
 			return true;
 		    } else {
-			let tgt = _.find(d.containers, function(o) { return o.energy >50; });
-			if(tgt) {
+			let tgt1 = _.find(d.containers, function(o) { return o.energy >50; });
+			if(tgt1) {
+			    let tgt = Game.getObjectById(tgt1.id);
 			    if( tgt.transferEnergy(cr) == ERR_NOT_IN_RANGE ) {
 				cr.moveTo(tgt);
 			    }			    
@@ -367,8 +368,9 @@ class AddrStoragePoint extends AddrPos {
 
 	this.getAmount(); // refresh cash data
 
-	let tgt = _.find(d.containers, {isFull: false});
-	if(tgt) {
+	let tgt1 = _.find(d.containers, {isFull: false});
+	if(tgt1) {
+	    let tgt = Game.getObjectById(tgt1.id);
 	    let status = cr.transfer(tgt, RESOURCE_ENERGY);
 	    console.log( "transfer = " + tgt.id + status );
 	    if(status == ERR_NOT_IN_RANGE ) {
@@ -410,7 +412,8 @@ class AddrStoragePoint extends AddrPos {
 		if(targets.length > 0) {
 		    targets.forEach(function(c) {
 			let e = c.store[RESOURCE_ENERGY];
-			containers[c.id] = { energy: e,
+			containers[c.id] = { id: c.id,
+					     energy: e,
 					     isFull: _.sum(c.store) >= c.storeCapacity
 					   };
 			energy+= e;
