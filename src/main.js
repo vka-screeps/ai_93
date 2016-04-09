@@ -369,7 +369,9 @@ class AddrStoragePoint extends AddrPos {
 
 	let tgt = _.find(d.containers, {isFull: false});
 	if(tgt) {
-	    if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
+	    let status = cr.transfer(tgt, RESOURCE_ENERGY);
+	    console.log("transfer = " + status;
+	    if(status == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
 		return true;
 	    }
@@ -404,11 +406,7 @@ class AddrStoragePoint extends AddrPos {
 	    let containers = {};
 	    {
 		
-		let targets = p.findInRange(FIND_STRUCTURES, 2
-					    // , { filter: { structureType: STRUCTURE_CONTAINER }}
-					   // { filter: { structureType: STRUCTURE_CONTAINER } }
-					   );
-		console.log("point " + p +  " - " + targets);
+		let targets = p.findInRange(FIND_STRUCTURES, 1 ,{ filter: { structureType: STRUCTURE_CONTAINER }} );
 		if(targets.length > 0) {
 		    targets.forEach(function(c) {
 			let e = c.store[RESOURCE_ENERGY];
