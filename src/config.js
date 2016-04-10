@@ -173,6 +173,7 @@ function setConfigSim() {
 					      full: true });
     }
 
+    /*
     if(!room_mem.harvPoints.hp3) {
 	room_mem.harvPoints.hp3 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp3',
@@ -181,7 +182,8 @@ function setConfigSim() {
 					      x: 43,
 					      y: 44,
 					      full: true });
-    }    
+    }
+    */    
     
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
