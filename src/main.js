@@ -1317,7 +1317,7 @@ var designRegistry = {
     // builder
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
     // slow builder
-    'd_b2' : [ WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK ],    
+    // 'd_b2' : [ WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK ],    
     'd_def1' : [ TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ]
 };
 
@@ -1336,9 +1336,11 @@ function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
 	if(design == 'd_h1') {
-	    return [WORK, CARRY, MOVE];
+	    return { work: 1, carry: 1, move: 1};
+	    // return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
-	    return [CARRY, CARRY, MOVE];
+	    return { carry: 2, move: 1};
+	    // return [CARRY, CARRY, MOVE];
 	} 
     }
 
@@ -1347,32 +1349,56 @@ function getDesign( design, sp, rm ) {
     let proto = designRegistry[design];
     if(!proto) {
 	u.log("Can't find design: " + design, u.LOG_WARN);
-	return [WORK, WORK, CARRY, MOVE];	
+	return { work: 2, carry: 1, move: 1};
+	// return [WORK, WORK, CARRY, MOVE];	
     }
 
     let i=0;
     let cost = 0;
-    let ret = [ ];
+    let ret = {};
     while(cost < energy) {
 	let next =  proto[i++];
 	if(!next)
 	    break;
 
-	cost = cost + costRegistry[next];
+	let cost1 = cost + costRegistry[next];
 	
-	if(cost > energy)
-	    break;
+	if(cost1 > energy)
+	    continue;
+	
+	cost = cost1;
 
-	if(next === TOUGH) {
-	    ret = [TOUGH].concat(ret);
+	if(!ret[next]) {
+	    ret[next] = 1;
 	} else {
-	    ret.push(next);
+	    ret[next]++;
 	}
+	// if(next === TOUGH) {
+	//     ret = [TOUGH].concat(ret);
+	// } else {
+	//     ret.push(next);
+	// }
     }
 
     u.log("Design for " + design + " - " + ret, u.LOG_INFO);
     
     return ret;
+}
+
+function getBodyFromDesign(design) {
+    let body = [];
+    Object.keys(design).forEach(function(key) {
+	let cnt = design[key];
+	let t = new Array(cnt);
+	t.fill(TOUGH);
+	
+	if(key === TOUGH) {
+	    body  = t.concat(body);
+	} else {
+	    body = body.concat(t);
+	}
+    });
+    return body;
 }
 
 class JobSpawn extends Job {
@@ -1405,7 +1431,9 @@ class JobSpawn extends Job {
 		},
 	    };
 
-	    let body = getDesign(d.design, spawn, rm);
+	    let design = getDesign(d.design, spawn, rm);
+	    let body = getBodyFromDesign(design);
+	    mem.design = design;
 	    
 	    u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
 	    
