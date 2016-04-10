@@ -443,7 +443,7 @@ class AddrHarvPoint extends Addr {
 	    // let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
 	    let rm = Game.rooms[d.roomName];
 	    let pos = this.getPos(rm);
-	    let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+	    let source = pos.findClosestByRange(FIND_SOURCES);
 	    d.res_id = source.id;
 	}
     };
