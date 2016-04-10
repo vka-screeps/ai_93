@@ -1347,7 +1347,7 @@ function getDesign( design, sp, rm ) {
     let energy = rm.energyCapacityAvailable;    
 
     if(!rm.memory.savedDsgn || rm.memory.savedDsgn.energy !== energy)
-	savedDsgn = {energy: energy};
+	rm.memory.savedDsgn = {energy: energy};
     let savedDsgn = rm.memory.savedDsgn;
 
     if(savedDsgn[design]) {
