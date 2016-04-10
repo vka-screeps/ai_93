@@ -1390,7 +1390,7 @@ function getBodyFromDesign(design) {
     Object.keys(design).forEach(function(key) {
 	let cnt = design[key];
 	let t = new Array(cnt);
-	t.fill(TOUGH);
+	t.fill(key);
 	
 	if(key === TOUGH) {
 	    body  = t.concat(body);
