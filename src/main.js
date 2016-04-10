@@ -710,7 +710,7 @@ class JobMiner extends Job {
 		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
 		let pos = f.make(d.res_pos, null).getPos(rm);
 		console.log( 'pos = ' + pos );
-		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+		let source = pos.findClosestByRange(FIND_SOURCES);
 		d.res_id = source.id;
 	    }
 	}
@@ -802,7 +802,7 @@ class JobMinerBasic extends Job {
 	if(!d.res_id) {
 	    if(d.res_pos) {
 		let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
-		let source = pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+		let source = pos.findClosestByRange(FIND_SOURCES);
 		d.res_id = source.id;
 	    }
 	}
