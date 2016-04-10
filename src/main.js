@@ -1344,7 +1344,17 @@ function getDesign( design, sp, rm ) {
 	} 
     }
 
-    let energy = rm.energyCapacityAvailable;
+    let energy = rm.energyCapacityAvailable;    
+
+    if(!rm.memory.savedDsgn || rm.memory.savedDsgn.energy !== energy)
+	savedDsgn = {energy: energy};
+    let savedDsgn = rm.memory.savedDsgn;
+
+    if(savedDsgn[design]) {
+	// return from cache
+	// u.log("Design for " + design + " - " + ret, u.LOG_INFO);
+	return savedDsgn[design];
+    }
     
     let proto = designRegistry[design];
     if(!proto) {
@@ -1381,6 +1391,7 @@ function getDesign( design, sp, rm ) {
     }
 
     u.log("Design for " + design + " - " + ret, u.LOG_INFO);
+    savedDsgn[design] = ret;
     
     return ret;
 }
@@ -1707,6 +1718,7 @@ function planCreepJobs(rm) {
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	let carrierJobs = rm.memory.jobs.JobCarrier;
+	let curMinerWorkCnt = getDesign('d_h1', null, rm)[WORK];
 	
 	for(let hp_id in rm.memory.harvPoints) {
 	    //let hp = rm.memory.harvPoints;
@@ -1725,12 +1737,18 @@ function planCreepJobs(rm) {
 		minerJobs[hp_id] = job;
 	    } else {
 		 // 400, 850
-		if(rm.memory.recoveryMode || rm.energyCapacityAvailable > 850) {
+		// if(rm.memory.recoveryMode || rm.energyCapacityAvailable > 850) {
+		//     minerJobs[hp_id].capacity = 1;
+		// } else if(rm.energyCapacityAvailable >=400){
+		//     minerJobs[hp_id].capacity = 2;
+		// } else {
+		//     minerJobs[hp_id].capacity = 3;
+		// }
+
+		if(rm.memory.recoveryMode) {
 		    minerJobs[hp_id].capacity = 1;
-		} else if(rm.energyCapacityAvailable >=400){
-		    minerJobs[hp_id].capacity = 2;
 		} else {
-		    minerJobs[hp_id].capacity = 3;
+		    minerJobs[hp_id].capacity = Math.ceil( 6 / curMinerWorkCnt );
 		}
 
 		if(chp.d.maxCapacity && (chp.d.maxCapacity < minerJobs[hp_id].capacity))
