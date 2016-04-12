@@ -721,9 +721,6 @@ class JobMiner extends Job {
 		d.curPower += cr.memory.design[WORK] * 2;
 	    } );
 	}
-
-	if(d.curPower > 10)
-	    d.curPower = 10;
     }
     
     start_work(rm, cr) {
@@ -1832,7 +1829,7 @@ function planCreepJobs(rm) {
 			    cname: 'JobCarrier',
 			    taken_by_id: null,
 			    priority : -1,
-			    capacity: 1, // todo
+			    capacity: 0, // todo
 			    curPower: 0,
 			    take_from :  chp.makeRef(),
 			    take_to : rm.memory.storagePoint,
@@ -1843,6 +1840,7 @@ function planCreepJobs(rm) {
 		if(job.avg_trip_time) {
 		    let cjob = f.make(job, null);
 		    let miningPower = minerJobs[hp_id].curPower;
+		    if(miningPower>10) miningPower = 10;
 		    if(!cjob.d.curPower) cjob.d.curPower = 0;
 		    let curCarrierPower = cjob.d.curPower / job.avg_trip_time / 2;
 		    
