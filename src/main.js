@@ -1838,6 +1838,7 @@ function planCreepJobs(rm) {
 		if(job.avg_trip_time) {
 		    let cjob = f.make(job, null);
 		    let miningPower = minerJobs[hp_id].curPower;
+		    if(!cjob.d.curPower) cjob.d.curPower = 0;
 		    let curCarrierPower = cjob.d.curPower / job.avg_trip_time / 2;
 		    
 		    if(cjob.getCount() === cjob.getCapacity()) {
