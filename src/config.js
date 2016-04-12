@@ -173,17 +173,17 @@ function setConfigSim() {
 					      full: true });
     }
 
-    /*
+
     if(!room_mem.harvPoints.hp3) {
 	room_mem.harvPoints.hp3 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp3',
 					      roomName: room_name,
-					      maxCapacity: 2,
+					      // maxCapacity: 2,
 					      x: 43,
 					      y: 44,
 					      full: true });
     }
-    */    
+
     
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
