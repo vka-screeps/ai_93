@@ -803,6 +803,7 @@ class JobMiner extends Job {
 
 }
 
+/*
 class JobMinerBasic extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -885,6 +886,7 @@ class JobMinerBasic extends Job {
 	
     }
 }
+*/
 
 class JobCarrier extends Job {
     constructor(d, parent) {
@@ -892,6 +894,17 @@ class JobCarrier extends Job {
     }
 
     static cname() { return 'JobCarrier'; }
+
+    calcPower(rm) {
+	let d = this.d;
+	d.curPower = 0;
+	if(d.taken_by_id) {
+	    Object.keys(d.taken_by_id).forEach(function(key) {
+		let cr = Game.getObjectById(key);
+		d.curPower += cr.memory.design[CARRY] * 50;
+	    } );
+	}
+    }    
 
     start_work(rm, cr) {
 	let d = this.d;
@@ -1526,7 +1539,7 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, JobMinerBasic, JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
+var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
 		   AddrStoragePoint/*, AddrHarvPointRef*/ ];
 
 
@@ -1815,6 +1828,7 @@ function planCreepJobs(rm) {
 			    taken_by_id: null,
 			    priority : -1,
 			    capacity: 1, // todo
+			    curPower: 0,
 			    take_from :  chp.makeRef(),
 			    take_to : rm.memory.storagePoint,
 			  };
@@ -1822,12 +1836,25 @@ function planCreepJobs(rm) {
 	    } else {
 		let job = carrierJobs[car_job_id];
 		if(job.avg_trip_time) {
-		    let curCarrierPower = (getDesign('d_c1', null, rm)[CARRY]) * 50 / job.avg_trip_time / 2 + 0.1;
-
+		    let cjob = f.make(job, null);
 		    let miningPower = minerJobs[hp_id].curPower;
-		    let carrierCount = _.min( [3, Math.ceil(miningPower / curCarrierPower) ] );
-		    job.capacity = carrierCount;
-		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + carrierCount );
+		    let curCarrierPower = cjob.d.curPower / job.avg_trip_time / 2;
+		    
+		    if(cjob.getCount() === cjob.getCapacity()) {
+			if(curCarrierPower < miningPower) {
+			    cjob.d.capacity++;
+			} else if (cjob.getCount() > 0) {
+			    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+			    let cr = Game.getObjectById(cr_id);
+			    let cr_pwr = cr.memory.design[CARRY] * 50 / job.avg_trip_time / 2;
+			    
+			    if((cjob.d.curPower - cr_pwr) > (1.1 * miningPower)) {
+				cjob.d.capacity--;
+			    }
+			}
+		    }		
+
+		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
 		}
 	    }
 	}
