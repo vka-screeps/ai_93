@@ -1906,7 +1906,7 @@ function cleanUpDeadCreeps(rm) {
 }
 
 function reduceJobs(rm, jobs) {
-    for(job_id in jobs) {
+    for(let job_id in jobs) {
 	let job = jobs[job_id];
 	let cjob = f.make(job, null);
 	while(cjob.getCount() > cjob.getCapacity()) {
