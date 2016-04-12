@@ -176,7 +176,7 @@ class Job extends CMemObj {
 	    }
 	}
 
-	calcPower();
+	this.calcPower();
     }
 
     assign(rm, cr) {
@@ -201,7 +201,7 @@ class Job extends CMemObj {
 	d.taken_by_id[cr.id] = 1;
 	cr.memory.role.job_id = d.id;
 
-	calcPower();
+	this.calcPower();
 	u.log( "Job " + d.id + " assigned to " + cr.name );
     }
 
