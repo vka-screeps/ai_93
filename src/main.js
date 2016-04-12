@@ -413,18 +413,23 @@ class AddrStoragePoint extends AddrPos {
 	    d.containers = {};
 	    let containers = {};
 	    {
-		
-		let targets = p.findInRange(FIND_STRUCTURES, 1 ,{ filter: { structureType: STRUCTURE_CONTAINER }} );
-		if(targets.length > 0) {
-		    targets.forEach(function(c) {
-			let e = c.store[RESOURCE_ENERGY];
-			containers[c.id] = { id: c.id,
-					     energy: e,
-					     isFull: _.sum(c.store) >= c.storeCapacity
-					   };
-			energy+= e;
-		    } );
-		};
+
+		{
+		    // let targets = p.findInRange(FIND_STRUCTURES, 1 ,{ filter: { structureType: STRUCTURE_CONTAINER }} );
+		    let targets = p.findInRange(FIND_STRUCTURES, 1, {filter: function(o) {
+			return (o.structureType===STRUCTURE_CONTAINER) || (o.structureType===STRUCTURE_STORAGE);
+		    }} );
+		    if(targets.length > 0) {
+			targets.forEach(function(c) {
+			    let e = c.store[RESOURCE_ENERGY];
+			    containers[c.id] = { id: c.id,
+						 energy: e,
+						 isFull: _.sum(c.store) >= c.storeCapacity
+					       };
+			    energy+= e;
+			} );
+		    };
+		}
 	    }
 	    d.containers = containers;
 	    d.energy = energy;
