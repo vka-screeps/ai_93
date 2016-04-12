@@ -887,7 +887,8 @@ class JobCarrier extends Job {
 	}
 
 	role.workStatus = {
-	    step: 0
+	    step: 0,
+	    trip_start_time: 0
 	}
     }
 
@@ -931,6 +932,7 @@ class JobCarrier extends Job {
 		if(tf.take(cr)) {
 		    break;
 		} else {
+		    role.workStatus.trip_start_time = Game.time;
 		    role.workStatus.step++;
 		}
 	    }
@@ -963,6 +965,13 @@ class JobCarrier extends Job {
 		    if(tt.give(cr)) {
 			break;
 		    } else {
+			let trip_time = Game.time - role.workStatus.trip_start_time;
+			if(!d.avg_trip_time) {
+			    d.avg_trip_time = trip_time;
+			} else {
+			    d.avg_trip_time = 0.7 * d.avg_trip_time + 0.3 * trip_time;
+			}
+			
 			role.workStatus.step++;
 		    }
 		}
@@ -1766,6 +1775,14 @@ function planCreepJobs(rm) {
 			    take_to : rm.memory.storagePoint,
 			  };
 		carrierJobs[car_job_id] = job;
+	    } else {
+		let job = carrierJobs[car_job_id];
+		if(job.avg_trip_time) {
+		    let curCarrierPower = (getDesign('d_c1', null, rm)[CARRY]) * 50 / job.avg_trip_time / 2 + 0.1;
+		    let carrierCount = _.min( [3, Math.ceil(9 / curCarrierPower) ] );
+		    job.capacity = carrierCount;
+		    console.log( "carrier calc " + car_job_id +", " + curCarrierPower +", " + carrierCount );
+		}
 	    }
 	}
     }
