@@ -1825,7 +1825,6 @@ function planCreepJobs(rm) {
 		    let curCarrierPower = (getDesign('d_c1', null, rm)[CARRY]) * 50 / job.avg_trip_time / 2 + 0.1;
 
 		    let miningPower = minerJobs[hp_id].curPower;
-		    if(miningPower > 9) miningPower = 9;
 		    let carrierCount = _.min( [3, Math.ceil(miningPower / curCarrierPower) ] );
 		    job.capacity = carrierCount;
 		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + carrierCount );
