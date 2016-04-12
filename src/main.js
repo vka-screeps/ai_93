@@ -1905,13 +1905,30 @@ function cleanUpDeadCreeps(rm) {
     }
 }
 
+function reduceJobs(rm, jobs) {
+    for(job_id in jobs) {
+	let job = jobs[job_id];
+	let cjob = f.make(job, null);
+	while(cjob.getCount() > cjob.getCapacity()) {
+	    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+	    let cr = Game.getObjectById(cr_id);
+	    cjob.unassign(rm ,cr);
+	}
+    }
+}
+
 // 1. Unassign and remove creeps that no longer exist
-// 2. If already has a job - do_work()
-// 3. Assign a new job, otherwise - start_work(), do_work()
+// 2. If already has a job - keep looking
+// 3. Assign a new job, otherwise - start_work()
 function assignCreepJobs(rm) {
 
     // for(let room_idx in Game.rooms) {
     // 	let rm = Game.rooms[room_idx];
+
+    reduceJobs(rm, rm.memory.jobs['JobMiner']);
+    reduceJobs(rm, rm.memory.jobs['JobCarrier']);
+    reduceJobs(rm, rm.memory.jobs['JobBuilder']);
+    reduceJobs(rm, rm.memory.jobs['JobDefender']);
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
