@@ -163,7 +163,6 @@ function setConfigSim() {
 					      full: true });
     }
 
-    /*
     if(!room_mem.harvPoints.hp2) {
 	room_mem.harvPoints.hp2 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp2',
@@ -173,10 +172,10 @@ function setConfigSim() {
 					      y: 2,
 					      full: true });
     }
-    */
 
 
-    /*
+
+
     if(!room_mem.harvPoints.hp3) {
 	room_mem.harvPoints.hp3 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp3',
@@ -186,7 +185,7 @@ function setConfigSim() {
 					      y: 44,
 					      full: true });
     }
-*/
+
 
     
     if(!room_mem.storagePoint) {
