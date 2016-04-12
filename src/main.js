@@ -1848,8 +1848,9 @@ function planCreepJobs(rm) {
 			    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
 			    let cr = Game.getObjectById(cr_id);
 			    let cr_pwr = cr.memory.design[CARRY] * 50 / job.avg_trip_time / 2;
+			    console.log( "cr_pwr = " + cr_pwr );
 			    
-			    if((cjob.d.curPower - cr_pwr) > (1.1 * miningPower)) {
+			    if((curCarrierPower - cr_pwr) > (1.1 * miningPower)) {
 				cjob.d.capacity--;
 			    }
 			}
