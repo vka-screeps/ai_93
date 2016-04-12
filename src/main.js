@@ -132,6 +132,9 @@ class Job extends CMemObj {
 	return ret;
     }
 
+    calcPower(rm) {
+    }
+
     // cr - optional
     unassign(rm, cr) {
 	let d = this.d;
@@ -172,6 +175,8 @@ class Job extends CMemObj {
 		d.taken_by_id = null;
 	    }
 	}
+
+	calcPower();
     }
 
     assign(rm, cr) {
@@ -196,6 +201,7 @@ class Job extends CMemObj {
 	d.taken_by_id[cr.id] = 1;
 	cr.memory.role.job_id = d.id;
 
+	calcPower();
 	u.log( "Job " + d.id + " assigned to " + cr.name );
     }
 
@@ -701,6 +707,20 @@ class JobMiner extends Job {
 
     static cname() { return 'JobMiner'; }
 
+    calcPower(rm) {
+	let d = this.d;
+	d.curPower = 0;
+	if(d.taken_by_id) {
+	    Object.keys(d.taken_by_id).forEach(function(key) {
+		let cr = Game.getObjectById(key);
+		d.curPower += cr.memory.design[WORK] * 2;
+	    } );
+	}
+
+	if(d.curPower > 10)
+	    d.curPower = 10;
+    }
+    
     start_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
@@ -1738,6 +1758,7 @@ function planCreepJobs(rm) {
 			    taken_by_id: null,
 			    priority : -1,
 			    capacity: 1,
+			    curPower: 0,
 			    res_id: null,
 			    res_pos : chp.makeRef(),
 			    drop_id: null,
@@ -1754,14 +1775,37 @@ function planCreepJobs(rm) {
 		//     minerJobs[hp_id].capacity = 3;
 		// }
 
+		let job = minerJobs[hp_id];
+		/*
 		if(rm.memory.recoveryMode) {
-		    minerJobs[hp_id].capacity = 1;
+		    job.capacity = 1;
 		} else {
-		    minerJobs[hp_id].capacity = Math.ceil( 6 / curMinerWorkCnt );
+		    job.capacity = Math.ceil( 6 / curMinerWorkCnt );
+		}
+		*/
+
+		if(rm.memory.recoveryMode) {
+		    job.capacity = 1;
+		} else {
+		    let cjob = f.make(job, null);
+		    
+		    if(cjob.getCount() === cjob.getCapacity()) {
+			if(cjob.d.curPower < 10) {
+			    cjob.d.capacity++;
+			} else if (cjob.getCount() > 0) {
+			    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+			    let cr = Game.getObjectById(cr_id);
+			    let cr_pwr = cr.memory.design[WORK] * 2;
+			    
+			    if(cjob.d.curPower - cr_pwr > 10) {
+				cjob.d.capacity--;
+			    }
+			}
+		    }
 		}
 
-		if(chp.d.maxCapacity && (chp.d.maxCapacity < minerJobs[hp_id].capacity))
-		    minerJobs[hp_id].capacity = chp.d.maxCapacity;
+		if(chp.d.maxCapacity && (chp.d.maxCapacity < job.capacity))
+		    job.capacity = chp.d.maxCapacity;
 	    }
 
 	    let car_job_id = 'carry_'+hp_id;
