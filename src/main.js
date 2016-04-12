@@ -1779,9 +1779,12 @@ function planCreepJobs(rm) {
 		let job = carrierJobs[car_job_id];
 		if(job.avg_trip_time) {
 		    let curCarrierPower = (getDesign('d_c1', null, rm)[CARRY]) * 50 / job.avg_trip_time / 2 + 0.1;
-		    let carrierCount = _.min( [3, Math.ceil(9 / curCarrierPower) ] );
+
+		    let miningPower = (minerJobs[hp_id].capacity) * (getDesign('d_h1', null, rm)[WORK]) * 2;
+		    if(miningPower > 9) miningPower = 9;
+		    let carrierCount = _.min( [3, Math.ceil(miningPower / curCarrierPower) ] );
 		    job.capacity = carrierCount;
-		    console.log( "carrier calc " + car_job_id +", " + curCarrierPower +", " + carrierCount );
+		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + carrierCount );
 		}
 	    }
 	}
