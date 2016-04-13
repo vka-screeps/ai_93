@@ -475,7 +475,7 @@ class AddrHarvPoint extends Addr {
 	let d = this.d;
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
-	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 0 }, {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 }, {
 		// We need to set the defaults costs higher so that we
 		// can set the road cost lower in `roomCallback`
 		plainCost: 2,
@@ -499,9 +499,11 @@ class AddrHarvPoint extends Addr {
 		    });
 		    // Avoid creeps in the room
 
+		    /*
 		    room.find(FIND_CREEPS).forEach(function(creep) {
 			costs.set(creep.pos.x, creep.pos.y, 0xff);
 		    });
+		    */
 
 		    return costs;
 		},
