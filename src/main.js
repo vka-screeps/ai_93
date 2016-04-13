@@ -508,9 +508,17 @@ class AddrHarvPoint extends Addr {
 	    } );
 
 	    console.log('searchRez for ' + cr.name + ' - ' + srez.path.length);
-	    if(srez.path.length > 0) {
-		console.log(srez.path[0]);
+	    {
+		let str = '';
+		for(let i=0; i<srez.path.length; ++i) {
+		    str = str + srez.path[i];
+		    if(i==3)
+			break;
+		}
+		console.log(str);		
 	    }
+
+
 	    
 	    if(srez.path.length > dist) {
 		let p2 = srez.path[0];
