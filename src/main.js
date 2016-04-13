@@ -475,7 +475,14 @@ class AddrHarvPoint extends Addr {
 	let d = this.d;
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
-	    if(cr.pos.getRangeTo(res) > dist || PathFinder.search( cr.pos, { pos: res.pos, range: 1 } ).path.length > 4) {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 } );
+	    if(srez.path.length > dist) {
+		let p2 = srez.path[0];
+		creep.move(creep.pos.getDirectionTo(p2));
+		return true;
+	    }
+	    /*
+	    if(cr.pos.getRangeTo(res) > dist) {
 		//let searchRez = ;
 		// console.log('searchRez = ' + searchRez.path.length);
 		// u.printObject(searchRez);
@@ -483,7 +490,13 @@ class AddrHarvPoint extends Addr {
 		u.log("Moving to object " + res, u.LOG_INFO);
 		cr.moveTo(res);
 		return true;
+	    } else {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 } );
+		if(srez.path.length > 4) {
+		    
+		}
 	    }
+	    */
 	} else {
 	    if(cr.pos.getRangeTo(d.x, d.y) > dist) {
 		cr.moveTo(d.x, d.y);
