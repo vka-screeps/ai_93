@@ -207,7 +207,7 @@ class Job extends CMemObj {
 	cr.memory.role.job_id = d.id;
 
 	this.calcPower();
-	u.log( "Job " + d.id + " assigned to " + cr.name );
+	u.log( "Job " + d.id + " assigned to " + cr.name + ', priority=' + d.priority );
     }
 
     do_work_all(rm) {
