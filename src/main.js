@@ -1691,13 +1691,18 @@ function detectRecoveryMode(rm) {
 
 function countTotalJobsCapacity(jobs) {
     let count = 0;
+    let pri = 10000;
     for(let id in jobs) {
 	let job = jobs[id];
 	let capacity = defaultFor(job.capacity, 1);
 	if(capacity === null) capacity = 1;
 	count = count + capacity;
+
+	// find min priority
+	let pri1 = defaultFor(job.priority, 10000);
+	if(pri1 < pri) pri = pri1;
     }
-    return count;
+    return {count: count, priority: pri};
 }
 
 function nextTickPlanning(rm) {
@@ -1728,9 +1733,21 @@ function nextTickPlanning(rm) {
     }
 */
 
-    rm.memory.balance.b1.count = _.min([3, countTotalJobsCapacity(rm.memory.jobs.JobBuilder)]);
-    rm.memory.balance.c2.count = countTotalJobsCapacity(rm.memory.jobs.JobCarrier);
-    rm.memory.balance.h2.count = _.max([0, countTotalJobsCapacity(rm.memory.jobs.JobMiner)-1]);
+    {
+	let stat = countTotalJobsCapacity(rm.memory.jobs.JobBuilder);
+	rm.memory.balance.b1.count = _.min([3, stat.count]);
+	rm.memory.balance.b1.priority = stat.priority;
+    }
+    {
+	let stat = countTotalJobsCapacity(rm.memory.jobs.JobCarrier);
+	rm.memory.balance.c2.count = stat.count;
+	rm.memory.balance.c2.priority = stat.priority;
+    }
+    {
+	let stat = countTotalJobsCapacity(rm.memory.jobs.JobMiner);
+	rm.memory.balance.h2.count = _.max([0, stat.count-1]);
+	rm.memory.balance.h2.priority = stat.priority;
+    }
 }
 
 function getConstrBuildingCapacity(rm, con) {
@@ -1763,7 +1780,7 @@ function planCreepJobs(rm) {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	let carrierJobs = rm.memory.jobs.JobCarrier;
 	let curMinerWorkCnt = getDesign('d_h1', null, rm)[WORK];
-	
+	let pri = 0;
 	for(let hp_id in rm.memory.harvPoints) {
 	    //let hp = rm.memory.harvPoints;
 	    let chp = f.make(rm.memory.harvPoints[hp_id], null);
@@ -1771,7 +1788,7 @@ function planCreepJobs(rm) {
 		let job = { id : hp_id,
 			    cname: 'JobMiner',
 			    taken_by_id: null,
-			    priority : -1,
+			    priority : pri,
 			    capacity: 1,
 			    curPower: 0,
 			    res_id: null,
@@ -1781,23 +1798,7 @@ function planCreepJobs(rm) {
 			  };
 		minerJobs[hp_id] = job;
 	    } else {
-		 // 400, 850
-		// if(rm.memory.recoveryMode || rm.energyCapacityAvailable > 850) {
-		//     minerJobs[hp_id].capacity = 1;
-		// } else if(rm.energyCapacityAvailable >=400){
-		//     minerJobs[hp_id].capacity = 2;
-		// } else {
-		//     minerJobs[hp_id].capacity = 3;
-		// }
-
 		let job = minerJobs[hp_id];
-		/*
-		if(rm.memory.recoveryMode) {
-		    job.capacity = 1;
-		} else {
-		    job.capacity = Math.ceil( 6 / curMinerWorkCnt );
-		}
-		*/
 
 		if(rm.memory.recoveryMode) {
 		    job.capacity = 1;
@@ -1828,7 +1829,7 @@ function planCreepJobs(rm) {
 		let job = { id : car_job_id,
 			    cname: 'JobCarrier',
 			    taken_by_id: null,
-			    priority : -1,
+			    priority : pri+1,
 			    capacity: 0, // todo
 			    curPower: 0,
 			    take_from :  chp.makeRef(),
@@ -1862,6 +1863,7 @@ function planCreepJobs(rm) {
 		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
 		}
 	    }
+	    pri += 5;
 	}
     }
 
@@ -1874,7 +1876,7 @@ function planCreepJobs(rm) {
 		let job = { id: con_job_id,
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
-			    priority : 20,
+			    priority : 100,
 			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
 				       roomName: rm.name,
@@ -1896,7 +1898,7 @@ function planCreepJobs(rm) {
 			cname: 'JobBuilder',
 			taken_by_id: null,
 			capacity: con_capacity,
-			priority : 20,
+			priority : 150,
 			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
 				   roomName: rm.name,
