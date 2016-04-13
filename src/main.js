@@ -107,6 +107,11 @@ class Job extends CMemObj {
 	return  (d.taken_by_id) ? (Object.keys(d.taken_by_id).length) : 0;
     }
 
+    getPriority() {
+	let d = this.d;
+	return defaultFor(d.priority, 10000);
+    }
+
     getCapacity() {
 	let d = this.d;
 	let capacity = defaultFor(d.capacity, 1);
@@ -1704,7 +1709,7 @@ function countTotalJobsCapacity(jobs) {
 
 	if(capacity > curCount) {
 	    // find min priority
-	    let pri1 = defaultFor(job.priority, 10000);
+	    let pri1 = cjob.getPriority();
 	    if(pri1 < pri) pri = pri1;
 	}
     }
