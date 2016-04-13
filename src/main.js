@@ -1557,11 +1557,15 @@ function planSpawnJobs(rm) {
     let priority = 0;
     for(let i in rm.memory.balance) {
 	let bal_ln = rm.memory.balance[i];
-	priority++;
+	priority = defaultFor(rm.memory.balance[i].priority, 10000);
 
 	let job_id = bal_ln.id;
 	let job = lst[job_id];
 	let countInProgress = job ? job.capacity : 0;
+
+	if(job) {
+	    job.priority = priority;
+	}
 	
 	if(bal_ln.count > bal_ln.curCount + countInProgress) {
 	    if(!lst[job_id]) {
@@ -1705,34 +1709,8 @@ function countTotalJobsCapacity(jobs) {
     return {count: count, priority: pri};
 }
 
+// update the creeps balance - count and priority
 function nextTickPlanning(rm) {
-    // increase defenders count, based on the number of defence jobs
-
-    // increase builder's count, based on the number of defence jobs
-    /*
-    if(!rm.memory.creeplist) return;
-
-    for(let cr_name in rm.memory.creeplist) {
-	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
-    }
-    */
-    /*
-    {
-	let jobs = rm.memory.jobs.JobBuilder;
-	if(jobs) {
-	    let jobs_cnt = 0;
-	    Object.keys(jobs).forEach(function(key) {
-		let cjob = f.make(jobs[key], null);
-		jobs_cnt += cjob.getCapacity();
-	    });
-	    // jobs_cnt = jobs_cnt/2;
-	    if(jobs_cnt>3)
-		jobs_cnt = 3;
-	    rm.memory.balance.b1.count = jobs_cnt;
-	}
-    }
-*/
-
     {
 	let stat = countTotalJobsCapacity(rm.memory.jobs.JobBuilder);
 	rm.memory.balance.b1.count = _.min([3, stat.count]);
