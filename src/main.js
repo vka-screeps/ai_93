@@ -1810,6 +1810,8 @@ function planCreepJobs(rm) {
 		    job.capacity = chp.d.maxCapacity;
 	    }
 
+	    let cminerJob = f.make(minerJobs[hp_id], null);
+
 	    let car_job_id = 'carry_'+hp_id;
 	    if(!carrierJobs[car_job_id]) {
 		let job = { id : car_job_id,
@@ -1824,8 +1826,9 @@ function planCreepJobs(rm) {
 		carrierJobs[car_job_id] = job;
 	    } else {
 		let job = carrierJobs[car_job_id];
+		let cjob = f.make(job, null);
+		
 		if(job.avg_trip_time) {
-		    let cjob = f.make(job, null);
 		    let miningPower = minerJobs[hp_id].curPower;
 		    if(miningPower>10) miningPower = 10;
 		    if(!cjob.d.curPower) cjob.d.curPower = 0;
@@ -1847,6 +1850,10 @@ function planCreepJobs(rm) {
 		    }		
 
 		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
+		} else {
+		    if(cjob.getCapacity() == 0 && cminerJob.getCount() > 0) {
+			cjob.d.capacity = 1;
+		    }
 		}
 	    }
 	    pri += 5;
