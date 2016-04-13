@@ -1697,14 +1697,16 @@ function countTotalJobsCapacity(jobs) {
     let count = 0;
     let pri = 10000;
     for(let id in jobs) {
-	let job = jobs[id];
-	let capacity = defaultFor(job.capacity, 1);
-	if(capacity === null) capacity = 1;
+	let cjob = f.make(jobs[id], null);
+	let capacity = cjob.getCapacity();
+	let curCount = cjob.getCount();
 	count = count + capacity;
 
-	// find min priority
-	let pri1 = defaultFor(job.priority, 10000);
-	if(pri1 < pri) pri = pri1;
+	if(capacity > curCount) {
+	    // find min priority
+	    let pri1 = defaultFor(job.priority, 10000);
+	    if(pri1 < pri) pri = pri1;
+	}
     }
     return {count: count, priority: pri};
 }
