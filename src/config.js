@@ -122,9 +122,9 @@ function setConfigSim() {
     
     if(!room_mem.balance) {
 	room_mem.balance = {
-	    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner' },  // permanent
-	    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier' },  // permanent
-	    d1: {id:'d1', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },  // permanent
+	    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner', priority: -2 },  // permanent
+	    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier', priority: -1 },  // permanent
+	    d1: {id:'d1', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender', priority: 1 },  // permanent
 	    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	    b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
