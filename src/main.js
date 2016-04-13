@@ -2021,12 +2021,12 @@ function processRoom(rm) {
     cleanUpDeadCreeps(rm);
     detectRecoveryMode(rm);
     
-    planCreepJobs(rm); // new jobs for builders
-    nextTickPlanning(rm); // adjust the number of creeps on the balance
+    planCreepJobs(rm); // schedule new jobs for builders and carriers
 
+    assignCreepJobs(rm); // creeps get new jobs
+    nextTickPlanning(rm); // adjust the number of creeps on the balance
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
     assignSpawnJobs(rm);
-    assignCreepJobs(rm);
     doAllJobs(rm);
 }
 
