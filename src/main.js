@@ -509,6 +509,7 @@ class AddrHarvPoint extends Addr {
 		},
 	    } );
 
+	    /*
 	    console.log('searchRez for ' + cr.name + ' to ' + res.pos + ' - ' + srez.path.length+ ', ' + srez.ops );
 	    {
 		let str = '';
@@ -519,7 +520,7 @@ class AddrHarvPoint extends Addr {
 		}
 		console.log(str);		
 	    }
-
+	    */
 
 	    
 	    if(srez.path.length > dist) {
