@@ -1603,6 +1603,9 @@ function planSpawnJobs(rm) {
 
 function assignSpawnJobs(rm) {
     let spawns = rm.find(FIND_MY_SPAWNS);
+
+    let job_ids_by_priority = null;
+    let job_ids_by_priority_idx = 0;
     
     for(let i1 in spawns) {
 	let spawn = spawns[i1];
@@ -1619,7 +1622,6 @@ function assignSpawnJobs(rm) {
 	if(!lst)
 	    continue;
 
-
 	if(!spawn.memory.role) {
 	    // init role
 	    spawn.memory.role = {
@@ -1631,7 +1633,7 @@ function assignSpawnJobs(rm) {
 	}
 
 	if(spawn.memory.role.job_id != null) {
-	    // The spawn is not creating anything ...
+	    // The spawn is building a creep...
 	    
 	    let job = lst[spawn.memory.role.job_id];
 
@@ -1642,40 +1644,22 @@ function assignSpawnJobs(rm) {
 	    } else {
 		continue; // work in progress
 	    }
-		/* else {
-		let cjob = f.make(job, null);
-
-		// TODO: just in case, they are out of sync
-		// job.taken_by_id = spawn.id;
-
-		// is the job done ?
-		if(_.isString(spawn.memory.role.workStatus)) {
-
-		    // release the job
-		    u.log("Spawn " + spawn.name + " finished " + spawn.memory.role.job_id, u.LOG_INFO);
-
-		    cjob.finish_work(spawn.room, spawn, true);
-
-		    // delete lst[spawn.memory.role.job_id];
-		    // spawn.memory.role.job_id = null;
-		    // spawn.memory.role.workStatus = null;
-		} else {
-		    // u.log("Spawn " + spawn.name + " waiting with status " + spawn.memory.role.workStatus, u.LOG_INFO);
-		    // cjob.start_work(spawn.room, spawn);
-		    continue;
-		}
-	    } */
 	}
 
-	for(let i2 in lst) {
-	    let job = lst[i2];
+	if(!job_ids_by_priority) {
+	    job_ids_by_priority = sortJobsByPriority(lst, true);
+	}
+
+	//for(let i2 in lst) {
+	if(job_ids_by_priority_idx < job_ids_by_priority.length) {
+	    let job = lst[job_ids_by_priority[job_ids_by_priority_idx]];
 	    let cjob = f.make(job, null);
 
-	    if(cjob.getCount()>0)
-		continue;
+	    // if(cjob.getCount()>0)
+	    // 	continue;
 
-	    if(cjob.getCapacity() == 0)
-		continue;
+	    // if(cjob.getCapacity() == 0)
+	    // 	continue;
 
 	    // take the job
 	    // u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
@@ -1685,10 +1669,27 @@ function assignSpawnJobs(rm) {
 
 	    // work on it
 	    cjob.start_work(spawn.room, spawn);
-
-	    break;
+	    job_ids_by_priority_idx++;
 	}
     }
+}
+
+function sortJobsByPriority( jobs, exclueTaken ) {
+    let job_ids = Object.keys(jobs);
+    if(exclueTaken) {
+	let job_ids = _.filter(job_ids, function (id) {
+	    let cjob = f.make(jobs[id], null);
+	    return (cjob.getCapacity() > 0) && (cjob.getCount() < cjob.getCapacity());
+	} );
+    }
+
+    job_ids = _.sort(job_ids, function(id) {
+	let cjob = f.make(jobs[id], null);
+	return cjob.getPriority();
+    } );
+
+    console.log( "sortJobsByPriority: " + job_ids );
+    return job_ids;
 }
 
 function detectRecoveryMode(rm) {
@@ -2029,8 +2030,8 @@ function processRoom(rm) {
     detectRecoveryMode(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
-
     assignCreepJobs(rm); // creeps get new jobs
+    
     nextTickPlanning(rm); // adjust the number of creeps on the balance
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
     assignSpawnJobs(rm);
