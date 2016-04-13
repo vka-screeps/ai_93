@@ -478,7 +478,7 @@ class AddrHarvPoint extends Addr {
 	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 } );
 	    if(srez.path.length > dist) {
 		let p2 = srez.path[0];
-		creep.move(creep.pos.getDirectionTo(p2));
+		cr.move(cr.pos.getDirectionTo(p2));
 		return true;
 	    }
 	    /*
