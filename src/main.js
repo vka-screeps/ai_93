@@ -498,11 +498,11 @@ class AddrHarvPoint extends Addr {
 			}
 		    });
 		    // Avoid creeps in the room
-		    /*
+
 		    room.find(FIND_CREEPS).forEach(function(creep) {
 			costs.set(creep.pos.x, creep.pos.y, 0xff);
 		    });
-		    */
+
 		    return costs;
 		},
 	    } );
