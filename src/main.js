@@ -1683,7 +1683,7 @@ function sortJobsByPriority( jobs, exclueTaken ) {
 	} );
     }
 
-    job_ids = _.sort(job_ids, function(id) {
+    job_ids = _.sortBy(job_ids, function(id) {
 	let cjob = f.make(jobs[id], null);
 	return cjob.getPriority();
     } );
