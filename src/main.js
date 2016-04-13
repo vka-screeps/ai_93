@@ -2077,6 +2077,8 @@ module.exports = {
 	}
 	*/
 	u.log('new tick:' + Game.time);
+
+	PathFinder.use(true);
 	
 	// collect stats
 	myroom();
