@@ -475,7 +475,7 @@ class AddrHarvPoint extends Addr {
 	let d = this.d;
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
-	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 }, {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 0 }, {
 		// We need to set the defaults costs higher so that we
 		// can set the road cost lower in `roomCallback`
 		plainCost: 2,
