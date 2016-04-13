@@ -1677,7 +1677,7 @@ function assignSpawnJobs(rm) {
 function sortJobsByPriority( jobs, exclueTaken ) {
     let job_ids = Object.keys(jobs);
     if(exclueTaken) {
-	let job_ids = _.filter(job_ids, function (id) {
+	job_ids = _.filter(job_ids, function (id) {
 	    let cjob = f.make(jobs[id], null);
 	    return (cjob.getCapacity() > 0) && (cjob.getCount() < cjob.getCapacity());
 	} );
