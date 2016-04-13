@@ -480,7 +480,7 @@ class AddrHarvPoint extends Addr {
 		// can set the road cost lower in `roomCallback`
 		plainCost: 2,
 		swampCost: 10,
-		
+		maxOps: 4000,
 		roomCallback: function(roomName) {
 		    let room = Game.rooms[roomName];
 		    // In this example `room` will always exist, but since PathFinder 
@@ -507,7 +507,7 @@ class AddrHarvPoint extends Addr {
 		},
 	    } );
 
-	    console.log('searchRez for ' + cr.name + ' - ' + srez.path.length);
+	    console.log('searchRez for ' + cr.name + ' - ' + srez.path.length+ ', ' + srez.ops);
 	    {
 		let str = '';
 		for(let i=0; i<srez.path.length; ++i) {
