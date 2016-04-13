@@ -1710,7 +1710,7 @@ function countTotalJobsCapacity(jobs) {
 
 	if(capacity > curCount) {
 	    // find min priority
-	    let pri1 = cjob.getPriority();
+	    let pri1 = cjob.getPriority() + curCount;
 	    if(pri1 < pri) pri = pri1;
 	}
     }
@@ -1817,7 +1817,7 @@ function planCreepJobs(rm) {
 		let job = { id : car_job_id,
 			    cname: 'JobCarrier',
 			    taken_by_id: null,
-			    priority : pri+1,
+			    priority : pri,
 			    capacity: 0, // todo
 			    curPower: 0,
 			    take_from :  chp.makeRef(),
