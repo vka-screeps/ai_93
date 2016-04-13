@@ -476,6 +476,9 @@ class AddrHarvPoint extends Addr {
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
 	    if(cr.pos.getRangeTo(res) > dist) {
+		let searchRez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 } );
+		console.log('searchRez = ' + searchRez);
+
 		u.log("Moving to object " + res, u.LOG_INFO);
 		cr.moveTo(res);
 		return true;
@@ -499,7 +502,7 @@ class AddrHarvPoint extends Addr {
 		return false;
 	}
 
-	if(this.move_to(cr, 2)) {
+	if(this.move_to(cr, 3)) {
 	    return true;
 	}	
 
