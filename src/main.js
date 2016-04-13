@@ -1752,7 +1752,7 @@ function sortJobsByPriority( jobs, exclueTaken ) {
 	return cjob.getPriority();
     } );
 
-    console.log( "sortJobsByPriority: " + job_ids );
+    // console.log( "sortJobsByPriority: " + job_ids );
     return job_ids;
 }
 
@@ -1913,7 +1913,7 @@ function planCreepJobs(rm) {
 			}
 		    }		
 
-		    console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
+		    // console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
 		} else {
 		    if(cjob.getCapacity() == 0 && cminerJob.getCount() > 0) {
 			cjob.d.capacity = 1;
