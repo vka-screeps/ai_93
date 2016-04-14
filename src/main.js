@@ -1674,20 +1674,18 @@ function calcRoomStats(rm) {
     // count energy per turn
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
-	console.log('calc mining power');
 	for(let job_id in minerJobs) {
 	    let job = minerJobs[job_id];
 	    let pwr = job.curPower;
 	    if(pwr > 10) pwr = 10;
-	    stat.enProd += pwr;
-	    console.log('Power - ' + pwr);
+	    stats.enProd += pwr;
 	}
     }
 
-    stat.enTotalQta = stat.enProd + stat.enTotal / 1000;
-    stat.enCtrlQta = config.ctrlrShare * stat.enTotalQta;
-    stat.enBldQta = config.builderShare * stat.enTotalQta;
-    stat.enRepairQta = config.repairShare * stat.enTotalQta;
+    stats.enTotalQta = stats.enProd + stats.enTotal / 1000;
+    stats.enCtrlQta = config.ctrlrShare * stats.enTotalQta;
+    stats.enBldQta = config.builderShare * stats.enTotalQta;
+    stats.enRepairQta = config.repairShare * stats.enTotalQta;
 }
 
 // Convert balance into JobSpawn jobs
