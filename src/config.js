@@ -209,8 +209,8 @@ function setConfigSim() {
 
     room_mem.config = {
 	ctrlrShare: 0.1,
-	repairShare: 0.2,
-	builderShare: 0.7,
+	repairShare: 0.1,
+	builderShare: 0.8,
     };
 
     /*
