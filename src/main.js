@@ -418,6 +418,7 @@ class AddrStoragePoint extends AddrPos {
 
 	    cr.drop(RESOURCE_ENERGY);
 	    d.isActive = true;
+	    return false; // can move the same turn
 	}
 	
 	return true;
