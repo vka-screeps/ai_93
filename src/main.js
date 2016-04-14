@@ -137,6 +137,15 @@ class Job extends CMemObj {
 	return ret;
     }
 
+    getFirstWorkerId() {
+	if(d.taken_by_id) {
+	    let keys = Object.keys(d.taken_by_id);
+	    if(keys.length>0)
+		return keys[0];
+	}
+	return null;
+    }
+
     calcPower(rm) {
     }
 
@@ -208,6 +217,17 @@ class Job extends CMemObj {
 
 	this.calcPower();
 	u.log( "Job " + d.id + " assigned to " + cr.name + ', priority=' + d.priority );
+    }
+
+    forEachWorker(rm, f) {
+	let d = this.d;
+	
+	if(d.taken_by_id) {
+	    Object.keys(d.taken_by_id).forEach(function(key) {
+		let cr = Game.getObjectById(key);
+		f(rm, cr);
+	    } );
+	}	
     }
 
     do_work_all(rm) {
@@ -784,12 +804,9 @@ class JobMiner extends Job {
     calcPower(rm) {
 	let d = this.d;
 	d.curPower = 0;
-	if(d.taken_by_id) {
-	    Object.keys(d.taken_by_id).forEach(function(key) {
-		let cr = Game.getObjectById(key);
+	this.forEachWorker(rm, function(rm, cr) {
 		d.curPower += cr.memory.design[WORK] * 2;
-	    } );
-	}
+	} );
     }
     
     start_work(rm, cr) {
@@ -969,12 +986,10 @@ class JobCarrier extends Job {
     calcPower(rm) {
 	let d = this.d;
 	d.curPower = 0;
-	if(d.taken_by_id) {
-	    Object.keys(d.taken_by_id).forEach(function(key) {
-		let cr = Game.getObjectById(key);
-		d.curPower += cr.memory.design[CARRY] * 50;
-	    } );
-	}
+
+	this.forEachWorker(rm, function(rm, cr) {
+	    d.curPower += cr.memory.design[CARRY] * 50;
+	} );	
     }    
 
     start_work(rm, cr) {
@@ -1559,12 +1574,13 @@ class JobSpawn extends Job {
 	    let body = getBodyFromDesign(design);
 	    mem.design = design;
 	    
-	    u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
+	    // 
 	    
 	    let result = spawn.createCreep(body, undefined, mem);
 	    role.workStatus = result;
 	    
 	    if(_.isString(result)) {
+		u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
 		console.log('The name is: '+result);
 	    }
 	    else {
@@ -1859,7 +1875,7 @@ function planCreepJobs(rm) {
 			if(cjob.d.curPower < 10) {
 			    cjob.d.capacity++;
 			} else if (cjob.getCount() > 0) {
-			    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+			    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
 			    let cr = Game.getObjectById(cr_id);
 			    let cr_pwr = cr.memory.design[WORK] * 2;
 			    
@@ -1902,7 +1918,7 @@ function planCreepJobs(rm) {
 			if(curCarrierPower < miningPower) {
 			    cjob.d.capacity++;
 			} else if (cjob.getCount() > 0) {
-			    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+			    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
 			    let cr = Game.getObjectById(cr_id);
 			    let cr_pwr = cr.memory.design[CARRY] * 50 / job.avg_trip_time / 2;
 			    console.log( "cr_pwr = " + cr_pwr );
@@ -1984,6 +2000,8 @@ function cleanUpDeadCreeps(rm) {
 			let job = jobs[role.job_id];
 			if(job.taken_by_id){
 			    delete job.taken_by_id[cr_id];
+			    let cjob = f.make(job, null);
+			    cjob.calcPower();
 			}
 		    }
 		}
@@ -2001,7 +2019,7 @@ function reduceJobs(rm, jobs) {
 	let job = jobs[job_id];
 	let cjob = f.make(job, null);
 	while(cjob.getCount() > cjob.getCapacity()) {
-	    let cr_id = Object.keys(cjob.d.taken_by_id)[0];
+	    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
 	    let cr = Game.getObjectById(cr_id);
 	    cjob.unassign(rm ,cr);
 	}
