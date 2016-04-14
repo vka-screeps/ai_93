@@ -789,6 +789,20 @@ class AddrBuilding extends Addr {
 	return true;
     }
 
+    getWorkerEnRate() {
+	let d = this.d;
+	let tgt = Game.getObjectById(d.tgt_id);	
+	let ret = 5;
+	if(tgt) {
+	    if(tgt.structureType === STRUCTURE_CONTROLLER) {
+		ret = 1;
+	    } else {
+		ret = 5;
+	    }
+	}
+	return ret;
+    }
+
     exists() {
 	let d = this.d;
 	let tgt = Game.getObjectById(d.tgt_id);	
@@ -1162,6 +1176,15 @@ class JobBuilder extends Job {
 
     static cname() { return 'JobBuilder'; }
 
+    calcPower(rm) {
+	let d = this.d;
+	let tt = f.make(d.take_to);
+	let workRate = tt.getWorkerEnRate();
+	d.curPower = 0;
+	this.forEachWorker(rm, function(rm, cr) {
+	    d.curPower += cr.memory.design[WORK] * workRate;
+	} );
+    }    
 
     start_work(rm, cr) {
 	let d = this.d;
@@ -1682,7 +1705,7 @@ function calcRoomStats(rm) {
 	}
     }
 
-    stats.enTotalQta = stats.enProd + stats.enTotal / 1000;
+    stats.enTotalQta = stats.enProd + stats.enTotal / 10000;
     stats.enCtrlQta = config.ctrlrShare * stats.enTotalQta;
     stats.enBldQta = config.builderShare * stats.enTotalQta;
     stats.enRepairQta = config.repairShare * stats.enTotalQta;
