@@ -1653,19 +1653,17 @@ var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDe
 
 // calculate room stats
 function calcRoomStats(rm) {
-    if(!rm.memory.stats) {
-	rm.memory.stats = {
-	    NZ: 0,
-	    enTotal: 0, // energy in the storage
-	    hasStorage: false, 
-	    enProd: 0, // mining pet turn
-	    enTotalQta: 0,
-	    enSpawnQta: 0, // spawner quota
-	    enCtrlQta: 0, // controller upgrade quote
-	    enBldQta: 0, // builders quota
-	    enRepairQta: 0,
-	};
-    }
+    rm.memory.stats = {
+	NZ: 0,
+	enTotal: 0, // energy in the storage
+	hasStorage: false, 
+	enProd: 0, // mining pet turn
+	enTotalQta: 0,
+	enSpawnQta: 0, // spawner quota
+	enCtrlQta: 0, // controller upgrade quote
+	enBldQta: 0, // builders quota
+	enRepairQta: 0,
+    };
 
     let stats = rm.memory.stats;
     let config = rm.memory.config;
@@ -1681,6 +1679,7 @@ function calcRoomStats(rm) {
 	    let pwr = job.curPower;
 	    if(pwr > 10) pwr = 10;
 	    stat.enProd += pwr;
+	    console.log('Power - ' + pwr);
 	}
     }
 
