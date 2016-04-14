@@ -1651,6 +1651,44 @@ var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDe
 
 ///////////////////////////////////////////////////////
 
+// calculate room stats
+function calcRoomStats(rm) {
+    if(!rm.memory.stats) {
+	rm.memory.stats = {
+	    NZ: 0,
+	    enTotal: 0, // energy in the storage
+	    hasStorage: false, 
+	    enProd: 0, // mining pet turn
+	    enTotalQta: 0,
+	    enSpawnQta: 0, // spawner quota
+	    enCtrlQta: 0, // controller upgrade quote
+	    enBldQta: 0, // builders quota
+	    enRepairQta: 0,
+	};
+    }
+
+    let stats = rm.memory.stats;
+    let config = rm.memory.config;
+    let cstor = f.make(rm.memory.storagePoint, null);
+    stats.NZ = rm.memory.NZ;
+    stats.enTotal = cstor.getAmount();
+
+    // count energy per turn
+    {
+	let minerJobs = rm.memory.jobs.JobMiner;
+	for(let job_id in minerJobs) {
+	    let job = minerJobs[job_id];
+	    let pwr = job.curPower;
+	    if(pwr > 10) pwr = 10;
+	    stat.enProd += pwr;
+	}
+    }
+
+    stat.enTotalQta = stat.enProd + stat.enTotal / 1000;
+    stat.enCtrlQta = config.ctrlrShare * stat.enTotalQta;
+    stat.enBldQta = config.builderShare * stat.enTotalQta;
+    stat.enRepairQta = config.repairShare * stat.enTotalQta;
+}
 
 // Convert balance into JobSpawn jobs
 function planSpawnJobs(rm) {
@@ -2136,6 +2174,8 @@ function processRoom(rm) {
 
     cleanUpDeadCreeps(rm);
     detectRecoveryMode(rm);
+
+    calcRoomStats(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
     assignCreepJobs(rm); // creeps get new jobs

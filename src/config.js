@@ -194,6 +194,25 @@ function setConfigSim() {
 
     }
 
+    if(!room_mem.stats) {
+	room_mem.stats = {
+	    NZ: 0,
+	    enTotal: 0, // energy in the storage
+	    hasStorage: false, 
+	    enProd: 0, // mining pet turn
+	    enTotalQta: 0,
+	    enCtrlQta: 0, // controller upgrade quote
+	    enSpawnQta: 0, // spawner quota
+	    enBldQta: 0, // builders quota
+	};
+    }
+
+    room_mem.config = {
+	ctrlrShare: 0.1,
+	repairShare: 0.2,
+	builderShare: 0.7,
+    };
+
     /*
     room_mem.strategy_data =[
 	{ role_id : 'h1', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
