@@ -844,8 +844,9 @@ class JobMiner extends Job {
 	let drop = Game.getObjectById(d.drop_id);
 
 	let needToCarry = rm.memory.recoveryMode; // || d.res_pos.hasContainer
-	
-	while( true ) {
+
+	let loop_it = 0;
+	while( loop_it++ < 2 ) {
 
 	    if(needToCarry) {
 		if(role.workStatus.step === 0) {
@@ -992,7 +993,7 @@ class JobCarrier extends Job {
 	this.forEachWorker(rm, function(rm, cr) {
 	    d.curPower += cr.memory.design[CARRY] * 50;
 	} );	
-    }    
+    }
 
     start_work(rm, cr) {
 	let d = this.d;
@@ -1037,7 +1038,9 @@ class JobCarrier extends Job {
 	let d = this.d;
 	let role = cr.memory.role;
 
-	while( true ) {
+	let loop_it = 0;
+	while( loop_it++ < 2 ) {
+
 	    if(role.workStatus.step === 0) {
 		// let tf = f.make(d.take_from);
 		// if(tf.move_to(cr)) {
