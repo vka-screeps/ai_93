@@ -138,6 +138,8 @@ class Job extends CMemObj {
     }
 
     getFirstWorkerId() {
+	let d = this.d;	
+	
 	if(d.taken_by_id) {
 	    let keys = Object.keys(d.taken_by_id);
 	    if(keys.length>0)
