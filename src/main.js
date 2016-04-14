@@ -4,7 +4,7 @@ var harvester = require('harvest');
 var cr = require('cr');
 var myroom = require('myroom');
 var config = require('config');
-var stat = require('stat');
+//var stat = require('stat');
 //var r = require('roles');
 
 var r = {
@@ -2027,6 +2027,7 @@ function planCreepJobs(rm) {
 		let job = { id: con_job_id,
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
+			    capacity: 0,
 			    priority : 100,
 			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
@@ -2059,6 +2060,36 @@ function planCreepJobs(rm) {
 	    rm.memory.jobs.JobBuilder[con_job_id] = job;
 	}
     }
+}
+
+function assignJobQuotas(rm) {
+    let stats = rm.memory.stats;
+
+    // builders
+    {
+	let jobs = rm.memory.jobs.JobBuilder;
+	let job_ids = sortJobsByPriority(jobs, false);
+	let i=0;
+	let quota = stats.enBldQta;
+	let oneJobQta = 20;
+	while(i<job_ids.length) {
+	    let id = job_ids[i++];
+	    let job = jobs[id];
+	    if(id === 'ctrlr') {
+		job.reqQta = stats.enCtrlQta;
+	    } else {
+		if(quota > oneJobQta) {
+		    job.reqQta = oneJobQta;
+		    quota -= oneJobQta;
+		} else {
+		    job.reqQta = quota;
+		    quota = 0;
+		}
+	    }
+	}
+    }
+    
+    // carriers
 }
 
 function cleanUpDeadCreeps(rm) {
@@ -2199,6 +2230,7 @@ function processRoom(rm) {
     calcRoomStats(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
+    assignJobQuotas(rm); // assign quotas to jobs
     assignCreepJobs(rm); // creeps get new jobs
     
     nextTickPlanning(rm); // adjust the number of creeps on the balance
