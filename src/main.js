@@ -151,6 +151,12 @@ class Job extends CMemObj {
     calcPower(rm) {
     }
 
+
+    updateCapacity(rm) {
+	let d = this.d;
+	u.log("updateCapacity -no implemented", u.LOG_WARN);
+    }
+
     // cr - optional
     unassign(rm, cr) {
 	let d = this.d;
@@ -1179,12 +1185,37 @@ class JobBuilder extends Job {
     calcPower(rm) {
 	let d = this.d;
 	let tt = f.make(d.take_to);
-	let workRate = tt.getWorkerEnRate();
+	d.workRate = tt.getWorkerEnRate();
 	d.curPower = 0;
 	this.forEachWorker(rm, function(rm, cr) {
-	    d.curPower += cr.memory.design[WORK] * workRate;
+	    d.curPower += cr.memory.design[WORK] * d.workRate;
 	} );
-    }    
+    }
+
+    updateCapacity(rm) {
+	let d = this.d;
+	if(d.reqQta === 0) {
+	    this.unassign(rm);
+	    d.capacity = 0;
+	} else {
+	    // getCount, reqQta, workRate
+	    if(this.getCount() === this.getCapacity()) {
+		if(d.curPower < 0.9 * d.reqQta) {
+		    d.capacity ++;
+		}
+	    }
+
+	    if(this.getCount() > 0 && d.curPower > 1.1 * d.reqQta) {
+		let cr_id = this.getFirstWorkerId();
+		let cr = Game.getObjectById(cr_id);
+		let cr_pwr = cr.memory.design[WORK] * d.workRate;
+		if((d.curPower - cr_pwr) > (1.1 * d.reqQta)) {
+		    this.unassign(rm, cr);
+		    d.capacity--;
+		}
+	    }
+	}
+    }
 
     start_work(rm, cr) {
 	let d = this.d;
@@ -2075,6 +2106,7 @@ function assignJobQuotas(rm) {
 	while(i<job_ids.length) {
 	    let id = job_ids[i++];
 	    let job = jobs[id];
+	    let cjob = f.make(job, null);
 	    if(id === 'ctrlr') {
 		job.reqQta = stats.enCtrlQta;
 	    } else {
@@ -2086,6 +2118,8 @@ function assignJobQuotas(rm) {
 		    quota = 0;
 		}
 	    }
+
+	    cjob.updateCapacity(rm);
 	}
     }
     
