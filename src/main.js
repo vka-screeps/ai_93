@@ -1061,6 +1061,12 @@ class JobCarrier extends Job {
 	    let tt = f.make(d.take_to);
 	    if(tt.d.isSpawn) {
 		if(cr.carry[RESOURCE_ENERGY] === 0) {
+		    let trip_time = Game.time - role.workStatus.trip_start_time+1;
+		    if(!d.avg_trip_time) {
+			d.avg_trip_time = trip_time;
+		    } else {
+			d.avg_trip_time = 0.7 * d.avg_trip_time + 0.3 * trip_time;
+		    }		    
 		    role.workStatus.step = 0;
 		} else {
 		    let tgt = this.findTarget(rm, cr);
@@ -1086,7 +1092,7 @@ class JobCarrier extends Job {
 		    if(tt.give(cr)) {
 			break;
 		    } else {
-			let trip_time = Game.time - role.workStatus.trip_start_time;
+			let trip_time = Game.time - role.workStatus.trip_start_time+1;
 			if(!d.avg_trip_time) {
 			    d.avg_trip_time = trip_time;
 			} else {
