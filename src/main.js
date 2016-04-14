@@ -1674,6 +1674,7 @@ function calcRoomStats(rm) {
     // count energy per turn
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
+	console.log('calc mining power');
 	for(let job_id in minerJobs) {
 	    let job = minerJobs[job_id];
 	    let pwr = job.curPower;
@@ -1977,7 +1978,7 @@ function planCreepJobs(rm) {
 			    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
 			    let cr = Game.getObjectById(cr_id);
 			    let cr_pwr = cr.memory.design[CARRY] * 50 / job.avg_trip_time / 2;
-			    console.log( "cr_pwr = " + cr_pwr );
+			    // console.log( "cr_pwr = " + cr_pwr );
 			    
 			    if((curCarrierPower - cr_pwr) > (1.1 * miningPower)) {
 				cjob.d.capacity--;
