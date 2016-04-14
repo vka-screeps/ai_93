@@ -1088,14 +1088,6 @@ class JobCarrier extends Job {
 		    if(tt.move_to(cr)) {
 			break;
 		    } else {
-			role.workStatus.step++;
-		    }
-		}
-
-		if(role.workStatus.step === 3) {
-		    if(tt.give(cr)) {
-			break;
-		    } else {
 			if(role.workStatus.trip_start_time) {
 			    let trip_time = Game.time - role.workStatus.trip_start_time+1;
 			    if(!d.avg_trip_time) {
@@ -1104,8 +1096,16 @@ class JobCarrier extends Job {
 				d.avg_trip_time = 0.7 * d.avg_trip_time + 0.3 * trip_time;
 			    }
 			    role.workStatus.trip_start_time = 0;
-			}			
+			}
 
+			role.workStatus.step++;
+		    }
+		}
+
+		if(role.workStatus.step === 3) {
+		    if(tt.give(cr)) {
+			break;
+		    } else {
 			role.workStatus.step++;
 		    }
 		}
