@@ -1092,6 +1092,10 @@ class JobCarrier extends Job {
     
     updateCapacity(rm) {
 	let d = this.d;
+
+	if(!d.curPower) {
+	    d.curPower = 0;
+	}	
 	
 	if(!d.reqQta) {
 	    if(d.capacity) {
