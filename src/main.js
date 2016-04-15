@@ -1099,7 +1099,7 @@ class JobCarrier extends Job {
 		(d.curPower > 1.1 * reqQtaDist)) {
 		let cr_id = this.getFirstWorkerId();
 		let cr = Game.getObjectById(cr_id);
-		let cr_pwr = cr.memory.design[WORK] * d.workRate;
+		let cr_pwr = cr.memory.design[CARRY] * 50;
 		console.log('updateCapacity - '+reqQtaDist +', '+d.curPower +', '+ cr_pwr);
 		if((d.curPower - cr_pwr) > (1.1 * reqQtaDist)) {
 		    this.unassign(rm, cr);
