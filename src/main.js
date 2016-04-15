@@ -2026,7 +2026,7 @@ function countTotalJobsCapacity(jobs) {
 function nextTickPlanning(rm) {
     {
 	let stat = countTotalJobsCapacity(rm.memory.jobs.JobBuilder);
-	rm.memory.balance.b1.count = _.min([3, stat.count]);
+	rm.memory.balance.b1.count = _.min([5, stat.count]);
 	rm.memory.balance.b1.priority = stat.priority;
     }
     {
