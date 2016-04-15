@@ -159,6 +159,10 @@ class Job extends CMemObj {
 	return null;
     }
 
+    setHelperQuota(rm, qta) {
+	u.log( "setHelperQuota is not implemented", u.LOG_WARN);
+    }
+
     calcPower(rm) {
 	let d = this.d;
 	let this_ = this;	
@@ -169,7 +173,7 @@ class Job extends CMemObj {
 
 	let cjob2 = this.getHelperJob(rm);
 	if(cjob2) {
-	    cjob2.calcPower(rm);
+	    cjob2.setHelperQuota(rm, d.curPower);
 	}
     }
     
@@ -1056,6 +1060,11 @@ class JobCarrier extends Job {
     calcCreepPwr(rm, cr) {
 	return cr.memory.design[CARRY] * 50;
     }
+
+    setHelperQuota(rm, qta) {
+	let d = this.d;
+	d.reqQta = qta;
+    }
     
     updateCapacity(rm) {
 	let d = this.d;
@@ -1382,7 +1391,7 @@ class JobBuilder extends Job {
 
 }
 
-class JobSupplyBulder extends Job {
+class JobSupplyBulder extends JobCarrier {
     constructor(d, parent) {
 	super(d, parent);
     }
@@ -1402,13 +1411,19 @@ class JobSupplyBulder extends Job {
 	    main_job_id: job_build.id,
 	};
     }
+
+    setHelperQuota(rm, qta) {
+	let d = this.d;
+	d.reqQta = qta;
+    }    
     
     start_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
 
 	role.workStatus = {
-	    step: 0
+	    step: 0,
+	    trip_start_time: 0
 	}
     }
 
@@ -1447,6 +1462,7 @@ class JobSupplyBulder extends Job {
 		if(tf.take(cr)) {
 		    break;
 		} else {
+		    role.workStatus.trip_start_time = Game.time;
 		    role.workStatus.step++;
 		}
 	    }
@@ -1455,6 +1471,15 @@ class JobSupplyBulder extends Job {
 		if(tt.move_to(cr, 3)) {
 		    break;
 		} else {
+		    if(role.workStatus.trip_start_time) {
+			let trip_time = Game.time - role.workStatus.trip_start_time+1;
+			if(!d.avg_trip_time) {
+			    d.avg_trip_time = trip_time;
+			} else {
+			    d.avg_trip_time = 0.7 * d.avg_trip_time + 0.3 * trip_time;
+			}
+			role.workStatus.trip_start_time = 0;
+		    }		    
 		    role.workStatus.step++;
 		}
 	    }
