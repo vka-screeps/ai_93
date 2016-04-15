@@ -31,6 +31,9 @@ var F = class {
     }
 
     make(d, parent) {
+	if(d===null)
+	    return null;
+	
 	while(d.cname === 'ObjRef') {
 	    let obj = Memory.objects[d.obj_id];
 	    if(!obj) {
