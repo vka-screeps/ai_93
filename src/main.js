@@ -156,6 +156,8 @@ class Job extends CMemObj {
     }
 
     getHelperJob(rm) {
+	let d = this.d;
+	console.log('getHelperJob for ' + d.id + ' = null ');
 	return null;
     }
 
