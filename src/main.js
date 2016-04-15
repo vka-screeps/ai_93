@@ -1077,8 +1077,10 @@ class JobCarrier extends Job {
     updateCapacity(rm) {
 	let d = this.d;
 	if(!d.reqQta) {
-	    this.unassign(rm);
-	    d.capacity = 0;
+	    if(d.capacity) {
+		this.unassign(rm);
+		d.capacity = 0;
+	    }
 	} else {
 	    let avg_trip_time = defaultFor(d.avg_trip_time, 3);
 	    if(avg_trip_time <=0)
