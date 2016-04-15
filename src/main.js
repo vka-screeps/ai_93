@@ -2072,7 +2072,7 @@ function planCreepJobs(rm) {
 			    reqQta: 10,
 			    res_id: null,
 			    res_pos : chp.makeRef(),
-			    maxCapacity: chp.maxCapacity,
+			    maxCapacity: chp.d.maxCapacity,
 			    drop_id: null,
 			    drop_name: 'Spawn1',
 			  };
