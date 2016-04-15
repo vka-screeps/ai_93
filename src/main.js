@@ -192,6 +192,10 @@ class Job extends CMemObj {
 
     updateCapacity(rm) {
 	let d = this.d;
+	if(!d.curPower) {
+	    d.curPower = 0;
+	}
+	
 	if(!d.reqQta) {
 	    this.unassign(rm);
 	    d.capacity = 0;
