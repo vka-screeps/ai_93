@@ -2239,6 +2239,7 @@ function assignJobQuotas(rm) {
 
 	    cjob.updateCapacity(rm);
 
+	    /*
 	    // 
 	    {
 		let car_job_id = 'help_' + id;
@@ -2248,6 +2249,7 @@ function assignJobQuotas(rm) {
 		    carJob.updateCapacity(rm);
 		}
 	    }
+	    */
 	}
     }
 
