@@ -1075,8 +1075,10 @@ class JobCarrier extends Job {
     }
     
     updateCapacity(rm) {
-	console.log('updateCapacity');
 	let d = this.d;
+	
+	console.log('updateCapacity ' + d.id);
+	
 	if(!d.reqQta) {
 	    if(d.capacity) {
 		this.unassign(rm);
