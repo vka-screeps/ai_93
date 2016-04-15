@@ -1308,7 +1308,7 @@ class JobBuilder extends Job {
     getHelperJob(rm) {
 	let d = this.d;
 	let helper_id = 'help_' + d.id;
-	return f.make(rm.memory.jobs.JobCarrier[d.help_id], null);
+	return f.make(rm.memory.jobs.JobCarrier[helper_id], null);
     }    
     
     start_work(rm, cr) {
@@ -1436,7 +1436,7 @@ class JobSupplyBulder extends JobCarrier {
 	    id: new_job_id,
 	    taken_by_id: null,
 	    capacity: 0, //job_build.capacity,
-	    reqQta: job_build.reqQta,
+	    reqQta: 0, // job_build.reqQta,
 	    priority : job_build.priority,
 	    take_from: job_build.take_from,
 	    take_to: job_build.take_to,
