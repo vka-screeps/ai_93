@@ -158,7 +158,7 @@ class Job extends CMemObj {
 
     getHelperJob(rm) {
 	let d = this.d;
-	console.log('Job.getHelperJob for ' + d.id + ' = null ');
+	// console.log('Job.getHelperJob for ' + d.id + ' = null ');
 	return null;
     }
 
@@ -177,7 +177,7 @@ class Job extends CMemObj {
 
 	
 	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
-	console.log('calcPower - ' + d.id + ', ' + cjob2);
+	// console.log('calcPower - ' + d.id + ', ' + cjob2);
 
 	if(cjob2) {
 	    cjob2.setHelperQuota(rm, d.curPower);
