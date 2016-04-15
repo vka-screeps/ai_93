@@ -144,7 +144,7 @@ function setConfigSim() {
 				       taken_by_id: null,
 				       priority : 0,
 				       capacity : 1,
-				       reqQta: 10,
+				       reqQta: 1,
 				       // take_from :  room_mem.harvPoints.hp1, // copy ref
 				       take_from :  room_mem.storagePoint,
 				       take_to : { cname: 'AddrBuilding',

@@ -1,1 +1,1 @@
-module.exports = { configVersion : 141 };
+module.exports = { configVersion : 142 };
