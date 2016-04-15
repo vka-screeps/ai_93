@@ -2213,7 +2213,8 @@ function assignJobQuotas(rm) {
 	    let qta = rm.memory.stats.enTotalQta - 3;
 	    if(qta < 1) qta = 1;
 	    else if(qta > 30) qta = 30;
-	    jc1_job.reqQta = qta;
+	    if(qta > jc1_job.reqQta)
+		jc1_job.reqQta = qta;
 	}
     }
     // miners
