@@ -2206,6 +2206,16 @@ function planCreepJobs(rm) {
 function assignJobQuotas(rm) {
     let stats = rm.memory.stats;
 
+    // jc1
+    {
+	let jc1_job = rm.memory.jobs.JobCarrier.jc1;
+	if(jc1_job) {
+	    let qta = rm.memory.stats.enTotalQta - 3;
+	    if(qta < 1) qta = 1;
+	    else if(qta > 30) qta = 30;
+	    jc1_job.reqQta = qta;
+	}
+    }
     // miners
     {
 	let jobs = rm.memory.jobs.JobMiner;
