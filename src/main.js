@@ -239,7 +239,7 @@ class Job extends CMemObj {
 	    }
 	}
 
-	this.calcPower();
+	this.calcPower(rm);
     }
 
     assign(rm, cr) {
@@ -264,7 +264,7 @@ class Job extends CMemObj {
 	d.taken_by_id[cr.id] = 1;
 	cr.memory.role.job_id = d.id;
 
-	this.calcPower();
+	this.calcPower(rm);
 	u.log( "Job " + d.id + " assigned to " + cr.name + ', priority=' + d.priority );
     }
 
@@ -2230,7 +2230,7 @@ function cleanUpDeadCreeps(rm) {
 			if(job.taken_by_id){
 			    delete job.taken_by_id[cr_id];
 			    let cjob = f.make(job, null);
-			    cjob.calcPower();
+			    cjob.calcPower(rm);
 			}
 		    }
 		}
