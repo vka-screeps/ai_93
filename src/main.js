@@ -172,6 +172,8 @@ class Job extends CMemObj {
 	} );
 
 	let cjob2 = this.getHelperJob(rm);
+	console.log('calcPower - ' + cjob2);
+
 	if(cjob2) {
 	    cjob2.setHelperQuota(rm, d.curPower);
 	}
