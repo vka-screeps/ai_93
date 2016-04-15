@@ -182,6 +182,9 @@ class Job extends CMemObj {
 	
 	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
 	let qta2 = (function() { return this_.getLimitedCurPower(d.curPower); })();
+
+	if(d.reqQta && qta2 > d.reqQta)
+	    qta2 = d.reqQta;
 	// console.log('calcPower - ' + d.id + ', ' + cjob2);
 
 	if(cjob2) {
