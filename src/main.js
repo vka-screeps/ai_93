@@ -167,6 +167,10 @@ class Job extends CMemObj {
 	u.log( "setHelperQuota is not implemented", u.LOG_WARN);
     }
 
+    getLimitedCurPower(qta) {
+	return qta;
+    }
+
     calcPower(rm) {
 	let d = this.d;
 	let this_ = this;	
@@ -177,10 +181,11 @@ class Job extends CMemObj {
 
 	
 	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
+	let qta2 = (function() { return this_.getLimitedCurPower(d.curPower); })();
 	// console.log('calcPower - ' + d.id + ', ' + cjob2);
 
 	if(cjob2) {
-	    cjob2.setHelperQuota(rm, d.curPower);
+	    cjob2.setHelperQuota(rm, qta2);
 	}
     }
     
@@ -209,6 +214,9 @@ class Job extends CMemObj {
 		    d.capacity--;
 		}
 	    }
+	}
+	if(d.maxCapacity && d.capacity>d.maxCapacity) {
+	    d.capacity = d.maxCapacity;
 	}
     }    
 
@@ -888,6 +896,10 @@ class JobMiner extends Job {
 	let helper_id = 'carry_' + d.id;
 	let ret = f.make(rm.memory.jobs.JobCarrier[helper_id], null);
 	return ret;
+    }
+
+    getLimitedCurPower(qta) {
+	return (qta<10) ? qta : 10;
     }
     
     start_work(rm, cr) {
@@ -2060,6 +2072,7 @@ function planCreepJobs(rm) {
 			    reqQta: 10,
 			    res_id: null,
 			    res_pos : chp.makeRef(),
+			    maxCapacity: chp.maxCapacity,
 			    drop_id: null,
 			    drop_name: 'Spawn1',
 			  };
