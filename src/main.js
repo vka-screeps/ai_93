@@ -155,11 +155,13 @@ class Job extends CMemObj {
 	return 1;
     }
 
+
     getHelperJob(rm) {
 	let d = this.d;
 	console.log('getHelperJob for ' + d.id + ' = null ');
 	return null;
     }
+
 
     setHelperQuota(rm, qta) {
 	u.log( "setHelperQuota is not implemented", u.LOG_WARN);
@@ -173,7 +175,7 @@ class Job extends CMemObj {
 	    d.curPower += this_.calcCreepPwr(rm, cr);
 	} );
 
-	let cjob2 = this.getHelperJob(rm);
+	let cjob2 = this_.getHelperJob(rm);
 	console.log('calcPower - ' + d.id + ', ' + cjob2);
 
 	if(cjob2) {
