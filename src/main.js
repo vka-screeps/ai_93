@@ -886,7 +886,7 @@ class JobMiner extends Job {
     getHelperJob(rm) {
 	let d = this.d;
 	let helper_id = 'carry_' + d.id;
-	let ret = f.make(rm.memory.jobs.JobCarrier[d.help_id], null);
+	let ret = f.make(rm.memory.jobs.JobCarrier[helper_id], null);
 	console.log("JobMiner.getHelperJob for " + d.id + " = " + ret);
     }
     
