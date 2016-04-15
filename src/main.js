@@ -31,7 +31,7 @@ var F = class {
     }
 
     make(d, parent) {
-	if(d===null)
+	if(!d)
 	    return null;
 	
 	while(d.cname === 'ObjRef') {
