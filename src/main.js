@@ -1217,6 +1217,8 @@ class JobCarrier extends Job {
 			    }
 			}
 		    } else {
+			if(role.workStatus.trip_start_time)
+			    role.workStatus.trip_start_time++; // don't count this as trip time
 			// todo - go to the wait point
 		    }
 		    break;
