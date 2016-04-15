@@ -176,7 +176,7 @@ class Job extends CMemObj {
 	} );
 
 	
-	let cjob2 = function(rm) { return this_.getHelperJob(rm); }(rm);
+	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
 	console.log('calcPower - ' + d.id + ', ' + cjob2);
 
 	if(cjob2) {
@@ -887,7 +887,7 @@ class JobMiner extends Job {
 	let d = this.d;
 	let helper_id = 'carry_' + d.id;
 	let ret = f.make(rm.memory.jobs.JobCarrier[helper_id], null);
-	console.log("JobMiner.getHelperJob for " + d.id + " = " + ret);
+	return ret;
     }
     
     start_work(rm, cr) {
