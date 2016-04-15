@@ -218,7 +218,7 @@ class Job extends CMemObj {
 		// let cr_pwr = cr.memory.design[WORK] * d.workRate;
 		let this_ = this;
 		let cr_pwr = (function(){return this_.calcCreepPwr(rm, cr);}) ();
-		console.log('updateCapacity - '+d.reqQta +', '+d.curPower +', '+ cr_pwr);
+		// console.log('updateCapacity - '+d.reqQta +', '+d.curPower +', '+ cr_pwr);
 		if((d.curPower - cr_pwr) > (1.1 * d.reqQta)) {
 		    this.unassign(rm, cr);
 		    d.capacity--;
