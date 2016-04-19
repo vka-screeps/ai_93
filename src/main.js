@@ -1885,6 +1885,7 @@ function planSpawnJobs(rm) {
 		else
 		    bal_adj[bal_id] = 1;
 	    }
+	    console.log('ttb - ' + cr.name + ', ' + ttb);
 	}
     }
     
