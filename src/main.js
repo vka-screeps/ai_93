@@ -1640,7 +1640,7 @@ var designRegistry = {
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
     // slow builder
     // 'd_b2' : [ WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK ],    
-    'd_def1' : [ TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ]
+    'd_def1' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ]
 };
 
 var costRegistry = {
@@ -1658,10 +1658,10 @@ function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
 	if(design == 'd_h1') {
-	    return { work: 1, carry: 1, move: 1};
+	    return { work: 1, carry: 1, move: 1, ttb: 3};
 	    // return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
-	    return { carry: 2, move: 1};
+	    return { carry: 2, move: 1, ttb: 3};
 	    // return [CARRY, CARRY, MOVE];
 	} 
     }
