@@ -1871,6 +1871,7 @@ function planSpawnJobs(rm) {
 
     //
     let bal_adj = {};
+    let ttb_acc = 0;
     
     for(let cr_name in rm.memory.creeplist) {
 	let cr_id = rm.memory.creeplist[cr_name].id;
@@ -1881,7 +1882,8 @@ function planSpawnJobs(rm) {
 	if(bal_ln) {
 	    let dsgn_nm = bal_ln.design;
 	    let ttb = getDesign(dsgn_nm, null, rm).ttb;
-	    if(ttb && cr.ticksToLive <= ttb) { // todo - add time to arrive at work
+	    if(ttb && cr.ticksToLive <= ttb + ttb_acc) { // todo - add time to arrive at work
+		ttb_acc += ttb;
 		if(bal_adj[bal_id])
 		    bal_adj[bal_id]++;
 		else
