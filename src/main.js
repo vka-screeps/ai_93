@@ -1882,6 +1882,7 @@ function planSpawnJobs(rm) {
 	    let dsgn_nm = bal_ln.design;
 	    let ttb = getDesign(dsgn_nm, null, rm).ttb;
 	    if(ttb && cr.ticksToLive <= ttb+1400) { // todo - add time to arrive at work
+		console.log('ttb inc - ' + cr.name);
 		if(bal_adj[bal_id])
 		    bal_adj[bal_id]++;
 		else
