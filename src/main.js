@@ -1684,7 +1684,9 @@ function getDesign( design, sp, rm ) {
 
     let i=0;
     let cost = 0;
-    let ret = {};
+    let ret = {
+	ttb: 0, // time to build
+    };
     while(cost < energy) {
 	let next =  proto[i++];
 	if(!next)
@@ -1702,6 +1704,7 @@ function getDesign( design, sp, rm ) {
 	} else {
 	    ret[next]++;
 	}
+	ret.ttb++;
 	// if(next === TOUGH) {
 	//     ret = [TOUGH].concat(ret);
 	// } else {
@@ -1862,6 +1865,29 @@ function calcRoomStats(rm) {
 
 // Convert balance into JobSpawn jobs
 function planSpawnJobs(rm) {
+
+
+    //
+    let bal_adj = {};
+    
+    for(let cr_name in rm.memory.creeplist) {
+	let cr_id = rm.memory.creeplist[cr_name].id;
+	let cr = Game.getObjectById(cr_id);
+
+	let bal_id = cr.memory.bal_id;
+	let bal_ln = rm.memory.balance[bal_id];
+	if(bal_ln) {
+	    let dsgn_nm = bal_ln.design;
+	    let ttb = getDesign(dsgn_nm, null, rm).ttb;
+	    if(ttb && cr.ticksToLive <= ttb) { // todo - add time to arrive at work
+		if(bal_adj[bal_id])
+		    bal_adj[bal_id]++;
+		else
+		    bal_adj[bal_id] = 1;
+	    }
+	}
+    }
+    
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
     let lst = jobs['JobSpawn'];
@@ -1874,6 +1900,9 @@ function planSpawnJobs(rm) {
 	let job_id = bal_ln.id;
 	let job = lst[job_id];
 	let countInProgress = job ? job.capacity : 0;
+	if(bal_adj[bal_ln.id]) {
+	    countInProgress -= bal_adj[bal_ln.id];
+	}
 
 	if(job) {
 	    job.priority = priority;
