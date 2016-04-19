@@ -1910,6 +1910,8 @@ function planSpawnJobs(rm) {
 	    countInProgress -= bal_adj[bal_ln.id];
 	}
 
+	console.log('balance '+ i + ', ' + countInProgress);
+
 	if(job) {
 	    job.priority = priority;
 	}
