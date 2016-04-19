@@ -1882,18 +1882,14 @@ function planSpawnJobs(rm) {
 	    let dsgn_nm = bal_ln.design;
 	    let ttb = getDesign(dsgn_nm, null, rm).ttb;
 	    if(ttb && cr.ticksToLive <= ttb+1400) { // todo - add time to arrive at work
-		console.log('ttb inc - ' + cr.name);
 		if(bal_adj[bal_id])
 		    bal_adj[bal_id]++;
 		else
 		    bal_adj[bal_id] = 1;
 	    }
-	    console.log('ttb - ' + cr.name + ', ' + ttb);
 	}
     }
 
-    u.printObject(bal_adj);
-    
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
     let lst = jobs['JobSpawn'];
@@ -1907,8 +1903,6 @@ function planSpawnJobs(rm) {
 	let job = lst[job_id];
 	let countInProgress = job ? job.capacity : 0;
 	let adj = bal_adj[bal_ln.id] ? bal_adj[bal_ln.id] : 0;
-
-	console.log('balance '+ i + ', ' + countInProgress + ', ' + adj);
 
 	if(job) {
 	    job.priority = priority;
