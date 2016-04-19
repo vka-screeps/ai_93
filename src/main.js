@@ -1891,6 +1891,8 @@ function planSpawnJobs(rm) {
 	    console.log('ttb - ' + cr.name + ', ' + ttb);
 	}
     }
+
+    u.printObject(bal_adj);
     
     let jobs = rm.memory.jobs;
     if (!jobs['JobSpawn']) jobs['JobSpawn'] = {};
