@@ -1933,7 +1933,7 @@ function planSpawnJobs(rm) {
 		if (job.capacity<0)
 		    job.capacity = 0;
 	    }
-	} else if (bal_ln.count < bal_ln.curCount + countInProgress) {
+	} else if (bal_ln.count < bal_ln.curCount + countInProgress - adj) {
 	    if(job) {
 		job.capacity = bal_ln.count - bal_ln.curCount + adj;
 		if (job.capacity<0)
