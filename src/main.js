@@ -1722,7 +1722,7 @@ function getBodyFromDesign(design) {
     let body = [];
     Object.keys(design).forEach(function(key) {
 	if(key === 'ttb' || key === 'cost')
-	    continue;
+	    return;
 	let cnt = design[key];
 	let t = new Array(cnt);
 	t.fill(key);
