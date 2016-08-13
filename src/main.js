@@ -158,7 +158,6 @@ class Job extends CMemObj {
 
     getHelperJob(rm) {
 	let d = this.d;
-	// console.log('Job.getHelperJob for ' + d.id + ' = null ');
 	return null;
     }
 
@@ -179,7 +178,6 @@ class Job extends CMemObj {
 	    d.curPower += this_.calcCreepPwr(rm, cr);
 	} );
 
-	
 	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
 	let qta2 = (function() { return this_.getLimitedCurPower(d.curPower); })();
 
@@ -352,7 +350,10 @@ class AddrPos extends Addr {
     init() { };
 
     getPos(rm) {
-	let d = this.d;	
+	let d = this.d;
+	if(!rm) {
+	    rm = Game.rooms[d.roomName];
+	}
 	return rm.getPositionAt(d.x, d.y);
     }
 
@@ -935,7 +936,6 @@ class JobMiner extends Job {
 	    if(d.res_pos) {
 		// let pos = rm.getPositionAt(d.res_pos.x, d.res_pos.y);
 		let pos = f.make(d.res_pos, null).getPos(rm);
-		console.log( 'pos = ' + pos );
 		let source = pos.findClosestByRange(FIND_SOURCES);
 		d.res_id = source.id;
 	    }
@@ -960,6 +960,19 @@ class JobMiner extends Job {
 	let drop = Game.getObjectById(d.drop_id);
 
 	let needToCarry = rm.memory.recoveryMode; // || d.res_pos.hasContainer
+	// let needToCarry = true;
+	/*
+	try {
+	    let car_job_id = 'carry_'+d.id;
+	    let car_job = rm.memory.jobs.JobCarrier[car_job_id];
+	    let ccar_job = f.make(car_job, null);
+	    if(ccar_job.getCount() > 0) {
+		needToCarry = false;
+	    }
+	} catch (err) {
+	    u.log( 'Error looking for carrier for ' + d.id + ' - ' + err, u.LOG_ERR );
+	}
+	*/
 
 	let loop_it = 0;
 	while( loop_it++ < 2 ) {
@@ -1356,6 +1369,7 @@ class JobBuilder extends Job {
 		let job = JobSupplyBulder.create(car_job_id, d, null);
 		car_jobs[car_job_id] = job;
 	    }
+	    this.calcPower(rm); // this should update the helper job quota
 	}
 
 	if(cr.carry[RESOURCE_ENERGY]>=10) {
@@ -1468,7 +1482,7 @@ class JobSupplyBulder extends JobCarrier {
     static cname() { return 'JobSupplyBulder'; }
 
     static create(new_job_id, job_build, parent){
-	return {
+	let ret = {
 	    cname: 'JobSupplyBulder',
 	    id: new_job_id,
 	    taken_by_id: null,
@@ -1479,6 +1493,20 @@ class JobSupplyBulder extends JobCarrier {
 	    take_to: job_build.take_to,
 	    main_job_id: job_build.id,
 	};
+
+	// calculate average trip time
+	try
+	{
+	    let tf = f.make(ret.take_from);		
+	    let tt = f.make(ret.take_to);
+	    
+	    let dist = tf.getPos().getRangeTo(tt.getPos());
+	    ret.avg_trip_time = dist;
+	    u.log('Estimated distance for ' + new_job_id + ' - ' + dist, u.LOG_INFO);
+	} catch (err) {
+	    u.log('Error estimating distance for ' + new_job_id + ' - ' + err, u.LOG_ERR);
+	}
+	return ret;
     }
 
     setHelperQuota(rm, qta) {
@@ -1589,7 +1617,7 @@ class JobSupplyBulder extends JobCarrier {
 		    let tgt = null;
 		    {
 			let workersListByDeficit = _.filter(workersList, function(c) {
-			    return cr.pos.getRangeTo(c) < 4;
+			    return cr.pos.getRangeTo(c) < 8;
 			} );
 			workersListByDeficit = _.sortBy(workersListByDeficit, function(c) { return c.carry[RESOURCE_ENERGY] - c.carryCapacity; } );
 			if(workersListByDeficit.length>0)
@@ -1843,10 +1871,6 @@ class JobSpawn extends Job {
 		// u.log("Spawn error: " + result + " at " + spawn.name + " : " + body, u.LOG_ERR);
 
 		this.finish_work(rm, spawn, false);
-		// if( result !== d.workStatus) {
-		// 	console.log('Spawn error: '+result);
-		// }
-		// role.workStatus = result;
 	    }
 	} else {
 	    this.finish_work(rm, spawn, true);
@@ -1978,6 +2002,10 @@ function planSpawnJobs(rm) {
 	if(job) {
 	    job.priority = priority;
 	}
+
+	// if(bal_ln.id == 'c2') {
+	//     console.log('Balance for c2 - ' + (bal_ln.curCount + countInProgress - adj)  + ' / ' + bal_ln.count);
+	// }
 	
 	if(bal_ln.count > bal_ln.curCount + countInProgress - adj) {
 	    if(!lst[job_id]) {
@@ -2095,12 +2123,11 @@ function sortJobsByPriority( jobs, exclueTaken ) {
 	return cjob.getPriority();
     } );
 
-    // console.log( "sortJobsByPriority: " + job_ids );
     return job_ids;
 }
 
 function detectRecoveryMode(rm) {
-    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount <2) ||
+    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount == 0) ||
 	(rm.memory.balance.h1.curCount + rm.memory.balance.h2.curCount == 0) ? 1 : 0;
 
     if(rm.memory.recoveryMode) {
@@ -2133,7 +2160,7 @@ function countTotalJobsCapacity(jobs) {
 function nextTickPlanning(rm) {
     {
 	let stat = countTotalJobsCapacity(rm.memory.jobs.JobBuilder);
-	rm.memory.balance.b1.count = _.min([7, stat.count]);
+	rm.memory.balance.b1.count = _.min([10, stat.count]);
 	rm.memory.balance.b1.priority = stat.priority;
     }
     {
@@ -2285,6 +2312,7 @@ function planCreepJobs(rm) {
 			    cname: 'JobBuilder',
 			    taken_by_id: null,
 			    capacity: 0,
+			    maxCapacity: 5,
 			    priority : 100,
 			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			    take_to: { cname: 'AddrBuilding',
@@ -2395,6 +2423,18 @@ function assignJobQuotas(rm) {
 		}
 	    }
 	    */
+	}
+
+	if(quota>0) {
+	    try {
+		let job = jobs['ctrlr'];
+		let cjob = f.make(job, null);
+
+		job.reqQta = _.min([20, job.reqQta+quota/2]);
+		cjob.updateCapacity(rm);
+	    } catch(err) {
+		u.log( 'Error ' + err, u.LOG_ERR );
+	    }
 	}
     }
 

@@ -209,10 +209,11 @@ function setConfigSim() {
 	};
     }
 
+    // quotas
     room_mem.config = {
-	ctrlrShare: 0.8,
+	ctrlrShare: 0.2,
 	repairShare: 0.1,
-	builderShare: 0.1,
+	builderShare: 0.7,
     };
 
     /*
