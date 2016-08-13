@@ -26,7 +26,7 @@ var F = class {
     }
 
     reg(c) {
-	u.log("Registering: " + c.cname(), u.LOG_INFO);
+	u.log("Registering class: " + c.cname(), u.LOG_DBG);
 	this.tbl[c.cname()] = c;
     }
 
@@ -44,7 +44,7 @@ var F = class {
 	}
 	let cls = this.tbl[d.cname];
 	if ( cls  ) {
-	    // u.log("Instantiating: " + d.cname, u.LOG_INFO); 
+	    // u.log("Instantiating: " + d.cname, u.LOG_DBG); 
 	    return new cls(d, parent);
 	} else {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
@@ -297,7 +297,7 @@ class Job extends CMemObj {
 	cr.memory.role.job_id = d.id;
 
 	this.calcPower(rm);
-	u.log( "Job " + d.id + " assigned to " + cr.name + ', priority=' + d.priority );
+	u.log( "Job " + d.id + " assigned to " + cr.name + ', priority=' + d.priority, u.LOG_DBG );
     }
 
     forEachWorker(rm, f) {
@@ -367,7 +367,17 @@ class AddrPos extends Addr {
     }
     
     take(cr) {
-	let d = this.d;		
+	let d = this.d;
+	if (d.isWaitPoint) {
+	    if(cr.carry[RESOURCE_ENERGY] > 0) {
+		return false; // already have got some energy here
+	    } else {
+		if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+		    cr.moveTo(d.x, d.y);
+		}		
+		return true; // keep waiting
+	    }
+	}
 	if(d.full) {
 	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
 		return false;
@@ -389,6 +399,11 @@ class AddrPos extends Addr {
 		    cr.pickup(target);
 		}
 		return true;
+	    } else {
+		let dist = 3;
+		if(cr.pos.getRangeTo(d.x, d.y) > dist) {
+		    cr.moveTo(d.x, d.y);
+		}
 	    }
 	}	
  
@@ -484,7 +499,7 @@ class AddrStoragePoint extends AddrPos {
 	if(tgt1) {
 	    let tgt = Game.getObjectById(tgt1.id);
 	    let status = cr.transfer(tgt, RESOURCE_ENERGY);
-	    console.log( "transfer = " + tgt.id + status );
+	    // console.log( "transfer = " + tgt.id + status );
 	    if(status == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
 		return true;
@@ -577,7 +592,7 @@ class AddrHarvPoint extends Addr {
 	let d = this.d;
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
-	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 }, {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 2 }, {
 		// We need to set the defaults costs higher so that we
 		// can set the road cost lower in `roomCallback`
 		plainCost: 2,
@@ -636,7 +651,7 @@ class AddrHarvPoint extends Addr {
 		// console.log('searchRez = ' + searchRez.path.length);
 		// u.printObject(searchRez);
 
-		u.log("Moving to object " + res, u.LOG_INFO);
+		u.log("Moving to object " + res, u.LOG_DBG);
 		cr.moveTo(res);
 		return true;
 	    } else {
@@ -898,7 +913,7 @@ class JobMiner extends Job {
     static cname() { return 'JobMiner'; }
 
     calcCreepPwr(rm, cr) {
-	return cr.memory.design[WORK] * 2;
+	return cr ? cr.memory.design[WORK] * 2 : 0;
     }
 
     getHelperJob(rm) {
@@ -964,12 +979,12 @@ class JobMiner extends Job {
 		// deliver
 		if(role.workStatus.step === 1) {
 		    if(cr.carry[RESOURCE_ENERGY] > 0) {
-			let status = cr.transferEnergy(drop);
+			let status = cr.transfer(drop, RESOURCE_ENERGY);
 			if(status == ERR_NOT_IN_RANGE ) {
 			    cr.moveTo(drop);
 			} else if(status == OK) {
 			} else {
-			    u.log( 'cr.transferEnergy(drop) returns ' + status, u.LOG_WARN );
+			    u.log( 'cr.transfer(drop) returns ' + status, u.LOG_WARN );
 			}
 			break;
 		    } else {
@@ -1224,6 +1239,7 @@ class JobCarrier extends Job {
 		    } else {
 			if(role.workStatus.trip_start_time)
 			    role.workStatus.trip_start_time++; // don't count this as trip time
+			tt.move_to(cr);
 			// todo - go to the wait point
 		    }
 		    break;
@@ -1332,7 +1348,7 @@ class JobBuilder extends Job {
 	// console.log( 'path ' + tfp + ', ' + ttp + ', ' + tfp.findPathTo(ttp) );
 
 	//	if(tfp && ttp && tfp.findPathTo(ttp).length > 10) {
-	if(tfp && ttp && tfp.getRangeTo(ttp) > 8) {
+	if(tfp && ttp && tfp.getRangeTo(ttp) > 7) {
 	    // create JobSupplyBulder for this job
 	    let car_jobs = rm.memory.jobs['JobCarrier'];
 	    let car_job_id = 'help_' + d.id;
@@ -1341,6 +1357,10 @@ class JobBuilder extends Job {
 		car_jobs[car_job_id] = job;
 	    }
 	}
+
+	if(cr.carry[RESOURCE_ENERGY]>=10) {
+	    role.workStatus.step = 2;
+	}
     }
 
     finish_work(rm) {
@@ -1348,6 +1368,16 @@ class JobBuilder extends Job {
 	
 	d.done = true;
 	this.unassign(rm);
+
+	// finish carrier job
+	let car_jobs = rm.memory.jobs['JobCarrier'];	
+	let car_job_id = 'help_' + d.id;
+	let job = car_jobs[car_job_id]
+	if(job) {
+	    let cjob = f.make(job, null);
+	    job.done = true;
+	    cjob.unassign(rm);
+	}
     }
 
 
@@ -1464,6 +1494,10 @@ class JobSupplyBulder extends JobCarrier {
 	    step: 0,
 	    trip_start_time: 0
 	}
+
+	if(cr.carry[RESOURCE_ENERGY]>=10) {
+	    role.workStatus.step = 2;
+	}	
     }
 
     finish_work(rm) {
@@ -1512,6 +1546,16 @@ class JobSupplyBulder extends JobCarrier {
 		} else {
 		    if(role.workStatus.trip_start_time) {
 			let trip_time = Game.time - role.workStatus.trip_start_time+1;
+			let recipientCnt = 0;
+			{
+			    let bld_jobs = rm.memory.jobs['JobBuilder'];
+			    let wjob = bld_jobs[d.main_job_id];
+			    if(wjob) {
+				let cwjob = f.make(wjob, null);
+				recipientCnt = cwjob.getCount();
+			    }
+			}
+			trip_time += recipientCnt;
 			if(!d.avg_trip_time) {
 			    d.avg_trip_time = trip_time;
 			} else {
@@ -1542,14 +1586,27 @@ class JobSupplyBulder extends JobCarrier {
 			return;
 		    }
 
-		    workersList = _.filter(workersList, function(c) {
-			return ((c.carry[RESOURCE_ENERGY]+10) < c.carryCapacity);
-		    } );
+		    let tgt = null;
+		    {
+			let workersListByDeficit = _.filter(workersList, function(c) {
+			    return cr.pos.getRangeTo(c) < 4;
+			} );
+			workersListByDeficit = _.sortBy(workersListByDeficit, function(c) { return c.carry[RESOURCE_ENERGY] - c.carryCapacity; } );
+			if(workersListByDeficit.length>0)
+			    tgt = workersListByDeficit[0];
+		    }
 
-		    let tgt = cr.pos.findClosestByRange(workersList/*, { filter: function(c) {
-			console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
-			return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
-		    } }*/);
+		    if(!tgt)
+		    {
+			workersList = _.filter(workersList, function(c) {
+			    return ((c.carry[RESOURCE_ENERGY]+10) < c.carryCapacity);
+			} );
+
+			tgt = cr.pos.findClosestByRange(workersList/*, { filter: function(c) {
+								     console.log(c.name + ' - ' + ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity));
+								     return ((c.carry[RESOURCE_ENERGY]+30) < c.carryCapacity);
+								     } }*/);
+		    }
 
 		    if(!tgt)
 			break;
@@ -1657,7 +1714,7 @@ var costRegistry = {
 function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
-	if(design == 'd_h1') {
+	if((design == 'd_h0') || (design == 'd_h1')) {
 	    return { work: 1, carry: 1, move: 1, ttb: 3};
 	    // return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
@@ -1674,7 +1731,7 @@ function getDesign( design, sp, rm ) {
 
     if(savedDsgn[design]) {
 	// return from cache
-	// u.log("Design for " + design + " - " + ret, u.LOG_INFO);
+	// u.log("Design for " + design + " - " + ret, u.LOG_DBG);
 	return savedDsgn[design];
     }
     
@@ -1715,7 +1772,7 @@ function getDesign( design, sp, rm ) {
 	// }
     }
 
-    u.log("Design for " + design + " - " + ret, u.LOG_INFO);
+    u.log("Design for " + design + " - " + ret, u.LOG_DBG);
     savedDsgn[design] = ret;
     
     return ret;
@@ -1773,16 +1830,18 @@ class JobSpawn extends Job {
 	    let body = getBodyFromDesign(design);
 	    mem.design = design;
 	    
-	    // 
-	    
-	    let result = spawn.createCreep(body, undefined, mem);
+	    //
+	    let new_name = mem.role.name + '_' + Memory.next_creep_id;
+	    let result = spawn.createCreep(body, new_name, mem);
 	    role.workStatus = result;
 	    
 	    if(_.isString(result)) {
-		u.log("Spawning " + mem.role.name + " at " + spawn.name + " : " + body, u.LOG_INFO);
-		console.log('The name is: '+result);
+		Memory.next_creep_id++;
+		u.log("Spawning " + result + " at " + spawn.name + " : " + body, u.LOG_INFO);
 	    }
 	    else {
+		// u.log("Spawn error: " + result + " at " + spawn.name + " : " + body, u.LOG_ERR);
+
 		this.finish_work(rm, spawn, false);
 		// if( result !== d.workStatus) {
 		// 	console.log('Spawn error: '+result);
@@ -1862,8 +1921,14 @@ function calcRoomStats(rm) {
 	}
     }
 
-    stats.enTotalQta = stats.enProd + stats.enTotal / 10000;
+    let extraQta = (stats.enTotal-2000);
+    if(extraQta>0) extraQta = extraQta / 500;
+    else extraQta = extraQta / 100;
+
+    stats.enTotalQta = stats.enProd + extraQta;
+    if(stats.enTotalQta<0) stats.enTotalQta = 0;
     stats.enCtrlQta = config.ctrlrShare * stats.enTotalQta;
+    if(stats.enCtrlQta>20) stats.enCtrlQta = 20;
     stats.enBldQta = config.builderShare * stats.enTotalQta;
     stats.enRepairQta = config.repairShare * stats.enTotalQta;
 }
@@ -1875,7 +1940,8 @@ function planSpawnJobs(rm) {
     //
     let bal_adj = {};
     let ttb_acc = 0;
-    
+
+    // Count all creeps that are near to end of life period.
     for(let cr_name in rm.memory.creeplist) {
 	let cr_id = rm.memory.creeplist[cr_name].id;
 	let cr = Game.getObjectById(cr_id);
@@ -1925,7 +1991,7 @@ function planSpawnJobs(rm) {
 		    design: bal_ln.design
 		};
 
-		u.log("New JobSpawn: " + job_id, u.LOG_INFO);
+		u.log("New JobSpawn: " + job_id, u.LOG_DBG);
 		lst[job_id] = new_job;
 	    } else {
 		job.capacity = bal_ln.count - bal_ln.curCount + adj;
@@ -2003,7 +2069,7 @@ function assignSpawnJobs(rm) {
 	    // 	continue;
 
 	    // take the job
-	    // u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_INFO);
+	    // u.log("Spawn " + spawn.name + " takes " + job.id, u.LOG_DBG);
 	    // spawn.memory.role.job_id = job.id;
 	    // job.taken_by_id = spawn.id;
 	    cjob.assign(rm, spawn);
@@ -2034,7 +2100,9 @@ function sortJobsByPriority( jobs, exclueTaken ) {
 }
 
 function detectRecoveryMode(rm) {
-    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount == 0) ? 1 : 0;
+    rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount <2) ||
+	(rm.memory.balance.h1.curCount + rm.memory.balance.h2.curCount == 0) ? 1 : 0;
+
     if(rm.memory.recoveryMode) {
 	u.log("Roome " + rm.name + " in RECOVERY MODE", u.LOG_WARN);
     }
@@ -2045,14 +2113,17 @@ function countTotalJobsCapacity(jobs) {
     let pri = 10000;
     for(let id in jobs) {
 	let cjob = f.make(jobs[id], null);
-	let capacity = cjob.getCapacity();
-	let curCount = cjob.getCount();
-	count = count + capacity;
+	if(cjob.getPriority() < 1000000) { // priority 1000000 is for waiting jobs
+	    let capacity = cjob.getCapacity();
+	    let curCount = cjob.getCount();
 
-	if(capacity > curCount) {
-	    // find min priority
-	    let pri1 = cjob.getPriority() + curCount;
-	    if(pri1 < pri) pri = pri1;
+	    count = count + capacity;
+
+	    if(capacity > curCount) {
+		// find min priority
+		let pri1 = cjob.getPriority() + curCount;
+		if(pri1 < pri) pri = pri1;
+	    }
 	}
     }
     return {count: count, priority: pri};
@@ -2062,7 +2133,7 @@ function countTotalJobsCapacity(jobs) {
 function nextTickPlanning(rm) {
     {
 	let stat = countTotalJobsCapacity(rm.memory.jobs.JobBuilder);
-	rm.memory.balance.b1.count = _.min([5, stat.count]);
+	rm.memory.balance.b1.count = _.min([7, stat.count]);
 	rm.memory.balance.b1.priority = stat.priority;
     }
     {
@@ -2246,6 +2317,21 @@ function planCreepJobs(rm) {
 	    rm.memory.jobs.JobBuilder[con_job_id] = job;
 	}
     }
+
+    // Carriers should give up their stuff
+    if(!rm.memory.jobs.JobCarrier['waiting']) {
+	let job = { id : 'waiting',
+		    cname: 'JobCarrier',
+		    taken_by_id: null,
+		    priority : 1000000, // very low priority
+		    capacity: 20, // todo
+		    curPower: 0,
+		    reqQta: 10000,
+		    take_from :  rm.memory.wait_point,
+		    take_to : rm.memory.storagePoint,
+		  };
+	rm.memory.jobs.JobCarrier['waiting'] = job;
+    }
 }
 
 function assignJobQuotas(rm) {
@@ -2257,7 +2343,7 @@ function assignJobQuotas(rm) {
 	if(jc1_job) {
 	    let qta = rm.memory.stats.enTotalQta - 3;
 	    if(qta < 1) qta = 1;
-	    else if(qta > 30) qta = 30;
+	    else if(qta > 20) qta = 20;
 	    jc1_job.reqQta = qta;
 	}
     }
@@ -2279,7 +2365,7 @@ function assignJobQuotas(rm) {
 	let job_ids = sortJobsByPriority(jobs, false);
 	let i=0;
 	let quota = stats.enBldQta;
-	let oneJobQta = 20;
+	let oneJobQta = 40;
 	while(i<job_ids.length) {
 	    let id = job_ids[i++];
 	    let job = jobs[id];
@@ -2322,8 +2408,6 @@ function assignJobQuotas(rm) {
 	    cjob.updateCapacity(rm);
 	}
     }
-
-    
 }
 
 function cleanUpDeadCreeps(rm) {
@@ -2351,14 +2435,16 @@ function cleanUpDeadCreeps(rm) {
 		rm.memory.balance[Memory.creeps[cr_name].bal_id].curCount--;
 		delete Memory.creeps[cr_name];
 	    }
-	    
+
 	    delete rm.memory.creeplist[cr_name];
 	}
     }
 }
 
 function reduceJobs(rm, jobs) {
-    for(let job_id in jobs) {
+    let job_id_lst = Object.keys(jobs);
+    
+    for(let job_id of job_id_lst) {
 	let job = jobs[job_id];
 	let cjob = f.make(job, null);
 	while(cjob.getCount() > cjob.getCapacity()) {
@@ -2366,7 +2452,38 @@ function reduceJobs(rm, jobs) {
 	    let cr = Game.getObjectById(cr_id);
 	    cjob.unassign(rm ,cr);
 	}
+	if(job.done) {
+	    cjob.unassign(rm);
+	    delete jobs[job_id];
+	}
     }
+}
+
+
+function sortCreepsByPriority( rm ,creeplist ) {
+    let name_list = Object.keys(creeplist);
+
+    name_list = _.filter(name_list, function (nm) {
+	let cr = Game.getObjectById( creeplist[nm].id );
+	return !cr.spawning && cr.memory.role;
+    } );
+
+    let sorted_name_list = _.sortBy( name_list, function(nm) {
+	
+	let cr = Game.getObjectById( creeplist[nm].id );
+	let pri = 1000001;
+	let role = cr.memory.role;
+
+	if(role.job_id) {
+	    let jobs = rm.memory.jobs[role.name];
+	    let job = jobs[role.job_id];
+	    pri = defaultFor( job.priority, pri );
+	}
+	// console.log( nm + " : " + pri );
+	return -pri;
+    } );
+    // console.log( "sortJobsByPriority: " + job_ids );
+    return sorted_name_list;
 }
 
 // 1. Unassign and remove creeps that no longer exist
@@ -2384,6 +2501,96 @@ function assignCreepJobs(rm) {
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
+    let sorted_name_list = sortCreepsByPriority(rm, rm.memory.creeplist );
+    let sortedJobIds = {};
+    for(let iii of ['JobMiner', 'JobCarrier', 'JobBuilder', 'JobDefender'] ) {
+	sortedJobIds[iii] = {ids:[], idx: 0};
+	sortedJobIds[iii].ids = sortJobsByPriority(rm.memory.jobs[iii], false);
+    }	
+    
+    for(let cr_name of sorted_name_list) {
+	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
+
+	// if(cr.spawning)
+	//     continue;
+
+	let role = cr.memory.role;
+	// if(!role)
+	//     continue;
+	
+	let jobs = rm.memory.jobs[role.name];
+	if(!jobs) {
+	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_WARN );
+	    continue;
+	}
+
+	let pri = 1000001; // current creep's priority
+	if(role.job_id) {
+	    if(role.name === 'JobMiner')
+		continue;
+	    let job = jobs[role.job_id];
+	    pri = defaultFor( job.priority, pri );
+	}
+	
+	let sortedJobIdsRec = sortedJobIds[role.name];
+	while(sortedJobIdsRec.idx < sortedJobIdsRec.ids.length) {
+	    let job2 = jobs[ sortedJobIdsRec.ids[sortedJobIdsRec.idx++] ];
+	    let pri2 = defaultFor(job2.priority, 1000001);
+	    if(pri2<pri) {
+		let cjob2 = f.make(job2, null);
+
+		if(job2.done) {
+		    continue;
+		}
+		if(job2.onhold)
+		    continue;
+		
+		if(cjob2.isFull())
+		    continue;
+
+		// may be unassign perv. job
+		if(role.job_id) {
+		    u.log( "Reassigning creep: " + cr_name + ' from: ' +  role.job_id + ' to: ' + job2.id, u.LOG_INFO);
+		    let job = jobs[role.job_id];
+		    let cjob = f.make(job, null);
+		    cjob.unassign(rm ,cr);
+		} else {
+		    u.log( "Assigning creep: " + cr_name + ' to: ' + job2.id, u.LOG_INFO);
+		}
+
+		// take the job
+		cjob2.assign(rm, cr);
+
+		// work on it
+		cjob2.start_work(rm, cr);
+		break;
+	    } else {
+		break;
+	    }
+	}
+
+	if(!role.job_id) {
+	    // no job - move to wait_point
+	    cwait_poit.move_to(cr);
+	}
+    }
+    //    }
+}
+
+function assignCreepJobsOld(rm) {
+
+    // for(let room_idx in Game.rooms) {
+    // 	let rm = Game.rooms[room_idx];
+
+    reduceJobs(rm, rm.memory.jobs['JobMiner']);
+    reduceJobs(rm, rm.memory.jobs['JobCarrier']);
+    reduceJobs(rm, rm.memory.jobs['JobBuilder']);
+    reduceJobs(rm, rm.memory.jobs['JobDefender']);
+
+    let cwait_poit = f.make(rm.memory.wait_point, null);
+
+    sortCreepsByPriority(rm, rm.memory.creeplist );
+
     for(let cr_name in rm.memory.creeplist) {
 	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 
@@ -2395,7 +2602,7 @@ function assignCreepJobs(rm) {
 	    continue;
 	let jobs = rm.memory.jobs[role.name];
 	if(!jobs) {
-	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_INFO );
+	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_ERR );
 	    continue;
 	}
 
@@ -2475,9 +2682,12 @@ function processRoom(rm) {
 
 
 u.initLog();
-Memory.log_level['global'] = 3;
+if(!Memory.log_level['global'])
+{
+    Memory.log_level['global'] = 3;
+}
 
-u.log('new global');
+u.log('new global', u.LOG_DBG);
 
 //regClasses(allClasses);
 
@@ -2499,7 +2709,7 @@ module.exports = {
 	    stat.clear();
 	}
 	*/
-	u.log('new tick:' + Game.time);
+	u.log('new tick:' + Game.time, u.LOG_DBG);
 
 	PathFinder.use(true);
 	

@@ -132,10 +132,11 @@ function setConfigSim() {
 	};
 
 
-	room_mem.wait_point = {cname: 'AddrPos',
-			       roomName: room_name,
-			       x: 25,
-			       y: 30 };
+	room_mem.wait_point = { cname: 'AddrPos',
+				roomName: room_name,
+				x: 25,
+				y: 30,
+				isWaitPoint: true };
 
 	room_mem.jobs = {
 	    'JobMiner' : {},
@@ -209,9 +210,9 @@ function setConfigSim() {
     }
 
     room_mem.config = {
-	ctrlrShare: 0.1,
+	ctrlrShare: 0.8,
 	repairShare: 0.1,
-	builderShare: 0.8,
+	builderShare: 0.1,
     };
 
     /*

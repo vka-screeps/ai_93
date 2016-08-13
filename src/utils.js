@@ -27,6 +27,7 @@ module.exports = {
 	    Memory.log_level = {};
     },
 
+    LOG_DBG : 4,
     LOG_INFO : 3,
     LOG_WARN : 2,
     LOG_ERR  : 1,
