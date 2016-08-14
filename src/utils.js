@@ -13,7 +13,7 @@ module.exports = {
 	if(!type) type = 3; // info
 	if(!facility) facility = 'global';
 	if(Memory.log_level[facility] >= type)
-	    console.log('mylog: ' + str);
+	    console.log('['+Game.time +'] : ' + str);
     },
 
     log_enable : function( type, facility ) {

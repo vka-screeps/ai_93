@@ -193,6 +193,7 @@ class Job extends CMemObj {
 
     updateCapacity(rm) {
 	let d = this.d;
+	
 	if(!d.curPower) {
 	    d.curPower = 0;
 	}
@@ -234,6 +235,7 @@ class Job extends CMemObj {
 	if(d.taken_by_id) {
 
 	    if(cr) {
+		// u.log( "Unassign creep " + cr.name + ' from ' + d.id, u.LOG_INFO );
 		delete d.taken_by_id[cr.id];
 		let role = cr.memory.role;
 		role.job_id = null;
@@ -725,6 +727,187 @@ class AddrHarvPoint extends Addr {
 	return false;
     }
 }
+
+class AddrUpkeep extends Addr {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrUpkeep'; }
+
+    static create(rm_name) {
+    	return { cname: 'AddrUpkeep',
+		 roomName: rm_name,
+    		 tgt_id_lst: [],
+	       };
+    }
+
+    getFirstTgt() {
+	let d = this.d;
+	let ret =  (d.tgt_id_lst.length>0) ? d.tgt_id_lst[0] : null;
+	return ret;
+    }
+
+    getFirstTgtObj() {
+	let tgt = this.getFirstTgt();
+	let ret = tgt ? Game.getObjectById(tgt) : null;
+	return ret;
+    }
+
+    removeFirstTgt() {
+	let d = this.d;
+	if (d.tgt_id_lst.length>0) {
+	    // delete d.tgt_id_lst[0];
+	    d.tgt_id_lst.splice(0, 1);
+	}
+    }
+
+    setNewTargets(targets) {
+	let d = this.d;
+
+	let fst_id = this.getFirstTgt();
+	if(targets.length > 0) {
+	    let targets2 = {};
+	    for(let i of d.tgt_id_lst) {
+		targets2[i]=0;
+	    }
+	    for(let j of targets) {
+		targets2[j]=0;
+	    }
+	    let targets3=[];
+	    for(let k in targets2) {
+		targets3.push(k);
+	    }
+
+	    let targets4=_.filter(targets3, function(k) { return (k && (k!=null) && (k!='null') && (k!=="")) ? true : false; } );
+
+	    // targets = _.union([d.tgt_id_lst, targets]);
+	    // let targets2 = _.uniq(targets, function(n) {
+	    // 	return String(n);
+	    // });
+	    
+	    let this_ = this;
+	    
+//	    console.log('targets3=' + targets3);
+//	    console.log('targets4=' + targets4);
+
+	    targets = _.sortBy(targets4, function (tgt_id) {
+		let object = Game.getObjectById(tgt_id);
+		// console.log('id='+ tgt_id);
+		let hitsMax = this_.getHitsUpkeepLimit(object);
+		// console.log('hitsMax='+ hitsMax);
+		
+		let pri = (object.hits / hitsMax);
+		if(fst_id && object.id == fst_id) {
+		    pri = ((object.hits-5000) / hitsMax)
+		}
+		return pri;
+	    } );
+
+	    d.tgt_id_lst = targets;
+	}
+    }
+
+    getReqQta() {
+	let d = this.d;
+	return (d.tgt_id_lst.length>0) ? 5 : 0;
+    }
+
+    getHitsUpkeepLimit(obj) {
+	let limit = 100000;
+	if( (obj.structureType===STRUCTURE_WALL) ||
+	    (obj.structureType===STRUCTURE_RAMPART) ) {
+	    limit = 20000;
+	}
+
+	let limit2 = obj.hitsMax;
+	return (limit2<limit) ? limit2 : limit;
+    }
+
+    init() {
+    };
+
+    getPos(rm) {
+	let d = this.d;
+	let tgt = this.getFirstTgtObj();
+	return tgt ? tgt.pos : null;
+    }
+
+    move_to(cr, dist) {
+	dist = defaultFor(dist, 1);
+	
+	let d = this.d;
+	let tgt = this.getFirstTgtObj();
+	if(tgt) {
+	    if(cr.pos.getRangeTo(tgt) > dist) {
+		cr.moveTo(tgt);
+		return true;
+	    }
+	    return false;
+	} else {
+	    u.log("AddrUpkeep - cannot find target ", u.LOG_WARN);
+	    return true;
+	}
+    }
+    
+    take(cr) {
+	u.log("AddrUpkeep - cannot take from target ", u.LOG_WARN);
+	return false;
+    }
+    
+    give(cr) {
+	if(cr.carry[RESOURCE_ENERGY] === 0)
+	    return false;
+	u.log("AddrUpkeep - cannot give to target ", u.LOG_WARN);
+	return false;
+    }
+
+    build(cr) {
+	if(cr.carry[RESOURCE_ENERGY] === 0)
+	    return false;
+	
+	let d = this.d;
+	let tgt = this.getFirstTgtObj();
+
+	if(tgt) {
+	    let ret = 0;
+	    if(tgt.structureType === STRUCTURE_CONTROLLER) {
+		u.log("AddrUpkeep - cannot repari controller " + tgt.id, u.LOG_WARN);
+		return false;
+	    } else if (tgt.hits >= this.getHitsUpkeepLimit(tgt)) {
+		u.log("AddrUpkeep - Target is already fully repaired" + tgt.id, u.LOG_WARN);
+		this.removeFirstTgt();
+		return false;
+	    } else {
+		ret = cr.repair(tgt);
+	    }
+	    if( ret == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+	    } else if (ret == ERR_INVALID_TARGET) {
+		u.log("AddrUpkeep - Invalid darget" + tgt.id, u.LOG_WARN);
+		this.removeFirstTgt();
+		return false;
+	    }
+	    // todo - analyze error code
+	} else {
+	    u.log("AddrUpkeep - cannot find target ", u.LOG_WARN);
+	    return false;
+	}
+	
+	return true;
+    }
+
+    getWorkerEnRate() {
+	let ret = 5;
+	return ret;
+    }
+
+    exists() {
+	let ret = (this.getFirstTgtObj() != null);
+	return ret;
+    }
+}
+
 
 // class AddrHarvPointRef extends AddrHarvPoint {
 //     constructor(d, parent) {
@@ -1394,7 +1577,19 @@ class JobBuilder extends Job {
 	}
     }
 
-
+    makeAssistedTFAddr(rm, tt) {
+	let p = tt.getPos();
+	let ret = null;
+	if(p) {
+	    ret = f.make( { cname: 'AddrPos',
+			    roomName: rm.name,
+			    x: p.x,
+			    y: p.y,
+			    dist: 3}, null );
+	}
+	return ret;
+    }
+    
     do_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
@@ -1404,6 +1599,7 @@ class JobBuilder extends Job {
 	    let tt = f.make(d.take_to);
 	    if(!tt.exists())
 	    {
+		console.log('target does not exist');
 		this.finish_work(rm);
 		return;
 	    }
@@ -1416,6 +1612,7 @@ class JobBuilder extends Job {
 		let help_job = f.make(car_jobs[car_job_id], null);
 		if(help_job.getCount() > 0) {
 		    // someone is carrying resources
+		    /*
 		    if(!d.take_from_local) {
 			// save target pos into take_from_local
 			let tgt = Game.getObjectById(d.take_to.tgt_id);
@@ -1428,25 +1625,41 @@ class JobBuilder extends Job {
 						  dist: 3};
 			    
 			}
+
 		    }
 		    
-		    tf = f.make(d.take_from_local);
+		    if(d.take_from_local) {
+			tf = f.make(d.take_from_local);
+		    }
+		    */
+		    d.take_from_local = true;
+		    tf = this.makeAssistedTFAddr(rm, tt);
 		}
 	    }
 	    
 	    if(role.workStatus.step === 0) {
-		if(tf.move_to(cr)) {
-		    break;
+		if(tf) {
+		    if(tf.move_to(cr)) {
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }
 		} else {
-		    role.workStatus.step++;
+		    u.log('TF address is null ' + d.id, u.LOG_WARN);
+		    break;
 		}
 	    }
 
 	    if(role.workStatus.step === 1) {
-		if(tf.take(cr)) {
-		    break;
+		if(tf) {
+		    if(tf.take(cr)) {
+			break;
+		    } else {
+			role.workStatus.step++;
+		    }
 		} else {
-		    role.workStatus.step++;
+		    u.log('TF address is null ' + d.id, u.LOG_WARN);
+		    break;
 		}
 	    }
 
@@ -1909,7 +2122,8 @@ class JobSpawn extends Job {
 // }
 
 var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
-		   AddrStoragePoint/*, AddrHarvPointRef*/ ];
+		   AddrStoragePoint, AddrUpkeep
+		   /*, AddrHarvPointRef*/ ];
 
 
 ///////////////////////////////////////////////////////
@@ -1955,6 +2169,22 @@ function calcRoomStats(rm) {
     if(stats.enCtrlQta>20) stats.enCtrlQta = 20;
     stats.enBldQta = config.builderShare * stats.enTotalQta;
     stats.enRepairQta = config.repairShare * stats.enTotalQta;
+}
+
+function updateUpkeepQueue(rm) {
+
+    let c_upkeep = f.make(rm.memory.upkeepPoint, null);
+
+    let targets = rm.find(FIND_STRUCTURES, {
+	filter: function (object) {
+	    let hitsMax = c_upkeep.getHitsUpkeepLimit(object);
+	    return (object.hits < (0.8*hitsMax));
+	}
+    });
+
+    let target_ids = _.map(targets, obj => obj.id);
+
+    c_upkeep.setNewTargets(target_ids);
 }
 
 // Convert balance into JobSpawn jobs
@@ -2325,6 +2555,23 @@ function planCreepJobs(rm) {
 	}
     }
 
+    if(!rm.memory.jobs.JobBuilder['upkeep']) {
+	let new_job_id = 'upkeep';
+	if(!rm.memory.jobs.JobBuilder[new_job_id]) {
+	    let job = { id: new_job_id,
+			cname: 'JobBuilder',
+			taken_by_id: null,
+			capacity: 0,
+			maxCapacity: 1,
+			priority : 90, 
+			take_from: rm.memory.storagePoint,
+			take_to: rm.memory.upkeepPoint,
+		      };
+
+	    rm.memory.jobs.JobBuilder[new_job_id] = job;
+	}
+    }
+
     let con_lst = rm.find(FIND_MY_CONSTRUCTION_SITES);
     for(let con_i in con_lst) {
 	let con = con_lst[con_i];
@@ -2394,12 +2641,19 @@ function assignJobQuotas(rm) {
 	let i=0;
 	let quota = stats.enBldQta;
 	let oneJobQta = 40;
+	
 	while(i<job_ids.length) {
 	    let id = job_ids[i++];
 	    let job = jobs[id];
 	    let cjob = f.make(job, null);
+	    if(quota<0.1) quota = 0;
 	    if(id === 'ctrlr') {
 		job.reqQta = stats.enCtrlQta;
+	    } else if(id === 'upkeep') {
+		let q1= f.make(rm.memory.upkeepPoint, null).getReqQta();
+		q1 = _.min( [q1, 5, quota] );
+		job.reqQta = q1;
+		quota -= q1;
 	    } else {
 		if(quota > oneJobQta) {
 		    job.reqQta = oneJobQta;
@@ -2410,19 +2664,7 @@ function assignJobQuotas(rm) {
 		}
 	    }
 
-	    cjob.updateCapacity(rm);
-
-	    /*
-	    // 
-	    {
-		let car_job_id = 'help_' + id;
-		let carJob = carJobs[car_job_id];
-		if(carJob) {
-		    carJob.reqQta = job.reqQta;
-		    carJob.updateCapacity(rm);
-		}
-	    }
-	    */
+	    // cjob.updateCapacity(rm);
 	}
 
 	if(quota>0) {
@@ -2431,10 +2673,16 @@ function assignJobQuotas(rm) {
 		let cjob = f.make(job, null);
 
 		job.reqQta = _.min([20, job.reqQta+quota/2]);
-		cjob.updateCapacity(rm);
+		// cjob.updateCapacity(rm);
 	    } catch(err) {
 		u.log( 'Error ' + err, u.LOG_ERR );
 	    }
+	}
+
+	for(let job_id of job_ids) {
+	    let job = jobs[job_id];
+	    let cjob = f.make(job, null);
+	    cjob.updateCapacity(rm);
 	}
     }
 
@@ -2533,7 +2781,7 @@ function assignCreepJobs(rm) {
 
     // for(let room_idx in Game.rooms) {
     // 	let rm = Game.rooms[room_idx];
-
+    
     reduceJobs(rm, rm.memory.jobs['JobMiner']);
     reduceJobs(rm, rm.memory.jobs['JobCarrier']);
     reduceJobs(rm, rm.memory.jobs['JobBuilder']);
@@ -2614,7 +2862,6 @@ function assignCreepJobs(rm) {
 	    cwait_poit.move_to(cr);
 	}
     }
-    //    }
 }
 
 function assignCreepJobsOld(rm) {
@@ -2709,6 +2956,7 @@ function processRoom(rm) {
     detectRecoveryMode(rm);
 
     calcRoomStats(rm);
+    updateUpkeepQueue(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
     assignJobQuotas(rm); // assign quotas to jobs

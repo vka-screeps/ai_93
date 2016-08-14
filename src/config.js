@@ -105,7 +105,12 @@ function setConfigSim() {
 					      full: true });
     }
 
-
+    if(!room_mem.upkeepPoint) {
+	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
+					    roomName: room_name,
+    					    tgt_id_lst: [],
+					  } );
+    }
     
     if(!room_mem.storagePoint) {
 	room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
