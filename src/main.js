@@ -197,6 +197,8 @@ class Job extends CMemObj {
 	if(!d.curPower) {
 	    d.curPower = 0;
 	}
+
+	this.calcPower(rm); // this should update the helper job quota
 	
 	if(!d.reqQta) {
 	    this.unassign(rm);
@@ -1153,7 +1155,7 @@ class JobMiner extends Job {
 		needToCarry = false;
 	    }
 	} catch (err) {
-	    u.log( 'Error looking for carrier for ' + d.id + ' - ' + err, u.LOG_ERR );
+	u.log( 'Error looking for carrier for ' + d.id + ' - ' + err, u.LOG_ERR );
 	}
 	*/
 
@@ -2949,8 +2951,11 @@ function doAllJobs(rm) {
 }
 
 function processRoom(rm) {
-    if(!rm.memory.creeplist)
+    if(!rm || !rm.memory || !rm.memory.creeplist)
+    {
+	u.log( 'Empty rm.memory.creeplist in toom  ' + rm.name, u.LOG_ERR );
 	return;
+    }
 
     cleanUpDeadCreeps(rm);
     detectRecoveryMode(rm);
@@ -2966,6 +2971,18 @@ function processRoom(rm) {
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs
     assignSpawnJobs(rm);
     doAllJobs(rm);
+}
+
+function printCPULimits(loc)
+{
+    u.log( 'CPU limits at ' + loc + ' ' + Game.cpu.tickLimit + ' / ' + Game.cpu.getUsed() + ' bucket: ' + Game.cpu.bucket + ' + ' + Game.cpu.limit, u.LOG_INFO );
+}
+
+function calcCPUUsage()
+{
+    if(!Memory.cpuUsageAvg)
+	Memory.cpuUsageAvg = 10;
+    Memory.cpuUsageAvg = 0.9*Memory.cpuUsageAvg + 0.1 * Game.cpu.getUsed();
 }
 
 
@@ -2999,12 +3016,24 @@ module.exports = {
 	*/
 	u.log('new tick:' + Game.time, u.LOG_DBG);
 
+	// try {
+	//     printCPULimits('Start');
+	// } catch (err)
+	// {
+	//     u.log( 'Error ' + err, u.LOG_ERR );
+	// }
+
 	PathFinder.use(true);
 	
 	// collect stats
 	myroom();
 
-	processRoom(Game.rooms['sim']);
+	// TODO
+	// processRoom(Game.rooms['sim']);
+	processRoom(Game.rooms['W43S54']);
+	
+	calcCPUUsage();
+	// printCPULimits('End');
 
 	/*
 	detectRecoveryMode(Game.rooms['sim']);

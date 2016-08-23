@@ -239,6 +239,178 @@ function setConfigSim() {
     */
 }
 
-function setConfigGame() {
+function setConfigGame()
+{
+    let room_name = 'W43S54';
+    console.log( 'setConfigGame for room ' + room_name );
+    if(!Memory.rooms[room_name]) {
+	Memory.rooms[room_name] = {};
+    }
+    let room_mem = Memory.rooms[room_name];
+
+    initMemVars();
+    initRoomVars(room_name);
+
+    // room_mem = {};
+    // SIM CONFIG
+    if(!room_mem.harvPoints) {
+	room_mem.harvPoints = {};
+    }
+
+    if(!room_mem.harvPoints.hp1)
+    {
+	room_mem.harvPoints.hp1 = addObject({ cname: 'AddrHarvPoint',
+					      id: 'hp1',
+					      roomName: room_name,
+					      x: 34,
+					      y: 18,
+					      full: true });
+    }
+
+    if(!room_mem.harvPoints.hp2) {
+	room_mem.harvPoints.hp2 = addObject({ cname: 'AddrHarvPoint',
+					      id: 'hp2',
+					      roomName: room_name,
+					      maxCapacity: 2,
+					      x: 29,
+					      y: 13,
+					      full: true });
+    }
+
+
+    if(!room_mem.upkeepPoint) {
+	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
+					    roomName: room_name,
+    					    tgt_id_lst: [],
+					  } );
+    }
+    
+    if(!room_mem.storagePoint) {
+	room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
+					     id: 'sp1',
+					     roomName: room_name,
+					     x: 28,
+					     y: 20,
+					     full: true,
+					     storage_id: null,
+					     isActive: false,
+					     backup_point: room_mem.harvPoints.hp1,
+					   } );
+    }
+    
+    if(!room_mem.balance) {
+	room_mem.balance = {
+	    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner', priority: -10 },  // permanent
+	    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier', priority: -5 },  // permanent
+	    d1: {id:'d1', count: 0, curCount: 0, design: 'd_def1', role: 'JobDefender', priority: -1 },  // permanent
+	    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
+	    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
+	    b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
+	    //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
+	};
+
+
+	room_mem.wait_point = { cname: 'AddrPos',
+				roomName: room_name,
+				x: 22,
+				y: 28,
+				isWaitPoint: true };
+
+	room_mem.jobs = {
+	    'JobMiner' : {},
+	    'JobCarrier' : { 'jc1' : { id : 'jc1',
+				       cname: 'JobCarrier',
+				       taken_by_id: null,
+				       priority : 0,
+				       capacity : 1,
+				       reqQta: 1,
+				       // take_from :  room_mem.harvPoints.hp1, // copy ref
+				       take_from :  room_mem.storagePoint,
+				       take_to : { cname: 'AddrBuilding',
+						   roomName: room_name,
+						   spawnName: 'Spawn1', },
+				     },
+			     
+			   },
+	    'JobDefender' : {
+		// 'jd1': { id: 'jd1',
+		// 	 cname: 'JobDefender',
+		// 	 taken_by_id: null,
+		// 	 priority : 0,
+		// 	 def_pos : {cname: 'AddrPos',
+		// 		    roomName: room_name,
+		// 		    x: 29,
+		// 		    y: 27 },
+		//        },
+		// 'jd2': { id: 'jd2',
+		// 	 cname: 'JobDefender',
+		// 	 taken_by_id: null,
+		// 	 priority : 0,
+		// 	 def_pos : {cname: 'AddrPos',
+		// 		    roomName: room_name,
+		// 		    x: 27,
+		// 		    y: 25 },
+		//        },
+		// 'jd3': { id: 'jd3',
+		// 	 cname: 'JobDefender',
+		// 	 taken_by_id: null,
+		// 	 priority : 0,
+		// 	 def_pos : {cname: 'AddrPos',
+		// 		    roomName: room_name,
+		// 		    x: 27,
+		// 		    y: 25 },
+		//        },
+	    },
+	    'JobBuilder' : {},
+	};
+
+
+	room_mem.creeplist = {};
+	room_mem.recoveryMode = true;
+
+	for(let cr_name in room_mem.creeplist) {
+	    Memory.creeps[cr_name].role.job_id = null
+	    Memory.creeps[cr_name].workStatus = null;
+	}
+
+    }
+
+    if(!room_mem.stats) {
+	room_mem.stats = {
+	    NZ: 0,
+	    enTotal: 0, // energy in the storage
+	    hasStorage: false, 
+	    enProd: 0, // mining pet turn
+	    enTotalQta: 0,
+	    enCtrlQta: 0, // controller upgrade quote
+	    enSpawnQta: 0, // spawner quota
+	    enBldQta: 0, // builders quota
+	};
+    }
+
+    // quotas
+    room_mem.config = {
+	ctrlrShare: 0.2,
+	repairShare: 0.1,
+	builderShare: 0.7,
+    };
+
+    /*
+    room_mem.strategy_data =[
+	{ role_id : 'h1', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
+	,{ role_id : 'h2', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }	
+	, { role_id : 'free', role : 'guard', count : 1, body : [TOUGH, TOUGH, ATTACK, ATTACK, MOVE]
+	    , props : { isMilitary:1 }
+	    , autoExpand: 1}
+	,{ role_id : 'h3', role : 'harv', count : 1, body : [ WORK, WORK, MOVE] }
+    ];
+
+    room_mem.strategy = 'str_maintain_creeps';
+    room_mem.str_data = {	curRoleTable : [],
+					curGoals : {},
+					specialization : "growth"
+				   };
+    */
 }
+
 
