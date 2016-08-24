@@ -691,7 +691,7 @@ class AddrHarvPoint extends Addr {
 	    return true;
 	}	
 
-	let rm = Game.rooms[cr.pos.roomName];
+	let rm = Game.rooms[d.roomName];
 	let p = this.getPos(rm);
 	// look for dropped energy
 	{
@@ -708,6 +708,23 @@ class AddrHarvPoint extends Addr {
 		    cr.pickup(target);
 		}
 		return true;
+	    } else {
+		// take it from a creep
+		let harvesters = p.findInRange(FIND_MY_CREEPS, 1, {
+		    filter: function(cr1) {
+			let mem = cr1.memory;
+			return (mem && mem.role && mem.role.name==='JobMiner' && cr1.carry[RESOURCE_ENERGY]>20);
+		    }
+		});
+		if(harvesters.length>0) {
+		    let target = cr.pos.findClosestByRange(harvesters);
+		    let status = target.transfer(cr, RESOURCE_ENERGY);
+		    if(status == ERR_NOT_IN_RANGE) {
+			cr.moveTo(target);
+		    } else {
+			// u.log('Transfer energy returns ' + status, u.LOG_INFO);
+		    }
+		}
 	    }
 	}
 	// look for containers
@@ -1934,8 +1951,8 @@ var designRegistry = {
     // 'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     // 'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     
-    'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, MOVE, MOVE, CARRY, MOVE],
-    'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, MOVE, MOVE, CARRY, MOVE],
+    'd_h0' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
+    'd_h1' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
     
     'd_c1' : [ MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE ],
     // builder
@@ -1968,7 +1985,8 @@ function getDesign( design, sp, rm ) {
 	} 
     }
 
-    let energy = rm.energyCapacityAvailable;    
+    let energy = rm.energyCapacityAvailable;
+    energy = _.min( [energy, defaultFor(rm.memory.config.creepCostLimit, 1000) ] );
 
     if(!rm.memory.savedDsgn || rm.memory.savedDsgn.energy !== energy)
 	rm.memory.savedDsgn = {energy: energy};
@@ -2245,7 +2263,7 @@ function planTowerJobs(rm) {
 	let c_upkeep = f.make(rm.memory.upkeepPoint, null);
 	let tgt = c_upkeep.getFirstTgtObj();
 	while(tgt && (tgt.hits >= c_upkeep.getHitsUpkeepLimit(tgt))) {
-		u.log("AddrUpkeep - Target is already fully repaired" + tgt.id, u.LOG_INFO);
+	    u.log("AddrUpkeep - Target is already fully repaired " + tgt.id + ' ', u.LOG_INFO);
 	    c_upkeep.removeFirstTgt();
 	    tgt = c_upkeep.getFirstTgtObj();
 	}

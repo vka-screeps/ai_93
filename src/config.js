@@ -219,6 +219,7 @@ function setConfigSim() {
 	ctrlrShare: 0.2,
 	repairShare: 0.1,
 	builderShare: 0.7,
+	creepCostLimit: 550,
     };
 
     /*
@@ -393,6 +394,7 @@ function setConfigGame()
 	ctrlrShare: 0.2,
 	repairShare: 0.1,
 	builderShare: 0.7,
+	creepCostLimit: 550,
     };
 
     /*
