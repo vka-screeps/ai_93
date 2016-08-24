@@ -541,6 +541,7 @@ class AddrStoragePoint extends AddrPos {
 	    }
 	    d.containers = {};
 	    let containers = {};
+	    d.totalCapacity = 0;
 	    {
 
 		{
@@ -556,6 +557,7 @@ class AddrStoragePoint extends AddrPos {
 						 isFull: _.sum(c.store) >= c.storeCapacity
 					       };
 			    energy+= e;
+			    d.totalCapacity += c.storeCapacity;
 			} );
 		    };
 		}
@@ -565,6 +567,11 @@ class AddrStoragePoint extends AddrPos {
 	}
 
 	return d.energy;
+    }
+
+    getTotalCapacity() {
+	this.getAmount();
+	return this.d.totalCapacity;
     }
 
     
@@ -2167,6 +2174,10 @@ function calcRoomStats(rm) {
     let stats = rm.memory.stats;
     let config = rm.memory.config;
     let cstor = f.make(rm.memory.storagePoint, null);
+
+
+    rm.memory.NZ ++;
+    rm.memory.NZ = _.min( [ rm.memory.NZ, cstor.getAmount(), cstor.getTotalCapacity() ] );
     stats.NZ = rm.memory.NZ;
     stats.enTotal = cstor.getAmount();
 
@@ -2181,7 +2192,7 @@ function calcRoomStats(rm) {
 	}
     }
 
-    let extraQta = (stats.enTotal-2000);
+    let extraQta = (stats.enTotal-2000 - stats.NZ);
     if(extraQta>0) extraQta = extraQta / 500;
     else extraQta = extraQta / 100;
 
