@@ -226,8 +226,10 @@ class Job extends CMemObj {
 		}
 	    }
 	}
-	if(d.maxCapacity && d.capacity>d.maxCapacity) {
-	    d.capacity = d.maxCapacity;
+	if( typeof d.maxCapacity !== 'undefined' ) {
+	    if(d.capacity>d.maxCapacity) {
+		d.capacity = d.maxCapacity;
+	    }
 	}
     }    
 
@@ -2189,6 +2191,73 @@ function updateUpkeepQueue(rm) {
     c_upkeep.setNewTargets(target_ids);
 }
 
+function planTowerJobs(rm) {
+    let twrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });
+
+    let carrierJobs = rm.memory.jobs.JobCarrier;
+    
+    // refill jobs
+    for(let twr of twrs) {
+	let car_job_id = 'refill_' + twr.id;
+	if(!carrierJobs[car_job_id]) {
+	    let job = { id : car_job_id,
+			cname: 'JobCarrier',
+			taken_by_id: null,
+			priority : 50,
+			capacity: 0, // todo
+			curPower: 0,
+			reqQta: 0,
+			take_from :  rm.memory.storagePoint,
+			take_to : { cname: 'AddrBuilding',
+				    roomName: rm.name,
+				    tgt_id: twr.id,
+				  },
+		      };
+	    carrierJobs[car_job_id] = job;
+	}
+
+	let cj = carrierJobs[car_job_id];
+	if (twr.energy >= twr.energyCapacity) {
+	    cj.reqQta = 0; 
+	} else if(twr.energy >= (0.8 * twr.energyCapacity)) {
+	    cj.reqQta = 5;
+	} else if(twr.energy >= (0.5 * twr.energyCapacity)) {
+	    cj.reqQta = 10;
+	} else {
+	    cj.reqQta = 15;
+	}
+    }
+
+    if(rm.memory.jobs.JobBuilder['upkeep']) {
+	rm.memory.jobs.JobBuilder['upkeep'].maxCapacity = (twrs.length > 0) ? 0 : 1;
+    }
+
+    ;
+    let target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+    if(target) {
+	// actions
+	for(let twr of twrs) {
+	    u.log('Tower attacks ' + target, u.LOG_INFO);
+	    twr.attack(target);
+	}	
+    } else {
+	// upkeep
+	let c_upkeep = f.make(rm.memory.upkeepPoint, null);
+	let tgt = c_upkeep.getFirstTgtObj();
+	while(tgt && (tgt.hits >= c_upkeep.getHitsUpkeepLimit(tgt))) {
+		u.log("AddrUpkeep - Target is already fully repaired" + tgt.id, u.LOG_INFO);
+	    c_upkeep.removeFirstTgt();
+	    tgt = c_upkeep.getFirstTgtObj();
+	}
+	if(tgt) {
+	    for(let twr of twrs) {
+		u.log('Tower repairs ' + tgt.id, u.LOG_INFO);
+		twr.repair(tgt);
+	    }	    
+	}
+    }
+}
+
 // Convert balance into JobSpawn jobs
 function planSpawnJobs(rm) {
 
@@ -2962,6 +3031,8 @@ function processRoom(rm) {
 
     calcRoomStats(rm);
     updateUpkeepQueue(rm);
+
+    planTowerJobs(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
     assignJobQuotas(rm); // assign quotas to jobs
@@ -3029,8 +3100,11 @@ module.exports = {
 	myroom();
 
 	// TODO
-	// processRoom(Game.rooms['sim']);
-	processRoom(Game.rooms['W43S54']);
+	if(Game.rooms.sim) {
+	    processRoom(Game.rooms['sim']);
+	} else {
+	    processRoom(Game.rooms['W43S54']);
+	}
 	
 	calcCPUUsage();
 	// printCPULimits('End');
