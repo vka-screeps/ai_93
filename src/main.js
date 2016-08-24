@@ -1221,10 +1221,10 @@ class JobMiner extends Job {
 		role.workStatus.step = 0;
 		if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
 		    cr.moveTo(res);
-		} else {
+		}/* else {
 		    if(cr.carry[RESOURCE_ENERGY] > 40)
 			cr.drop(RESOURCE_ENERGY);
-		}
+		} */
 		break;
 	    }
 	    
