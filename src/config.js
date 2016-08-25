@@ -278,6 +278,18 @@ function setConfigGame()
 					      full: true });
     }
 
+    if(!room_mem.harvPoints.hp3 || room_mem.harvPoints.hp3 === 'delete') {
+    	room_mem.harvPoints.hp3 = addObject({ cname: 'AddrHarvPoint',
+    					      id: 'hp3',
+    					      roomName: 'W42S54',
+    					      maxCapacity: 2,
+					      res_id: '579fa8f80700be0674d2e934',
+    					      x: 3,
+    					      y: 40,
+    					      full: true });
+    }
+    // room_mem.harvPoints.hp3 = 'delete';
+    
 
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
