@@ -1159,7 +1159,10 @@ class JobMiner extends Job {
     }
 
     getLimitedCurPower(qta) {
-	return (qta<10) ? qta : 10;
+	let d = this.d;
+	let res = this.findRes();
+	let maxQta = res ? (res.energyCapacity/300) : 5;
+	return (qta<maxQta) ? qta : maxQta;
     }
 
     findRes(rm) {
@@ -2237,9 +2240,10 @@ function calcRoomStats(rm) {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	for(let job_id in minerJobs) {
 	    let job = minerJobs[job_id];
+	    let cjob = f.make(job, null);
 	    let pwr = job.curPower;
-	    if(pwr > 10) pwr = 10;
-	    stats.enProd += pwr;
+	    // if(pwr > 10) pwr = 10;
+	    stats.enProd += cjob.getLimitedCurPower(pwr);
 	}
     }
 
