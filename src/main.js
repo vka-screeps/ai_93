@@ -2325,19 +2325,32 @@ function planTowerJobs(rm) {
 	    twr.attack(target);
 	}	
     } else {
-	// upkeep
-	let c_upkeep = f.make(rm.memory.upkeepPoint, null);
-	let tgt = c_upkeep.getFirstTgtObj();
-	while(tgt && (tgt.hits >= c_upkeep.getHitsUpkeepLimit(tgt))) {
-	    u.log("AddrUpkeep - Target is already fully repaired " + tgt.id + ' ', u.LOG_INFO);
-	    c_upkeep.removeFirstTgt();
-	    tgt = c_upkeep.getFirstTgtObj();
-	}
-	if(tgt) {
+	target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_MY_CREEPS, {
+	    filter: function(cr) {
+		return (cr.hits < cr.hitsMax);
+	    }
+	});
+
+	if(target) {
 	    for(let twr of twrs) {
-		u.log('Tower repairs ' + tgt.id, u.LOG_INFO);
-		twr.repair(tgt);
-	    }	    
+		u.log('Tower heals ' + target.name, u.LOG_INFO);
+		twr.heal(target);
+	    }
+	} else {
+	    // upkeep
+	    let c_upkeep = f.make(rm.memory.upkeepPoint, null);
+	    let tgt = c_upkeep.getFirstTgtObj();
+	    while(tgt && (tgt.hits >= c_upkeep.getHitsUpkeepLimit(tgt))) {
+		u.log("AddrUpkeep - Target is already fully repaired " + tgt.id + ' ', u.LOG_INFO);
+		c_upkeep.removeFirstTgt();
+		tgt = c_upkeep.getFirstTgtObj();
+	    }
+	    if(tgt) {
+		for(let twr of twrs) {
+		    u.log('Tower repairs ' + tgt.id, u.LOG_INFO);
+		    twr.repair(tgt);
+		}	    
+	    }
 	}
     }
 }
