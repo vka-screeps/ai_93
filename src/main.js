@@ -7,6 +7,7 @@ var config = require('config');
 //var stat = require('stat');
 //var r = require('roles');
 
+var defaultRoom = 'W43S54';
 var r = {
     init: function() { m_init() },
     f : f,
@@ -51,6 +52,7 @@ var F = class {
 	}
     }
 };
+
 
 var f = new F();
 
@@ -346,6 +348,32 @@ function defaultFor(a, val) {
     return a = typeof a !== 'undefined' ? a : val;
 }
 
+function creepIsFull(cr) {
+    let total = _.sum(cr.carry);
+    return total >= cr.carryCapacity;
+}
+
+function creepIsFullWith(cr, res) {
+    let total = cr.carry[res] ? cr.carry[res] : 0;
+    return total >= cr.carryCapacity;
+}
+
+function creepIsFilledWithAny(cr) {
+    let total = _.sum(cr.carry);
+    return total > 0;
+}
+
+function creepIsFilledWithAnyBut(cr, res) {
+    let total = _.sum(cr.carry);
+    total -= cr.carry[res] ? cr.carry[res] : 0;
+    return total > 0;
+}
+
+function creepIsFilledWith(cr, res) {
+    return cr.carry[res] && (cr.carry[res] > 0);
+}
+
+
 class AddrPos extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -390,7 +418,7 @@ class AddrPos extends Addr {
     take(cr) {
 	let d = this.d;
 	if (d.isWaitPoint) {
-	    if(cr.carry[RESOURCE_ENERGY] > 0) {
+	    if(creepIsFilledWithAny(cr)) {
 		return false; // already have got some energy here
 	    } else {
 		if(cr.pos.getRangeTo(d.x, d.y) > 1) {
@@ -400,10 +428,10 @@ class AddrPos extends Addr {
 	    }
 	}
 	if(d.full) {
-	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+	    if(creepIsFull(cr))
 		return false;
 	} else {
-	    if(cr.carry[RESOURCE_ENERGY] > 0)
+	    if(creepIsFilledWithAny(cr))
 		return false;
 	}
 
@@ -438,6 +466,137 @@ class AddrPos extends Addr {
     }
 }
 
+// Room for scavenging
+class AddrFreeRoom extends AddrPos {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'AddrFreeRoom'; }
+
+    doWithdraw(cr, tgt, res) {
+	let status = cr.withdraw(tgt, res);
+	if(status == OK || status == ERR_FULL) {
+	    return 1;
+	} else if (status == ERR_NOT_ENOUGH_RESOURCES) {
+	    return 0;
+	} else if (status == ERR_NOT_IN_RANGE) {
+	    status = cr.moveTo(tgt);
+	    if(status == OK || status == ERR_TIRED) {
+		return 1;
+	    } else {
+		return -1;
+	    }
+	} else {
+	    return -1;
+	}
+    }
+
+    take(cr) {
+	let d = this.d;
+	if(d.full) {
+	    if(creepIsFull(cr))
+		return false;
+	} else {
+	    if(creepIsFilledWithAny(cr))
+		return false;
+	}
+
+	if(this.move_to(cr, 3)) {
+	    return true;
+	}	
+
+	// let rm = Game.rooms[cr.pos.roomName];
+	let rm = Game.rooms[d.roomName];
+	let p = this.getPos(rm);
+	if(!d.target_list) {
+	    console.log('creating target list');
+	    let targets = rm.find(FIND_STRUCTURES, {
+		filter: function(struct) {
+		    let isGood = false;
+		    try {
+			if(!struct.my) {
+			    let total = 0;
+			    if(struct.energy) {
+				total += struct.energy;
+			    }
+			    if(struct.store) {
+				total += _.sum(struct.store);
+			    }
+			    if(total>0) {
+				isGood = true;
+			    }
+			}
+		    } catch (err) {
+		    }
+		    return isGood;
+		}
+	    });
+
+	    _.sortBy(targets, function(struct) {
+		p.getRangeTo(struct);
+	    } );
+
+	    d.target_list = _.map(targets, function (struct) {
+		let retVal = {
+		    id: struct.id,
+		    store: {}
+		};
+
+		if(struct.energy && struct.energy > 0) {
+		    retVal.store[RESOURCE_ENERGY] = struct.energy;
+		}
+
+		if(struct.store) {
+		    // for(let res in struct.store) {
+		    // 	struct.store[res] = struct.store[res];
+		    // }
+		    retVal.store = struct.store;
+		}
+		return retVal;
+	    });
+	}
+
+	let tgt = null;
+	let res = null;
+	let foundSome = false;
+	let limit = 10;
+	while(limit-- > 0 && d.target_list.length > 0) {
+	    tgt = d.target_list[0];
+	    let resTypes = Object.keys(tgt.store);
+	    while(resTypes.length > 0) {
+		let res = resTypes[0];
+
+		// try to withdraw
+		let withdrawRet = this.doWithdraw(cr, Game.getObjectById(tgt.id), res);
+		console.log('Creep ' + cr.name + ' withdrawing ' + res + ' from ' + tgt.id + ' status: ' + withdrawRet );
+
+		if(withdrawRet>0) {
+		    foundSome = true;
+		    break;
+		} else if(withdrawRet==0) {
+		    // done with this res
+		    resTypes.splice(0, 1);
+		    delete tgt.store[res];
+		} else {
+		    // done with this target
+		    delete tgt.store;
+		    break;
+		}
+	    }
+
+	    if(!tgt.store || Object.keys(tgt.store).length == 0) {
+		d.target_list.splice(0, 1);
+	    }
+
+	    if(foundSome)
+		break;
+	}
+
+	return foundSome;
+    }    
+}
+
 class AddrStoragePoint extends AddrPos {
     constructor(d, parent) {
 	super(d, parent);
@@ -447,13 +606,36 @@ class AddrStoragePoint extends AddrPos {
 
     init() { };
 
+    giveAllRes(cr, tgt) {
+	let status = OK;
+ 	for(let resourceType in cr.carry) {
+	    if(cr.carry[resourceType] > 0) {
+		status = cr.transfer(tgt, resourceType);
+	    }
+	}
+	return status;
+    }
+
+    giveAllResBut(cr, tgt, res) {
+	let status = OK;
+ 	for(let resourceType in cr.carry) {
+	    if(resourceType !== res)
+	    {
+		if(cr.carry[resourceType] > 0) {
+		    status = cr.transfer(tgt, resourceType);
+		}
+	    }
+	}
+	return status;
+    }    
+
     take(cr) {
 	let d = this.d;		
 	if(d.full) {
-	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+	    if(creepIsFullWith(cr, RESOURCE_ENERGY))
 		return false;
 	} else {
-	    if(cr.carry[RESOURCE_ENERGY] > 0)
+	    if(creepIsFilledWith(cr, RESOURCE_ENERGY))
 		return false;
 	}
 
@@ -472,6 +654,24 @@ class AddrStoragePoint extends AddrPos {
 
 		let rm = Game.rooms[d.roomName];
 		let p = this.getPos(rm);
+
+		// give up resources
+		if(creepIsFilledWithAnyBut(cr, RESOURCE_ENERGY))
+		{
+		    let tgt1 = _.find(d.containers, function(o) { return !o.isFull } );
+		    if(tgt1) {
+			let tgt = Game.getObjectById(tgt1.id);
+			let status = this.giveAllResBut(cr, tgt, RESOURCE_ENERGY);
+			if(status  == ERR_NOT_IN_RANGE ) {
+			    cr.moveTo(tgt);
+			    return true;
+			}  else if (status == OK) {
+			    return true;
+			} else {
+			    u.log('Error - has no resources to give up' + cr.name + ' status ' + status, u.LOG_ERR);
+			}
+		    }		    
+		}
 		// look for dropped energy
 		{
 		    let targets = p.findInRange(FIND_DROPPED_ENERGY, 3);
@@ -512,7 +712,7 @@ class AddrStoragePoint extends AddrPos {
     give(cr) {
 	let d = this.d;
 
-	if(cr.carry[RESOURCE_ENERGY] === 0)
+	if(!creepIsFilledWithAny(cr))
 	    return false;
 
 	this.getAmount(); // refresh cash data
@@ -520,7 +720,9 @@ class AddrStoragePoint extends AddrPos {
 	let tgt1 = _.find(d.containers, {isFull: false});
 	if(tgt1) {
 	    let tgt = Game.getObjectById(tgt1.id);
-	    let status = cr.transfer(tgt, RESOURCE_ENERGY);
+	    // let status = cr.transfer(tgt, RESOURCE_ENERGY);
+	    // transfer all resources
+	    let status = this.giveAllRes(cr, tgt);
 	    // console.log( "transfer = " + tgt.id + status );
 	    if(status == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
@@ -710,10 +912,10 @@ class AddrHarvPoint extends Addr {
     take(cr) {
 	let d = this.d;		
 	if(d.full) {
-	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+	    if(creepIsFull(cr))
 		return false;
 	} else {
-	    if(cr.carry[RESOURCE_ENERGY] > 0)
+	    if(creepIsFilledWithAny(cr))
 		return false;
 	}
 
@@ -990,10 +1192,10 @@ class AddrUpkeep extends Addr {
 //     take(cr) {
 // 	let d = this.d;		
 // 	if(d.full) {
-// 	    if(cr.carry[RESOURCE_ENERGY] >= cr.carryCapacity)
+// 	    if(creepIsFull(cr))
 // 		return false;
 // 	} else {
-// 	    if(cr.carry[RESOURCE_ENERGY] > 0)
+// 	    if(creepIsFilledWithAny(cr))
 // 		return false;
 // 	}
 
@@ -1055,7 +1257,7 @@ class AddrBuilding extends Addr {
     }
     
     take(cr) {
-	if(cr.carry[RESOURCE_ENERGY] > 0)
+	if(creepIsFilledWithAny(cr))
 	    return false;
 	
 	let d = this.d;
@@ -1106,7 +1308,7 @@ class AddrBuilding extends Addr {
 	    if( ret == ERR_NOT_IN_RANGE ) {
 		cr.moveTo(tgt);
 	    } else if (ret == ERR_INVALID_TARGET) {
-		let rm = Game.rooms[cr.pos.roomName];
+		let rm = getCreepRoom(cr);
 		let cp = f.make(rm.memory.wait_point, null);
 		cp.move_to(cr);
 	    }
@@ -1245,7 +1447,7 @@ class JobMiner extends Job {
 
 		// deliver
 		if(role.workStatus.step === 1) {
-		    if(cr.carry[RESOURCE_ENERGY] > 0) {
+		    if(creepIsFilledWithAny(cr)) {
 			let status = cr.transfer(drop, RESOURCE_ENERGY);
 			if(status == ERR_NOT_IN_RANGE ) {
 			    cr.moveTo(drop);
@@ -1352,7 +1554,7 @@ class JobMinerBasic extends Job {
 	    }
 
 	    if(role.workStatus.step === 3) {
-		if(cr.carry[RESOURCE_ENERGY] > 0) {
+		if(creepIsFilledWithAny(cr)) {
 		    cr.transferEnergy(drop);
 		    break;
 		} else {
@@ -1558,7 +1760,8 @@ class JobCarrier extends Job {
 }
 
 function getCreepRoom(cr) {
-    return Game.rooms[cr.pos.roomName];
+    let roomName = cr.memory.roomName ? cr.memory.roomName : defaultRoom;
+    return Game.rooms[roomName];
 }
 
 function getCreepsJob(cr) {
@@ -1892,7 +2095,7 @@ class JobSupplyBulder extends JobCarrier {
 
 	    if(role.workStatus.step === 3) {
 
-		if(cr.carry[RESOURCE_ENERGY] > 0) {
+		if(creepIsFilledWith(cr, RESOURCE_ENERGY)) {
 		    // cr.drop(RESOURCE_ENERGY);
 		    let bld_jobs = rm.memory.jobs['JobBuilder'];
 		    let wjob = bld_jobs[d.main_job_id];
@@ -2153,6 +2356,7 @@ class JobSpawn extends Job {
 	    let design = getDesign(d.design, spawn, rm);
 	    let body = getBodyFromDesign(design);
 	    mem.design = design;
+	    mem.roomName = rm.name;
 	    
 	    //
 	    let new_name = mem.role.name + '_' + Memory.next_creep_id;
@@ -2205,7 +2409,7 @@ class JobSpawn extends Job {
 // }
 
 var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
-		   AddrStoragePoint, AddrUpkeep
+		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom
 		   /*, AddrHarvPointRef*/ ];
 
 
@@ -2599,6 +2803,7 @@ function planCreepJobs(rm) {
     }
     */
 
+    // harvPoints
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	let carrierJobs = rm.memory.jobs.JobCarrier;
@@ -2710,6 +2915,39 @@ function planCreepJobs(rm) {
 	    }
 	}
     }
+
+    // scavenge points
+    {
+	let carrierJobs = rm.memory.jobs.JobCarrier;
+	for(let scav_id in rm.memory.scavengePoints) {
+
+	    if(rm.memory.scavengePoints[scav_id] === 'delete') {
+		let car_job_id = 'carry_'+scav_id;
+		if(carrierJobs[car_job_id]) {
+		    carrierJobs[car_job_id].done = true;
+		}
+	    } else {
+		//let hp = rm.memory.scavengePoints;
+		let chp = f.make(rm.memory.scavengePoints[scav_id], null);
+
+		let car_job_id = 'carry_'+scav_id;
+		if(!carrierJobs[car_job_id]) {
+		    let job = { id : car_job_id,
+				cname: 'JobCarrier',
+				taken_by_id: null,
+				priority : 1000, // scavenge priority
+				capacity: 0, // todo
+				maxCapacity: f.d.maxCapacity,
+				curPower: 0,
+				reqQta: 10,
+				take_from :  chp.makeRef(),
+				take_to : rm.memory.storagePoint,
+			      };
+		    carrierJobs[car_job_id] = job;
+		}
+	    }
+	}
+    }    
 
     if(!rm.memory.jobs.JobBuilder['ctrlr']) {
 	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
@@ -3211,7 +3449,7 @@ module.exports = {
 	if(Game.rooms.sim) {
 	    processRoom(Game.rooms['sim']);
 	} else {
-	    processRoom(Game.rooms['W43S54']);
+	    processRoom(Game.rooms[defaultRoom]);
 	}
 	
 	calcCPUUsage();

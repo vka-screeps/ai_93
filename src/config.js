@@ -105,6 +105,20 @@ function setConfigSim() {
 					      full: true });
     }
 
+    if(!room_mem.scavengePoints) {
+	room_mem.scavengePoints = {};
+    }
+    
+    if(!room_mem.scavengePoints.scavengep1 || room_mem.scavengePoints.scavengep1 === 'delete') {
+    	room_mem.scavengePoints.scavengep1 = addObject({ cname: 'AddrFreeRoom',
+    					      id: 'scavengep1',
+    					      roomName: 'sim',
+    					      maxCapacity: 2,
+    					      x: 32,
+    					      y: 25,
+    					      full: true });
+    }    
+
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
 					    roomName: room_name,
@@ -289,6 +303,22 @@ function setConfigGame()
     					      full: true });
     }
     // room_mem.harvPoints.hp3 = 'delete';
+
+    if(!room_mem.scavengePoints) {
+	room_mem.scavengePoints = {};
+    }
+
+    if(!room_mem.scavengePoints.scavengep1 || room_mem.scavengePoints.scavengep1 === 'delete') {
+    	room_mem.scavengePoints.scavengep1 = addObject({ cname: 'AddrFreeRoom',
+    					      id: 'scavengep1',
+    					      roomName: 'W43S53',
+    					      maxCapacity: 2,
+    					      x: 32,
+    					      y: 25,
+    					      full: true });
+    }
+
+    room_mem.scavengePoints.scavengep1 = 'delete';
     
 
     if(!room_mem.upkeepPoint) {
