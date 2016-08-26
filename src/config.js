@@ -318,7 +318,20 @@ function setConfigGame()
     					      full: true });
     }
 
-    room_mem.scavengePoints.scavengep1 = 'delete';
+    room_mem.scavengePoints.scavengep1 = 'delete';    
+
+    if(!room_mem.scavengePoints.scavengep2 || room_mem.scavengePoints.scavengep2 === 'delete') {
+    	room_mem.scavengePoints.scavengep2 = addObject({ cname: 'AddrFreeRoom',
+    					      id: 'scavengep2',
+    					      roomName: 'W43S52',
+    					      maxCapacity: 5,
+    					      x: 19,
+    					      y: 34,
+    					      full: true });
+    }
+
+    room_mem.scavengePoints.scavengep2 = 'delete';    
+    
     
 
     if(!room_mem.upkeepPoint) {
@@ -436,7 +449,7 @@ function setConfigGame()
 	ctrlrShare: 0.2,
 	repairShare: 0.1,
 	builderShare: 0.7,
-	creepCostLimit: 550,
+	creepCostLimit: 600,
     };
 
     /*

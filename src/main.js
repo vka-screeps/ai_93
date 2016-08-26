@@ -2427,6 +2427,7 @@ function calcRoomStats(rm) {
 	enCtrlQta: 0, // controller upgrade quote
 	enBldQta: 0, // builders quota
 	enRepairQta: 0,
+	energyCapacityAvailable: rm.energyCapacityAvailable,
     };
 
     let stats = rm.memory.stats;
@@ -2553,6 +2554,7 @@ function planTowerJobs(rm) {
 		for(let twr of twrs) {
 		    u.log('Tower repairs ' + tgt.id, u.LOG_INFO);
 		    twr.repair(tgt);
+		    break; // only one tower is on repair
 		}	    
 	    }
 	}
@@ -2937,7 +2939,7 @@ function planCreepJobs(rm) {
 				taken_by_id: null,
 				priority : 1000, // scavenge priority
 				capacity: 0, // todo
-				maxCapacity: f.d.maxCapacity,
+				maxCapacity: chp.d.maxCapacity,
 				curPower: 0,
 				reqQta: 10,
 				take_from :  chp.makeRef(),
