@@ -34,7 +34,8 @@ function setConfig() {
 	console.log("Sim mode detected!");
 	return setConfigSim();
     } else {
-	return setConfigGame();
+	setConfigGame();
+	setConfigGame2()
     }
 };
 
@@ -351,7 +352,9 @@ function setConfigGame()
     // Claim rooms
     claimARoom(room_mem, 'W43S55');
 
-    room_mem.extraConstructionSites=['57c34574fe945e772e27833f'];
+    //room_mem.extraConstructionSites=['57c34574fe945e772e27833f'];
+    room_mem.extraConstructionSites=[];
+    room_mem.extraConstructionRooms=['W43S55'];
 
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
@@ -477,7 +480,7 @@ function setConfigGame()
 	repairShare: 0.1,
 	builderShare: 0.7,
 	creepCostLimit: 600,
-	NZInc: 1,
+	NZInc: 0.5,
     };
 
     /*
@@ -633,8 +636,6 @@ function setConfigGame2()
 	repairShare: 0.1,
 	builderShare: 0.7,
 	creepCostLimit: 600,
-	NZInc: 1,
+	NZInc: 0,
     };
 }
-
-

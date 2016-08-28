@@ -1504,8 +1504,8 @@ class JobClaim extends Job {
 	    priority : 1000,
 	    res_pos:{ cname: 'AddrFreeRoom',
     		      roomName: roomName,
-    		      x: 1,
-    		      y: 1 }
+    		      x: 25,
+    		      y: 25 }
 	};
 
 	return ret;
@@ -2106,6 +2106,9 @@ class JobSupplyBulder extends JobCarrier {
 	    let tt = f.make(ret.take_to);
 	    
 	    let dist = tf.getPos().getRangeTo(tt.getPos());
+	    
+	    if(dist>50) dist = 50;
+	    if(!dist || dist<3)  dist = 3;
 	    ret.avg_trip_time = dist;
 	    u.log('Estimated distance for ' + new_job_id + ' - ' + dist, u.LOG_INFO);
 	} catch (err) {
@@ -2591,6 +2594,10 @@ function updateUpkeepQueue(rm) {
     c_upkeep.setNewTargets(target_ids);
 }
 
+function distanceFromBorder(pos) {
+    return _.min([pos.x, pos.y, 49-pos.x, 49-pos.y]);
+}
+
 function planTowerJobs(rm) {
     let twrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_TOWER } });
 
@@ -2635,11 +2642,14 @@ function planTowerJobs(rm) {
     ;
     let target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
     if(target) {
-	// actions
-	for(let twr of twrs) {
-	    u.log('Tower attacks ' + target, u.LOG_INFO);
-	    twr.attack(target);
-	}	
+
+	if(distanceFromBorder(target.pos) > 5) {
+	    // actions
+	    for(let twr of twrs) {
+		u.log('Tower attacks ' + target, u.LOG_INFO);
+		twr.attack(target);
+	    }
+	}
     } else {
 	target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_MY_CREEPS, {
 	    filter: function(cr) {
@@ -3116,6 +3126,15 @@ function planCreepJobs(rm) {
 	    }
 	}
     }
+
+    if(rm.memory.extraConstructionRooms) {
+	for(let rm1_name of rm.memory.extraConstructionRooms) {
+	    let rm1 = Game.rooms[rm1_name];
+	    let con_lst1 = rm1.find(FIND_MY_CONSTRUCTION_SITES);
+	    con_lst = con_lst.concat(con_lst1);
+	}
+    }
+
     
     for(let con_i in con_lst) {
 	let con = con_lst[con_i];
@@ -3590,6 +3609,7 @@ module.exports = {
 	    processRoom(Game.rooms['sim']);
 	} else {
 	    processRoom(Game.rooms[defaultRoom]);
+	    processRoom(Game.rooms['W43S55']);
 	}
 	
 	calcCPUUsage();
