@@ -3108,6 +3108,15 @@ function planCreepJobs(rm) {
     }
 
     let con_lst = rm.find(FIND_MY_CONSTRUCTION_SITES);
+    if(rm.memory.extraConstructionSites) {
+	for(let cid of rm.memory.extraConstructionSites) {
+	    let con = Game.getObjectById(cid);
+	    if(con) {
+		con_lst.push(con);
+	    }
+	}
+    }
+    
     for(let con_i in con_lst) {
 	let con = con_lst[con_i];
 	// let con_capacity = getConstrBuildingCapacity(rm, con);
@@ -3120,7 +3129,7 @@ function planCreepJobs(rm) {
 			priority : 150,
 			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
 			take_to: { cname: 'AddrBuilding',
-				   roomName: rm.name,
+				   roomName: con.pos.roomName, //rm.name,
 				   tgt_id: con.id },
 		      };
 
