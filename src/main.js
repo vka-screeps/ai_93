@@ -1486,6 +1486,113 @@ class JobMiner extends Job {
 
 }
 
+
+class JobClaim extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobClaim'; }
+
+    static create(new_job_id, roomName){
+	let ret = {
+	    cname: 'JobClaim',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: 1,
+	    reqQta: 1,
+	    priority : 1000,
+	    res_pos:{ cname: 'AddrFreeRoom',
+    		      roomName: roomName,
+    		      x: 1,
+    		      y: 1 }
+	};
+
+	return ret;
+    }
+
+    calcCreepPwr(rm, cr) {
+	return cr ? cr.memory.design[CLAIM] : 0;
+    }
+
+    // find controller
+    findCtrlr(rm) {
+	let d = this.d;
+	try {
+	    if(!d.res_id) {
+		if(d.res_pos) {
+		    let pos = f.make(d.res_pos, null).getPos(rm);
+		    rm = Game.rooms[pos.roomName];
+		    let ctrlrs = rm.find(FIND_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
+		    let ctrl = ctrlrs[0];
+		    d.res_id = ctrl.id;
+		}
+	    }
+
+	    return Game.getObjectById(d.res_id);
+	}catch (err) {
+	    console.log(err);
+	}
+	return null;
+    }
+    
+    start_work(rm, cr) {
+	let d = this.d;
+	let role = cr.memory.role;
+
+	this.findCtrlr(rm);
+
+	role.workStatus = {
+	    step: 0
+	}
+    }
+
+    finish_work(rm) {
+	let d = this.d;
+	
+	d.done = true;
+	this.unassign(rm);
+    }
+
+    do_work(rm, cr) {
+	let d = this.d;
+	let role = cr.memory.role;
+	let ctrlr = this.findCtrlr(rm); //Game.getObjectById(d.res_id);
+	let tt = f.make(d.res_pos);
+
+	if(ctrlr && ctrlr.my) {
+	    u.log( 'Controller in room ' + d.res_pos.roomName + ' belongs to us', u.LOG_INFO );
+	    d.done = true;
+	    this.finish_work();
+	    return;
+	}
+
+
+	if( !ctrlr && tt.move_to(cr,1) ) {
+	    return;
+	} else {
+	    if(!ctrlr) {
+		u.log( 'Unable to find controller in room ' + d.res_pos.roomName, u.LOG_ERR );
+		this.finish_work();
+		return;
+	    } else {
+		let status = cr.claimController(ctrlr);
+		if(status == ERR_NOT_IN_RANGE) {
+		    cr.moveTo(ctrlr);
+		} else {
+		    if(status == OK) {
+		    } else {
+			u.log( 'Unable to claim controller in room ' + d.res_pos.roomName + ' status: ' + status, u.LOG_ERR );
+			this.finish_work();
+			return;
+		    }
+		}
+	    }
+	}
+    }
+}
+
+
 /*
 class JobMinerBasic extends Job {
     constructor(d, parent) {
@@ -2413,7 +2520,7 @@ class JobSpawn extends Job {
 // }
 
 var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
-		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom
+		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom, JobClaim,
 		   /*, AddrHarvPointRef*/ ];
 
 
@@ -2781,6 +2888,11 @@ function nextTickPlanning(rm) {
 	rm.memory.balance.h2.count = _.max([0, stat.count-1]);
 	rm.memory.balance.h2.priority = stat.priority;
     }
+    {
+	let stat = countTotalJobsCapacity(rm.memory.jobs.JobClaim);
+	rm.memory.balance.bal_claim.count = _.max([0, stat.count]);
+	rm.memory.balance.bal_claim.priority = stat.priority;
+    }
 }
 
 function getConstrBuildingCapacity(rm, con) {
@@ -3016,6 +3128,18 @@ function planCreepJobs(rm) {
 	}
     }
 
+
+    // Claimer jobs
+    for(let claimRoomName in rm.memory.claimRooms) {
+	if(rm.memory.claimRooms[claimRoomName] === 'claim') {
+	    rm.memory.claimRooms[claimRoomName] = 'claiming';
+	    let job_id = 'claim_'+claimRoomName;
+	    if(!rm.memory.jobs.JobClaim[job_id]) {
+		rm.memory.jobs.JobClaim[job_id] = JobClaim.create(job_id, claimRoomName)
+	    }
+	}
+    }
+
     // Carriers should give up their stuff
     if(!rm.memory.jobs.JobCarrier['waiting']) {
 	let job = { id : 'waiting',
@@ -3209,12 +3333,13 @@ function assignCreepJobs(rm) {
     reduceJobs(rm, rm.memory.jobs['JobCarrier']);
     reduceJobs(rm, rm.memory.jobs['JobBuilder']);
     reduceJobs(rm, rm.memory.jobs['JobDefender']);
+    reduceJobs(rm, rm.memory.jobs['JobClaim']);
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
     let sorted_name_list = sortCreepsByPriority(rm, rm.memory.creeplist );
     let sortedJobIds = {};
-    for(let iii of ['JobMiner', 'JobCarrier', 'JobBuilder', 'JobDefender'] ) {
+    for(let iii of ['JobMiner', 'JobCarrier', 'JobBuilder', 'JobDefender', 'JobClaim'] ) {
 	sortedJobIds[iii] = {ids:[], idx: 0};
 	sortedJobIds[iii].ids = sortJobsByPriority(rm.memory.jobs[iii], false);
     }	
@@ -3388,7 +3513,7 @@ function processRoom(rm) {
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
     assignJobQuotas(rm); // assign quotas to jobs
-    assignCreepJobs(rm); // creeps get new jobs
+    assignCreepJobs(rm); // assign creeps to new jobs
     
     nextTickPlanning(rm); // adjust the number of creeps on the balance
     planSpawnJobs(rm);  // // Convert balance into JobSpawn jobs

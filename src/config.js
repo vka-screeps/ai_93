@@ -54,6 +54,16 @@ function addObject( obj ) {
 	     obj_id: next_id };
 }
 
+function claimARoom(room_mem, rn) {
+    if(!room_mem.claimRooms) {
+	room_mem.claimRooms = {};
+    }	
+    if( !room_mem.claimRooms[rn] ) {
+	room_mem.claimRooms[rn] = 'claim';
+    }
+}
+
+
 
 function setConfigSim() {
 
@@ -117,7 +127,10 @@ function setConfigSim() {
     					      x: 32,
     					      y: 25,
     					      full: true });
-    }    
+    }
+
+    claimARoom(room_mem, 'sim');
+
 
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
@@ -147,6 +160,7 @@ function setConfigSim() {
 	    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	    b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
+	    bal_claim: {id:'bal_claim', count: 0, curCount: 0, design: 'd_claim', role: 'JobClaim' },
 	    //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	};
 
@@ -202,6 +216,7 @@ function setConfigSim() {
 				     },
 			    },
 	    'JobBuilder' : {},
+	    'JobClaim' : {},
 	};
 
 
@@ -330,8 +345,11 @@ function setConfigGame()
     					      full: true });
     }
 
-    room_mem.scavengePoints.scavengep2 = 'delete';    
-    
+    room_mem.scavengePoints.scavengep2 = 'delete';
+
+
+    // Claim rooms
+    claimARoom(room_mem, 'W43S55');
     
 
     if(!room_mem.upkeepPoint) {
@@ -419,6 +437,7 @@ function setConfigGame()
 		//        },
 	    },
 	    'JobBuilder' : {},
+	    'JobClaim' : {},
 	};
 
 
