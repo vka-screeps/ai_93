@@ -1974,7 +1974,7 @@ class JobBuilder extends Job {
 	let ret = null;
 	if(p) {
 	    ret = f.make( { cname: 'AddrPos',
-			    roomName: rm.name,
+			    roomName: p.roomName,
 			    x: p.x,
 			    y: p.y,
 			    dist: 3}, null );
@@ -2546,7 +2546,7 @@ function calcRoomStats(rm) {
     let cstor = f.make(rm.memory.storagePoint, null);
 
 
-    rm.memory.NZ ++;
+    rm.memory.NZ = rm.memory.NZ + config.NZInc;
     rm.memory.NZ = _.min( [ rm.memory.NZ, cstor.getAmount(), cstor.getTotalCapacity() ] );
     stats.NZ = rm.memory.NZ;
     stats.enTotal = cstor.getAmount();

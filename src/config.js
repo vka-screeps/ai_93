@@ -477,6 +477,7 @@ function setConfigGame()
 	repairShare: 0.1,
 	builderShare: 0.7,
 	creepCostLimit: 600,
+	NZInc: 1,
     };
 
     /*
@@ -632,6 +633,7 @@ function setConfigGame2()
 	repairShare: 0.1,
 	builderShare: 0.7,
 	creepCostLimit: 600,
+	NZInc: 1,
     };
 }
 
