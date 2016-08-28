@@ -362,6 +362,7 @@ function setConfigGame()
 	    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	    b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
+	    bal_claim: {id:'bal_claim', count: 0, curCount: 0, design: 'd_claim', role: 'JobClaim' },
 	    //	d2: {id:'d2', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender' },
 	};
 
@@ -429,6 +430,12 @@ function setConfigGame()
 	    Memory.creeps[cr_name].workStatus = null;
 	}
 
+    }
+
+    // Add claim role
+    if(!room_mem.balance.bal_claim) {
+	room_mem.balance.bal_claim = {id:'bal_claim', count: 0, curCount: 0, design: 'd_claim', role: 'JobClaim' };
+	room_mem.jobs.JobClaim = {};
     }
 
     if(!room_mem.stats) {

@@ -2223,7 +2223,8 @@ var designRegistry = {
     'd_b1' : [ WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK, CARRY, MOVE, WORK ],
     // slow builder
     // 'd_b2' : [ WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK ],    
-    'd_def1' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ]
+    'd_def1' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ],
+    'd_claim' : [ CLAIM, MOVE, CLAIM, MOVE ],
 };
 
 var costRegistry = {
@@ -2250,7 +2251,10 @@ function getDesign( design, sp, rm ) {
     }
 
     let energy = rm.energyCapacityAvailable;
-    energy = _.min( [energy, defaultFor(rm.memory.config.creepCostLimit, 1000) ] );
+    if('d_claim' != design)
+    {
+	energy = _.min( [energy, defaultFor(rm.memory.config.creepCostLimit, 3000) ] );
+    }
 
     if(!rm.memory.savedDsgn || rm.memory.savedDsgn.energy !== energy)
 	rm.memory.savedDsgn = {energy: energy};
