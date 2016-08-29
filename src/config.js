@@ -355,6 +355,7 @@ function setConfigGame()
     //room_mem.extraConstructionSites=['57c34574fe945e772e27833f'];
     room_mem.extraConstructionSites=[];
     room_mem.extraConstructionRooms=['W43S55'];
+    room_mem.extraEnergyToRoom=['W43S55'];
 
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
@@ -533,7 +534,7 @@ function setConfigGame2()
 	room_mem.harvPoints.hp2 = addObject({ cname: 'AddrHarvPoint',
 					      id: 'hp2',
 					      roomName: room_name,
-					      maxCapacity: 2,
+					      maxCapacity: 1,
 					      x: 46,
 					      y: 37,
 					      full: true });

@@ -1,3 +1,7 @@
+// module.exports = {
+//     transferCreepToRoom : function(crName, rmName) { transferCreepToRoom(crName, rmName); },
+// }
+
 var u = require('utils');
 var _ = require('lodash');
 var harvester = require('harvest');
@@ -373,6 +377,13 @@ function creepIsFilledWith(cr, res) {
     return cr.carry[res] && (cr.carry[res] > 0);
 }
 
+function getRoomSpawnName(rm) {
+    let spawns = rm.find(FIND_MY_SPAWNS);
+    if(spawns && spawns.length)
+	return spawns[0].name;
+    return null;
+}
+
 
 class AddrPos extends Addr {
     constructor(d, parent) {
@@ -421,7 +432,7 @@ class AddrPos extends Addr {
 	    if(creepIsFilledWithAny(cr)) {
 		return false; // already have got some energy here
 	    } else {
-		if(cr.pos.getRangeTo(d.x, d.y) > 1) {
+		if(cr.pos.getRangeTo(this.getPos()) > 1) {
 		    cr.moveTo(d.x, d.y);
 		}		
 		return true; // keep waiting
@@ -2499,9 +2510,12 @@ class JobSpawn extends Job {
 
 	// update balance
 	if(success) {
-	    let cr = Game.creeps[role.workStatus];
-	    rm.memory.creeplist[cr.name]={id: cr.id};
-	    rm.memory.balance[d.bal_id].curCount++;
+	    try {
+		let cr = Game.creeps[role.workStatus];
+		rm.memory.creeplist[cr.name]={id: cr.id};
+		rm.memory.balance[d.bal_id].curCount++;
+	    } catch (err) {
+	    }
 	    d.capacity--;
 	    if(d.capacity < 0)
 		d.capacity = 0;
@@ -2962,7 +2976,7 @@ function planCreepJobs(rm) {
 				res_pos : chp.makeRef(),
 				maxCapacity: chp.d.maxCapacity,
 				drop_id: null,
-				drop_name: 'Spawn1',
+				drop_name: getRoomSpawnName(rm), //'Spawn1',
 			      };
 		    minerJobs[hp_id] = job;
 		} /*else {
@@ -3291,7 +3305,9 @@ function cleanUpDeadCreeps(rm) {
 			if(job.taken_by_id){
 			    delete job.taken_by_id[cr_id];
 			    let cjob = f.make(job, null);
-			    cjob.calcPower(rm);
+			    try {
+				cjob.calcPower(rm);
+			    } catch(err){}
 			}
 		    }
 		}
@@ -3319,6 +3335,26 @@ function reduceJobs(rm, jobs) {
 	    cjob.unassign(rm);
 	    delete jobs[job_id];
 	}
+    }
+}
+
+function transferCreepToRoom(crName, newRoomName) {
+    try {
+	let cr = Game.creeps[crName];
+	let rm = getCreepRoom(cr);
+	let newRoom = Game.rooms[newRoomName];
+	let cjob = getCreepsJob(cr);
+	if(cjob) {
+	    cjob.unassign(rm, cr);
+	}
+
+	cr.memory.roomName = newRoomName;
+	newRoom.memory.creeplist[cr.name]={id: cr.id};
+	delete rm.memory.creeplist[cr.name];
+	newRoom.memory.balance[cr.memory.bal_id].curCount++;
+	rm.memory.balance[d.bal_id].curCount--;
+    } catch(err) {
+	u.log( 'Unable to transfer ' + crName + ' to ' + rmName, u.LOG_ERR );
     }
 }
 
@@ -3512,6 +3548,7 @@ function assignCreepJobsOld(rm) {
     }
     //    }
 }
+
 
 function doAllJobs(rm) {
     for(let role_name in rm.memory.jobs) {
