@@ -346,6 +346,7 @@ class Addr extends CMemObj {
     move_to(cr, dist) { return true; }
     take(cr) { return true; }
     give(cr) { return true; }
+    exists() { return true; }
 }
 
 function defaultFor(a, val) {
@@ -520,6 +521,10 @@ class AddrFreeRoom extends AddrPos {
 	    return true;
 	}
 
+	if(d.done) {
+	    return false;
+	}
+
 	/*
 	if(this.move_to(cr, 3)) {
 	    return true;
@@ -529,7 +534,7 @@ class AddrFreeRoom extends AddrPos {
 	// let rm = Game.rooms[cr.pos.roomName];
 	let rm = Game.rooms[d.roomName];
 	let p = this.getPos(rm);
-	if(!d.target_list) {
+	if(!d.target_list || (d.target_list.length==0)) {
 	    console.log('creating target list');
 	    let targets = rm.find(FIND_STRUCTURES, {
 		filter: function(struct) {
@@ -577,10 +582,16 @@ class AddrFreeRoom extends AddrPos {
 	    });
 	}
 
+	if(d.target_list.length==0) {
+	    d.done = true;
+	    return false;
+	}
+
+	// u.log( 'Creep ' + cr.name + ' scavenging in room ' + rm.name, u.LOG_INFO );
 	let tgt = null;
 	let res = null;
 	let foundSome = false;
-	let limit = 10;
+	let limit = 50;
 	while(limit-- > 0 && d.target_list.length > 0) {
 	    tgt = d.target_list[0];
 	    let resTypes = Object.keys(tgt.store);
@@ -589,7 +600,7 @@ class AddrFreeRoom extends AddrPos {
 
 		// try to withdraw
 		let withdrawRet = this.doWithdraw(cr, Game.getObjectById(tgt.id), res);
-		console.log('Creep ' + cr.name + ' withdrawing ' + res + ' from ' + tgt.id + ' status: ' + withdrawRet );
+		// console.log('Creep ' + cr.name + ' withdrawing ' + res + ' from ' + tgt.id + ' status: ' + withdrawRet );
 
 		if(withdrawRet>0) {
 		    foundSome = true;
@@ -605,7 +616,7 @@ class AddrFreeRoom extends AddrPos {
 		}
 	    }
 
-	    if(!tgt.store || Object.keys(tgt.store).length == 0) {
+	    if(!tgt.store || Object.keys(tgt.store).length == 0/* || !foundSome*/) {
 		d.target_list.splice(0, 1);
 	    }
 
@@ -614,7 +625,11 @@ class AddrFreeRoom extends AddrPos {
 	}
 
 	return foundSome;
-    }    
+    }
+
+    exists() {
+	return this.d.done ? false : true;
+    }
 }
 
 class AddrStoragePoint extends AddrPos {
@@ -1362,6 +1377,7 @@ class AddrBuilding extends Addr {
 }
 
 
+
 class JobMiner extends Job {
     constructor(d, parent) {
 	super(d, parent);
@@ -1840,8 +1856,12 @@ class JobCarrier extends Job {
 		    if(tf.take(cr)) {
 			break;
 		    } else {
-			role.workStatus.trip_start_time = Game.time;
-			role.workStatus.step++;
+			if(tf.exists() ) {
+			    role.workStatus.trip_start_time = Game.time;
+			    role.workStatus.step++;
+			} else {
+			    d.done = true;
+			}
 		    }
 		}
 
@@ -3108,7 +3128,7 @@ function planCreepJobs(rm) {
 		let chp = f.make(rm.memory.scavengePoints[scav_id], null);
 		let car_job_id = 'carry_'+scav_id;
 
-		if(chp.d.maxCapacity>0) {
+		if(chp.d.maxCapacity>0 && chp.exists()) {
 		    if(!carrierJobs[car_job_id]) {
 			let job = { id : car_job_id,
 				    cname: 'JobCarrier',
@@ -3429,6 +3449,7 @@ function sortCreepsByPriority( rm ,creeplist ) {
     return sorted_name_list;
 }
 
+
 // 1. Unassign and remove creeps that no longer exist
 // 2. If already has a job - keep looking
 // 3. Assign a new job, otherwise - start_work()
@@ -3520,69 +3541,83 @@ function assignCreepJobs(rm) {
     }
 }
 
-function assignCreepJobsOld(rm) {
-
-    // for(let room_idx in Game.rooms) {
-    // 	let rm = Game.rooms[room_idx];
+/*
+function assignCreepJobsNew(rm) {
 
     reduceJobs(rm, rm.memory.jobs['JobMiner']);
     reduceJobs(rm, rm.memory.jobs['JobCarrier']);
     reduceJobs(rm, rm.memory.jobs['JobBuilder']);
     reduceJobs(rm, rm.memory.jobs['JobDefender']);
+    reduceJobs(rm, rm.memory.jobs['JobClaim']);
 
     let cwait_poit = f.make(rm.memory.wait_point, null);
 
-    sortCreepsByPriority(rm, rm.memory.creeplist );
-
-    for(let cr_name in rm.memory.creeplist) {
+    let sorted_name_list = sortCreepsByPriority(rm, rm.memory.creeplist );
+    let sortedJobIds = {};
+    for(let iii of ['JobMiner', 'JobCarrier', 'JobBuilder', 'JobDefender', 'JobClaim'] ) {
+	sortedJobIds[iii] = {ids:[], idx: 0};
+	sortedJobIds[iii].ids = sortJobsByPriority(rm.memory.jobs[iii], false);
+    }	
+    
+    for(let cr_name of sorted_name_list) {
 	let cr = Game.getObjectById( rm.memory.creeplist[cr_name].id );
 
-	if(cr.spawning)
-	    continue;
+	// if(cr.spawning)
+	//     continue;
 
 	let role = cr.memory.role;
-	if(!role)
-	    continue;
+	// if(!role)
+	//     continue;
+	
 	let jobs = rm.memory.jobs[role.name];
 	if(!jobs) {
-	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_ERR );
+	    u.log( "Creep " + cr_name + " has no job queue: " + role.name, u.LOG_WARN );
 	    continue;
 	}
 
+	let pri = 1000001; // current creep's priority
 	if(role.job_id) {
-	    // already has a job
-	    // let job = jobs[role.job_id];
-	    // let cjob = f.make(job, null);
-	    
-	    // cjob.do_work(rm);
-	    continue;
+	    if(role.name === 'JobMiner')
+		continue;
+	    let job = jobs[role.job_id];
+	    pri = defaultFor( job.priority, pri );
 	}
+	
+	let sortedJobIdsRec = sortedJobIds[role.name];
+	while(sortedJobIdsRec.idx < sortedJobIdsRec.ids.length) {
+	    let job2 = jobs[ sortedJobIdsRec.ids[sortedJobIdsRec.idx++] ];
+	    let pri2 = defaultFor(job2.priority, 1000001);
+	    if(pri2<pri) {
+		let cjob2 = f.make(job2, null);
 
-	// TODO: don't start over again and again, use Object.keys(jobs)
-	for(let job_id in jobs) {
-	    let job = jobs[job_id];
-	    let cjob = f.make(job, null);
+		if(job2.done) {
+		    continue;
+		}
+		if(job2.onhold)
+		    continue;
+		
+		if(cjob2.isFull())
+		    continue;
 
-	    if(job.done) {
-		cjob.unassign(rm);
-		delete jobs[job_id];
-		continue;
+		// may be unassign perv. job
+		if(role.job_id) {
+		    u.log( "Reassigning creep: " + cr_name + ' from: ' +  role.job_id + ' to: ' + job2.id, u.LOG_INFO);
+		    let job = jobs[role.job_id];
+		    let cjob = f.make(job, null);
+		    cjob.unassign(rm ,cr);
+		} else {
+		    u.log( "Assigning creep: " + cr_name + ' to: ' + job2.id, u.LOG_INFO);
+		}
+
+		// take the job
+		cjob2.assign(rm, cr);
+
+		// work on it
+		cjob2.start_work(rm, cr);
+		break;
+	    } else {
+		break;
 	    }
-	    if(job.onhold)
-		continue;
-	    
-	    if(cjob.isFull())
-		continue;
-	    
-	    // found a job
-	    
-	    // take the job
-	    cjob.assign(rm, cr);
-
-	    // work on it
-	    cjob.start_work(rm, cr);
-	    // cjob.do_work(rm);
-	    break;
 	}
 
 	if(!role.job_id) {
@@ -3590,8 +3625,8 @@ function assignCreepJobsOld(rm) {
 	    cwait_poit.move_to(cr);
 	}
     }
-    //    }
 }
+*/
 
 
 function doAllJobs(rm) {
