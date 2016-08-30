@@ -334,27 +334,27 @@ function setConfigGame()
     					      full: true });
     }
 
-    room_mem.scavengePoints.scavengep1 = 'delete';    
-
+    // room_mem.scavengePoints.scavengep1 = 'delete';
+    
     if(!room_mem.scavengePoints.scavengep2 || room_mem.scavengePoints.scavengep2 === 'delete') {
     	room_mem.scavengePoints.scavengep2 = addObject({ cname: 'AddrFreeRoom',
     					      id: 'scavengep2',
     					      roomName: 'W43S52',
-    					      maxCapacity: 5,
+    					      maxCapacity: 3,
     					      x: 19,
     					      y: 34,
     					      full: true });
     }
+    // room_mem.scavengePoints.scavengep2 = 'delete';
 
-    room_mem.scavengePoints.scavengep2 = 'delete';
-
+    // room_mem.scavengePoints.scavengep2.maxCapacity=5;
 
     // Claim rooms
     claimARoom(room_mem, 'W43S55');
 
     //room_mem.extraConstructionSites=['57c34574fe945e772e27833f'];
     room_mem.extraConstructionSites=[];
-    room_mem.extraConstructionRooms=['W43S55'];
+    room_mem.extraConstructionRooms=[]; //['W43S55'];
     room_mem.extraEnergyToRoom=['W43S55'];
 
     if(!room_mem.upkeepPoint) {
@@ -455,6 +455,8 @@ function setConfigGame()
 	}
 
     }
+
+    // addBalanceLine( room_mem.balance, bal_claim: {id:'bal_dismantle', count: 0, curCount: 0, design: 'd_dismantle', role: 'JobDismantle' } );
 
     // Add claim role
     if(!room_mem.balance.bal_claim) {
@@ -633,9 +635,9 @@ function setConfigGame2()
 
     // quotas
     room_mem.config = {
-	ctrlrShare: 0.2,
+	ctrlrShare: 0.4,
 	repairShare: 0.1,
-	builderShare: 0.7,
+	builderShare: 0.4,
 	creepCostLimit: 600,
 	NZInc: 0,
     };

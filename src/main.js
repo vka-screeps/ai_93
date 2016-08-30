@@ -433,7 +433,8 @@ class AddrPos extends Addr {
 		return false; // already have got some energy here
 	    } else {
 		if(cr.pos.getRangeTo(this.getPos()) > 1) {
-		    cr.moveTo(d.x, d.y);
+		    // cr.moveTo(d.x, d.y);
+		    cr.moveTo(this.getPos());
 		}		
 		return true; // keep waiting
 	    }
@@ -513,9 +514,17 @@ class AddrFreeRoom extends AddrPos {
 		return false;
 	}
 
+	if(cr.pos.roomName !== d.roomName) {
+	    // console.log( 'Creep ' + cr.name + ' moves to room ' + d.roomName );
+	    cr.moveTo(this.getPos());
+	    return true;
+	}
+
+	/*
 	if(this.move_to(cr, 3)) {
 	    return true;
-	}	
+	}
+	*/
 
 	// let rm = Game.rooms[cr.pos.roomName];
 	let rm = Game.rooms[d.roomName];
@@ -1741,6 +1750,31 @@ class JobCarrier extends Job {
 		    d.capacity--;
 		}
 	    }
+
+	    if( typeof d.maxCapacity !== 'undefined' ) {
+		if(d.capacity>d.maxCapacity) {
+		    d.capacity = d.maxCapacity;
+		}
+	    }	    
+	}
+    }
+
+
+    estimateTripTime() {
+	let d = this.d;
+	try
+	{
+	    let tf = f.make(ret.take_from);		
+	    let tt = f.make(ret.take_to);
+	    
+	    let dist = tf.getPos().getRangeTo(tt.getPos());
+
+	    if(!dist || dist<3)  dist = 3;
+	    if(dist>100) dist = 100;
+	    d.avg_trip_time = dist;
+	    u.log('Estimated distance for ' + new_job_id + ' - ' + dist, u.LOG_INFO);
+	} catch (err) {
+	    u.log('Error estimating distance for ' + new_job_id + ' - ' + err, u.LOG_ERR);
 	}
     }
 
@@ -2654,7 +2688,7 @@ function planTowerJobs(rm) {
     }
 
     ;
-    let target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+    let target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
     if(target) {
 
 	if(distanceFromBorder(target.pos) > 5) {
@@ -2665,7 +2699,7 @@ function planTowerJobs(rm) {
 	    }
 	}
     } else {
-	target = Game.spawns['Spawn1'].pos.findClosestByRange(FIND_MY_CREEPS, {
+	target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_MY_CREEPS, {
 	    filter: function(cr) {
 		return (cr.hits < cr.hitsMax);
 	    }
@@ -3068,24 +3102,34 @@ function planCreepJobs(rm) {
 		if(carrierJobs[car_job_id]) {
 		    carrierJobs[car_job_id].done = true;
 		}
-	    } else {
+	    } else 
+	    {
 		//let hp = rm.memory.scavengePoints;
 		let chp = f.make(rm.memory.scavengePoints[scav_id], null);
-
 		let car_job_id = 'carry_'+scav_id;
-		if(!carrierJobs[car_job_id]) {
-		    let job = { id : car_job_id,
-				cname: 'JobCarrier',
-				taken_by_id: null,
-				priority : 1000, // scavenge priority
-				capacity: 0, // todo
-				maxCapacity: chp.d.maxCapacity,
-				curPower: 0,
-				reqQta: 10,
-				take_from :  chp.makeRef(),
-				take_to : rm.memory.storagePoint,
-			      };
-		    carrierJobs[car_job_id] = job;
+
+		if(chp.d.maxCapacity>0) {
+		    if(!carrierJobs[car_job_id]) {
+			let job = { id : car_job_id,
+				    cname: 'JobCarrier',
+				    taken_by_id: null,
+				    priority : 100, // scavenge priority
+				    capacity: 0, // todo
+				    maxCapacity: chp.d.maxCapacity,
+				    curPower: 0,
+				    reqQta: 10,
+				    take_from :  chp.makeRef(),
+				    take_to : rm.memory.storagePoint,
+				  };
+			carrierJobs[car_job_id] = job;
+			f.make(job, null).estimateTripTime();
+		    } else {
+			carrierJobs[car_job_id].maxCapacity = chp.d.maxCapacity;
+		    }
+		} else {
+		    if(carrierJobs[car_job_id]) {
+			carrierJobs[car_job_id].done = true;
+		    }		    
 		}
 	    }
 	}
