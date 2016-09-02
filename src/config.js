@@ -130,8 +130,7 @@ function setConfigSim() {
     					      full: true });
     }
 
-    claimARoom(room_mem, 'sim');
-
+    // claimARoom(room_mem, 'sim');
 
     if(!room_mem.upkeepPoint) {
 	room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
@@ -157,7 +156,7 @@ function setConfigSim() {
 	room_mem.balance = {
 	    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner', priority: -10 },  // permanent
 	    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier', priority: -5 },  // permanent
-	    d1: {id:'d1', count: 1, curCount: 0, design: 'd_def1', role: 'JobDefender', priority: -1 },  // permanent
+	    d1: {id:'d1', count: 0, curCount: 0, design: 'd_def1', role: 'JobDefender', priority: -1 },  // permanent
 	    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 	    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
 	    b1: {id:'b1', count: 0, curCount: 0, design: 'd_b1', role: 'JobBuilder' },
@@ -177,7 +176,7 @@ function setConfigSim() {
 	    'JobCarrier' : { 'jc1' : { id : 'jc1',
 				       cname: 'JobCarrier',
 				       taken_by_id: null,
-				       priority : 0,
+				       priority : -1,
 				       capacity : 1,
 				       reqQta: 1,
 				       // take_from :  room_mem.harvPoints.hp1, // copy ref
@@ -188,7 +187,7 @@ function setConfigSim() {
 				     },
 			     
 			   },
-	    'JobDefender' : { 'jd1': { id: 'jd1',
+	    'JobDefender' : {/* 'jd1': { id: 'jd1',
 				       cname: 'JobDefender',
 				       taken_by_id: null,
 				       priority : 0,
@@ -214,10 +213,8 @@ function setConfigSim() {
 						  roomName: room_name,
 						  x: 27,
 						  y: 25 },
-				     },
+				     },*/ 
 			    },
-	    'JobBuilder' : {},
-	    'JobClaim' : {},
 	};
 
 
@@ -228,7 +225,6 @@ function setConfigSim() {
 	    Memory.creeps[cr_name].role.job_id = null
 	    Memory.creeps[cr_name].workStatus = null;
 	}
-
     }
 
     if(!room_mem.stats) {
@@ -401,7 +397,7 @@ function setConfigGame()
 	    'JobCarrier' : { 'jc1' : { id : 'jc1',
 				       cname: 'JobCarrier',
 				       taken_by_id: null,
-				       priority : 0,
+				       priority : -1,
 				       capacity : 1,
 				       reqQta: 1,
 				       // take_from :  room_mem.harvPoints.hp1, // copy ref
@@ -595,7 +591,7 @@ function setConfigGame2()
 	    'JobCarrier' : { 'jc1' : { id : 'jc1',
 				       cname: 'JobCarrier',
 				       taken_by_id: null,
-				       priority : 0,
+				       priority : -1,
 				       capacity : 1,
 				       reqQta: 1,
 				       // take_from :  room_mem.harvPoints.hp1, // copy ref
