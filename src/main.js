@@ -2962,6 +2962,28 @@ function getConstrBuildingCapacity(rm, con) {
     return 2;
 }
 
+function findObject(id) {
+    let objects = Memory.objects;    
+    let o2 = _.find( objects, function(o2) {
+	try {
+	    return (id === o2.id);
+	} catch(err){};
+	return false;
+    } );
+    return o2;
+}
+
+function deleteObject(id) {
+    let objects = Memory.objects;    
+    let o2 = findObject(id);
+    if(o2) {
+	delete objects[o2.obj_id];
+	return true;
+    } else {
+	return false;
+    }
+}
+
 // Put the JobMinerBasic on hold, after leaving the recovery mode
 function planCreepJobs(rm) {
     // Enable/disable the 'j1' job - JobMinerBasic
@@ -3096,17 +3118,23 @@ function planCreepJobs(rm) {
     // scavenge points
     {
 	let carrierJobs = rm.memory.jobs.JobCarrier;
-	for(let scav_id in rm.memory.scavengePoints) {
-
-	    if(rm.memory.scavengePoints[scav_id] === 'delete') {
+	let scav_id_lst = Object.keys(rm.memory.scavengePoints);
+	for(let scav_id of scav_id_lst) {
+	    let chp = f.make(rm.memory.scavengePoints[scav_id], null);
+	    
+	    if(chp.d.postDelete) {
+		// todo - find all related jobs
 		let car_job_id = 'carry_'+scav_id;
 		if(carrierJobs[car_job_id]) {
 		    carrierJobs[car_job_id].done = true;
+		} else {
+		    // remove the point
+		    deleteObject(scav_id);
+		    delete rm.memory.scavengePoints[scav_id];
+		    u.log( "Deleting object " + scav_id, u.LOG_INFO );
 		}
-	    } else 
-	    {
+	    } else {
 		//let hp = rm.memory.scavengePoints;
-		let chp = f.make(rm.memory.scavengePoints[scav_id], null);
 		let car_job_id = 'carry_'+scav_id;
 
 		if(chp.d.maxCapacity>0 && chp.exists()) {
@@ -3501,13 +3529,17 @@ function assignCreepJobs(rm) {
 
 		// may be unassign perv. job
 		if(role.job_id) {
-		    u.log( "Reassigning creep: " + cr_name + ' from: ' +  role.job_id + ' to: ' + job2.id, u.LOG_INFO);
+		    let txt = "Reassigning creep: " + cr_name + ' from: ' +  role.job_id + ' to: ' + job2.id;
+		    u.log( txt , u.LOG_INFO);
 		    let job = jobs[role.job_id];
 		    let cjob = f.make(job, null);
 		    cjob.unassign(rm ,cr);
 		} else {
-		    u.log( "Assigning creep: " + cr_name + ' to: ' + job2.id, u.LOG_INFO);
+		    let txt = "Assigning creep: " + cr_name + ' to: ' + job2.id;
+		    u.log( txt , u.LOG_INFO);
 		}
+
+		cr.say(job2.id);
 
 		// take the job
 		cjob2.assign(rm, cr);

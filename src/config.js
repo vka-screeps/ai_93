@@ -55,6 +55,72 @@ function addObject( obj ) {
 	     obj_id: next_id };
 }
 
+/*
+// Dangerous
+function clearDuplicatesFor(id) {
+    try {
+	let objects = Memory.objects;
+	let keys = Object.keys(objects);
+
+	keys = _.filter( keys, function (k) {
+	    try {
+		return (id === objects[k].id);
+	    } catch(err){};
+	    return false;
+	} );
+
+	if(keys.length > 1) {
+	    keys.splice(keys.length-1, 1); // remove last
+	    console.log('Duplicates: ' + keys);
+	    _.forEach(keys, (v, i, c) => { delete objects[v];  } );
+	} else {
+	    console.log('No duplicates: ' + keys);
+	}
+    } catch(err) {
+	console.log("Error: " + err);
+    }
+}
+*/
+
+function findObject(id) {
+    let objects = Memory.objects;
+    let o2 = _.find( objects, function(o2) {
+	try {
+	    return (id === o2.id);
+	} catch(err){};
+	return false;
+    } );
+    return o2;
+}
+
+function addOrUpdateObject( hash, obj ) {
+    if(!hash[obj.id]) {
+	hash[obj.id] = addObject(obj);
+    } else {
+	let o2 = findObject(obj.id);
+	if(o2) {
+	    for(let k of Object.keys(obj)) {
+		if(typeof o2[k] === 'undefined' || o2[k] !== obj[k]) {
+		    console.log("Change property of "+o2.obj_id +" " + obj.id + "." +k+"=" +obj[k]);
+		    o2[k] = obj[k];
+		}
+	    }
+	} else {
+	    console.log("Error: can't find object " + obj.id);
+	}
+    }
+}
+
+function postDeleteObject( hash, obj ) {
+    if(!hash[obj.id]) {
+	return; // already deleted
+    } else {
+	obj.postDelete = true;
+	addOrUpdateObject( hash, obj );
+    }
+}
+
+
 function claimARoom(room_mem, rn) {
     if(!room_mem.claimRooms) {
 	room_mem.claimRooms = {};
@@ -119,16 +185,17 @@ function setConfigSim() {
     if(!room_mem.scavengePoints) {
 	room_mem.scavengePoints = {};
     }
-    
-    if(!room_mem.scavengePoints.scavengep1 || room_mem.scavengePoints.scavengep1 === 'delete') {
-    	room_mem.scavengePoints.scavengep1 = addObject({ cname: 'AddrFreeRoom',
-    					      id: 'scavengep1',
-    					      roomName: 'sim',
-    					      maxCapacity: 2,
-    					      x: 32,
-    					      y: 25,
-    					      full: true });
-    }
+
+    postDeleteObject(
+//    addOrUpdateObject(
+	room_mem.scavengePoints,
+	{ cname: 'AddrFreeRoom',
+    	  id: 'scavengep1',
+    	  roomName: 'sim',
+    	  maxCapacity: 4,
+    	  x: 32,
+    	  y: 25,
+	  full: true } );
 
     // claimARoom(room_mem, 'sim');
 
@@ -320,27 +387,35 @@ function setConfigGame()
 	room_mem.scavengePoints = {};
     }
 
-    if(!room_mem.scavengePoints.scavengep1 || room_mem.scavengePoints.scavengep1 === 'delete') {
-    	room_mem.scavengePoints.scavengep1 = addObject({ cname: 'AddrFreeRoom',
-    					      id: 'scavengep1',
-    					      roomName: 'W43S53',
-    					      maxCapacity: 2,
-    					      x: 32,
-    					      y: 25,
-    					      full: true });
-    }
+    // clearDuplicatesFor('scavengep1');
+    addOrUpdateObject(
+	room_mem.scavengePoints,
+	{ cname: 'AddrFreeRoom',
+    	  id: 'scavengep1',
+    	  roomName: 'W43S53',
+    	  maxCapacity: 2,
+	  demolish: true,
+    	  x: 32,
+    	  y: 25,
+    	  full: true });
 
     // room_mem.scavengePoints.scavengep1 = 'delete';
+
+    /*
+    clearDuplicatesFor('scavengep2');
+    postDeleteObject(
+	room_mem.scavengePoints,
+	{ cname: 'AddrFreeRoom',
+    	  id: 'scavengep2',
+    	  roomName: 'W43S52',
+    	  maxCapacity: 5,
+    	  x: 19,
+    	  y: 34,
+    	  full: true });
+    */
+
+
     
-    if(!room_mem.scavengePoints.scavengep2 || room_mem.scavengePoints.scavengep2 === 'delete') {
-    	room_mem.scavengePoints.scavengep2 = addObject({ cname: 'AddrFreeRoom',
-    					      id: 'scavengep2',
-    					      roomName: 'W43S52',
-    					      maxCapacity: 3,
-    					      x: 19,
-    					      y: 34,
-    					      full: true });
-    }
     // room_mem.scavengePoints.scavengep2 = 'delete';
 
     // room_mem.scavengePoints.scavengep2.maxCapacity=5;
@@ -635,6 +710,6 @@ function setConfigGame2()
 	repairShare: 0.1,
 	builderShare: 0.4,
 	creepCostLimit: 600,
-	NZInc: 0,
+	NZInc: 0.3,
     };
 }

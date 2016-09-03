@@ -1,6 +1,7 @@
 module.exports = {
     stat : function() { printStat_(); },
     work :  function() { printWork_(); },
+    jobs :  function() { sayJobs(); },
     clear : function() { clearMemory_(); }
 };
 
@@ -148,4 +149,16 @@ var printWork_ = function() {
     }
 
     console.log('Total creeps: ' + totalCreeps + ' / ' + totalCreepParts);
+};
+
+var sayJobs = function() {
+    for(let i in Game.creeps) {
+	let cr = Game.creeps[i];
+	try {
+	    let txt = cr.memory.role.job_id;
+	    if(txt) {
+		cr.say(txt);
+	    }
+	} catch(err) {};
+    }
 };
