@@ -2962,22 +2962,11 @@ function getConstrBuildingCapacity(rm, con) {
     return 2;
 }
 
-function findObject(id) {
-    let objects = Memory.objects;    
-    let o2 = _.find( objects, function(o2) {
-	try {
-	    return (id === o2.id);
-	} catch(err){};
-	return false;
-    } );
-    return o2;
-}
-
-function deleteObject(id) {
-    let objects = Memory.objects;    
-    let o2 = findObject(id);
-    if(o2) {
-	delete objects[o2.obj_id];
+function deleteObject(cobj) {
+    let objects = Memory.objects;
+    
+    if(objects[cobj.d.obj_id]) {
+	delete objects[cobj.d.obj_id];
 	return true;
     } else {
 	return false;
@@ -3129,7 +3118,7 @@ function planCreepJobs(rm) {
 		    carrierJobs[car_job_id].done = true;
 		} else {
 		    // remove the point
-		    deleteObject(scav_id);
+		    deleteObject(chp);
 		    delete rm.memory.scavengePoints[scav_id];
 		    u.log( "Deleting object " + scav_id, u.LOG_INFO );
 		}

@@ -82,11 +82,11 @@ function clearDuplicatesFor(id) {
 }
 */
 
-function findObject(id) {
+function findObject(obj) {
     let objects = Memory.objects;
     let o2 = _.find( objects, function(o2) {
 	try {
-	    return (id === o2.id);
+	    return (obj.id === o2.id) && (obj.roomName === o2.roomName);
 	} catch(err){};
 	return false;
     } );
@@ -94,10 +94,15 @@ function findObject(id) {
 }
 
 function addOrUpdateObject( hash, obj ) {
+    let o2 = findObject(obj);
+
     if(!hash[obj.id]) {
-	hash[obj.id] = addObject(obj);
+	if(!o2) {
+	    hash[obj.id] = addObject(obj);
+	} else {
+	    console.log("Error: object " + obj.id+", " + obj.roomName + " already exists");
+	}
     } else {
-	let o2 = findObject(obj.id);
 	if(o2) {
 	    for(let k of Object.keys(obj)) {
 		if(typeof o2[k] === 'undefined' || o2[k] !== obj[k]) {
@@ -387,8 +392,10 @@ function setConfigGame()
 	room_mem.scavengePoints = {};
     }
 
+
+    // TODO - user obj.id and obj.roomName for findObject and deleteObject
     // clearDuplicatesFor('scavengep1');
-    addOrUpdateObject(
+    postDeleteObject(
 	room_mem.scavengePoints,
 	{ cname: 'AddrFreeRoom',
     	  id: 'scavengep1',
