@@ -441,6 +441,7 @@ function setConfigGame()
 */
 
 
+    
     // room_mem.scavengePoints.scavengep1 = 'delete';
 
     /*

@@ -12,8 +12,13 @@ module.exports = {
     log : function(str, type, facility) {
 	if(!type) type = 3; // info
 	if(!facility) facility = 'global';
-	if(Memory.log_level[facility] >= type)
+	let enablePrint=true;
+	try {
+	    enablePrint = (Memory.log_level[facility] >= type);
+	} catch(err) {};
+	if(enablePrint) {
 	    console.log('['+Game.time +'] : ' + str);
+	}
     },
 
     log_enable : function( type, facility ) {

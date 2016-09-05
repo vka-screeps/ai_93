@@ -70,7 +70,7 @@ module.exports = function (memobj) {
 	}
     }
 
-    memory.regClasses(['Task']);
+    memobj.regClasses([Task]);
 
     return {
 	Task: Task

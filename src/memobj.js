@@ -69,7 +69,7 @@ class CMemObj {
 
 module.exports = function() {
     let f = new F();
-    regClasses = function ( list ) {
+    let regClasses = function ( list ) {
 	list.forEach( function(c) {
 	    f.reg(c); } );
     };

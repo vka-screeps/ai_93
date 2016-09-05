@@ -6,6 +6,8 @@ var memobj = require('memobj')();
 var f = memobj.f;
 var CMemObj = memobj.CMemObj;
 
+var task = require('task')(memobj);
+
 var u = require('utils');
 var _ = require('lodash');
 var harvester = require('harvest');
@@ -35,7 +37,6 @@ var jobPriorities = {
 var r = {
     init: function() { m_init() },
     f : f,
-    cf : F,
     planSpawnJobs : planSpawnJobs,
     assignSpawnJobs : assignSpawnJobs,
     
