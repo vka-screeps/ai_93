@@ -406,6 +406,41 @@ function setConfigGame()
     	  y: 25,
     	  full: true });
 
+/*
+    // ???
+    addOrUpdateTask(
+	room_name,
+	{ cname: 'AddrFreeRoom',
+    	  id: 'scavengep3',
+    	  roomName: 'W43S53',
+    	  x: 32,
+    	  y: 25,
+    	  full: true,
+	  task: 'demolish',
+    	  maxCapacity: 2,
+	} );
+
+    addOrUpdateTask(
+	room_name,
+	{ cname: 'Task',
+    	  id: 'task1',
+	  task: 'reserve',
+    	  roomName: 'W43S53',
+	} );
+
+    addOrUpdateTask(
+	room_name,
+	{ cname: 'AddrPos',
+	  roomName: room_name,
+	  x: 25,
+	  y: 30,
+	  task: 'guard',
+	}
+    );
+
+*/
+
+
     // room_mem.scavengePoints.scavengep1 = 'delete';
 
     /*
