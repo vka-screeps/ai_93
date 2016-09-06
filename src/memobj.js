@@ -34,6 +34,10 @@ var F = class {
 	    u.log("Can't find class: " + d.cname, u.LOG_WARN);
 	}
     }
+
+    findClass(cname) {
+	return this.tbl[cname];
+    }
 };
 
 class CMemObj {
@@ -69,14 +73,46 @@ class CMemObj {
 
 module.exports = function() {
     let f = new F();
-    let regClasses = function ( list ) {
+    
+    function regClasses( list ) {
 	list.forEach( function(c) {
 	    f.reg(c); } );
     };
+
+    function deleteObject(cobj) {
+	let objects = Memory.objects;
+	
+	
+	if(objects[cobj.d.obj_id]) {
+	    delete objects[cobj.d.obj_id];
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    function addObject( obj ) {
+
+	if(!Memory.objects) {
+	    Memory.objects = {
+		next_id: 1
+	    };
+	}
+	let objects = Memory.objects;
+
+	let next_id = 'id_' + objects.next_id++;
+	obj.obj_id = next_id;
+	objects[next_id] = obj;
+	return { cname: 'ObjRef',
+		 obj_id: next_id };
+    }
     
+
     return {
 	f: f,
 	CMemObj: CMemObj,
 	regClasses: regClasses,
+	deleteObject : deleteObject,
+	addObject : addObject,
     };
 };

@@ -49,6 +49,49 @@ function m_init() {
     memobj.regClasses(allClasses);
 }
 
+class TaskClaim extends task.Task {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+    
+    static cname() { return 'TaskClaim'; }
+
+    get_cur_jobs(rm) {
+	let d = this.d;
+	if(this.lst)
+	    return this.lst;
+	this.lst = [ {job_type: 'JobClaim',
+		      job_id: 'claim_task_' + d.id} ];
+
+	// console.log( 'get_cur_jobs returns ' + this.lst + ', ' + this.lst.length);
+	return this.lst;
+    }
+
+    maybeCreateJob(rm) {
+	let lst  = this.get_cur_jobs(rm);
+	let this_ = this;
+	lst.forEach( (jb)=> {
+	    try {
+		if(!this_.job_exists(rm, jb)) {
+		    u.log('creating job ' + jb.job_type + ', ' + jb.job_id, u.LOG_INFO);
+		    
+		    this_.putJob( rm,
+				  jb,
+				  f.findClass(jb.job_type).createFromTask(jb.job_id, this_) );
+		}
+
+	    }catch(err){
+		u.log("Error in maybeCreateJob - " + jb + ', ' + err, u.LOG_ERR);
+	    }
+	} );
+
+    }
+    
+    maybeCompleteJob(rm) {
+//	console.log( 'maybeCompleteJob');
+    }
+};
+
 class Job extends CMemObj {
     constructor(d, parent) {
 	super(d, parent);
@@ -1492,6 +1535,20 @@ class JobClaim extends Job {
 	return ret;
     }
 
+    static createFromTask(new_job_id, task) {
+	let ret = {
+	    cname: 'JobClaim',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: 1,
+	    reqQta: 1,
+	    priority : jobPriorities.claim,
+	    res_pos: f.make(task.d.pts[0], null).makeRef(),
+	};
+	
+	return ret;
+    }
+
     calcCreepPwr(rm, cr) {
 	return cr ? cr.memory.design[CLAIM] : 0;
     }
@@ -2452,6 +2509,7 @@ class JobSpawn extends Job {
 
 var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
 		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom, JobClaim,
+		   TaskClaim,
 		   /*, AddrHarvPointRef*/ ];
 
 
@@ -2893,18 +2951,6 @@ function getConstrBuildingCapacity(rm, con) {
     return 2;
 }
 
-function deleteObject(cobj) {
-    let objects = Memory.objects;
-    
-    
-    if(objects[cobj.d.obj_id]) {
-	delete objects[cobj.d.obj_id];
-	return true;
-    } else {
-	return false;
-    }
-}
-
 // Put the JobMinerBasic on hold, after leaving the recovery mode
 function planCreepJobs(rm) {
     // Enable/disable the 'j1' job - JobMinerBasic
@@ -3036,6 +3082,20 @@ function planCreepJobs(rm) {
 	}
     }
 
+    // tasks
+    if(rm.memory.tasks) {
+	let task_id_lst = Object.keys(rm.memory.tasks);
+	for(let task_id of task_id_lst) {
+	    try {
+		let ctsk = f.make(rm.memory.tasks[task_id], null);
+		ctsk.updateJobs(rm);
+	    } catch(err) {
+		u.log( "Error processing task " + task_id + " - " + err, u.LOG_ERR );
+	    }
+	}
+    }
+    
+
     // scavenge points
     {
 	let carrierJobs = rm.memory.jobs.JobCarrier;
@@ -3050,7 +3110,7 @@ function planCreepJobs(rm) {
 		    carrierJobs[car_job_id].done = true;
 		} else {
 		    // remove the point
-		    deleteObject(chp);
+		    memobj.deleteObject(chp);
 		    delete rm.memory.scavengePoints[scav_id];
 		    u.log( "Deleting object " + scav_id, u.LOG_INFO );
 		}
@@ -3083,7 +3143,8 @@ function planCreepJobs(rm) {
 		}
 	    }
 	}
-    }    
+    }
+
 
     if(!rm.memory.jobs.JobBuilder['ctrlr']) {
 	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
@@ -3629,9 +3690,8 @@ u.log('new global', u.LOG_DBG);
 
 //regClasses(allClasses);
 
-config.updateConfig();
-
 r.init();
+config.updateConfig(memobj);
 
 /******************************************************************************/
 module.exports = {
