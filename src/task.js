@@ -72,6 +72,7 @@ module.exports = function (memobj) {
 	}
 
 	maybeWorkOnTask(rm) {}
+	maybeUpdateJob(rm) {}
 	
 	maybeCreateJob(rm) {
 	    let lst  = this.get_cur_jobs(rm);
@@ -83,7 +84,7 @@ module.exports = function (memobj) {
 			
 			this_.putJob( rm,
 				      jb,
-				      f.findClass(jb.job_type).createFromTask(jb.job_id, this_) );
+				      f.findClass(jb.job_type).createFromTask(rm, jb.job_id, this_) );
 		    }
 
 		}catch(err){
@@ -135,10 +136,18 @@ module.exports = function (memobj) {
 		}
 	    } else {
 		// may be create some jobs
+		if(d.postUpdate) {
+		    this.maybeUpdateJob(rm);
+		    delete d.postUpdate;
+		}
 
 		this.maybeCreateJob(rm);
 		this.maybeCompleteJob(rm);
-		this.maybeWorkOnTask(rm);
+		try {
+		    this.maybeWorkOnTask(rm);
+		} catch(err) {
+		    u.log("Error in maybeWorkOnTask - " + d.id + ', ' + err, u.LOG_ERR);
+		}
 	    }	
 	}
     };
@@ -175,11 +184,17 @@ module.exports = function (memobj) {
 	    } else {
 		// update
 		let obj = tsk;
+		let postUpdate = false;
 		for(let k of Object.keys(tsk)) {
 		    if(typeof o2[k] === 'undefined' || o2[k] !== obj[k]) {
 			console.log("Change property of " + obj.id + "." +k+"=" +obj[k]);
 			o2[k] = obj[k];
+			postUpdate = true;
 		    }
+		}
+
+		if(postUpdate) {
+		    o2.postUpdate = true;
 		}
 
 		// todo -update pts

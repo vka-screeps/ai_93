@@ -120,68 +120,61 @@ module.exports = {
 		room_mem.harvPoints = {};
 	    }
 
-	    if(!room_mem.harvPoints.hp1)
-	    {
-		room_mem.harvPoints.hp1 = addObject({ cname: 'AddrHarvPoint',
-						      id: 'hp1',
-						      roomName: room_name,
-						      x: 35,
-						      y: 20,
-						      full: true });
-	    }
-
-	    if(!room_mem.harvPoints.hp2) {
-		room_mem.harvPoints.hp2 = addObject({ cname: 'AddrHarvPoint',
-						      id: 'hp2',
-						      roomName: room_name,
-						      maxCapacity: 1,
-						      x: 35,
-						      y: 2,
-						      full: true });
-	    }
-
-
-
-
-	    if(!room_mem.harvPoints.hp3) {
-		room_mem.harvPoints.hp3 = addObject({ cname: 'AddrHarvPoint',
-						      id: 'hp3',
-						      roomName: room_name,
-						      // maxCapacity: 2,
-						      x: 43,
-						      y: 44,
-						      full: true });
-	    }
-
-	    if(!room_mem.scavengePoints) {
-		room_mem.scavengePoints = {};
-	    }
-
-	    //    postDeleteObject(
 	    task.addOrUpdateTask(  room_name,
-				   { cname: 'TaskClaim',
-				     id: 'scav1',
-    				     maxCapacity: 4,
+				   { cname: 'TaskMining',
+				     id: 'hp1',
+    				     maxCapacity: 3,
+				     priority: 1,
 				     // postDelete: true,
 				   },
-				   [
-				   { cname: 'AddrFreeRoom',
-    				     roomName: 'sim',
-    				     x: 32,
-    				     y: 25,
-				     full: true
-				   } ]
+				   { cname: 'AddrHarvPoint',
+				     id: 'hp1',
+				     roomName: room_name,
+				     x: 35,
+				     y: 20,
+				     full: true }
+				);
 
-				   );
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskMining',
+				     id: 'hp2',
+    				     maxCapacity: 1,
+				     priority: 5,
+				     // postDelete: true,
+				   },
+				   { cname: 'AddrHarvPoint',
+				     id: 'hp2',
+				     roomName: room_name,
+				     x: 35,
+				     y: 2,
+				     full: true }
+				);
 
-
-	    if(!room_mem.upkeepPoint) {
-		room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
-						    roomName: room_name,
-    						    tgt_id_lst: [],
-						  } );
-	    }
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskConstr',
+				     id: 'constr1',
+				     type: STRUCTURE_TOWER,
+				     postDelete: true, 
+				   },
+				   { cname: 'AddrPos',
+				     roomName: room_name,
+				     x: 15,
+				     y: 25, }
+				);
 	    
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskConstr',
+				     id: 'constr2',
+				     type: STRUCTURE_STORAGE,
+				     // postDelete: true, 
+				   },
+				   { cname: 'AddrPos',
+				     roomName: room_name,
+				     x: 29,
+				     y: 23, }
+				);	    	    
+
+
 	    if(!room_mem.storagePoint) {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
@@ -191,14 +184,22 @@ module.exports = {
 						     full: true,
 						     storage_id: null,
 						     isActive: false,
-						     backup_point: room_mem.harvPoints.hp1,
+						     backup_point: room_mem.tasks.hp1.pts[0],
 						   } );
 	    }
+
+	    if(!room_mem.upkeepPoint) {
+		room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
+						    roomName: room_name,
+    						    tgt_id_lst: [],
+						  } );
+	    }
+	    
 	    
 	    if(!room_mem.balance) {
 		room_mem.balance = {
-		    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner', priority: -10 },  // permanent
-		    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier', priority: -5 },  // permanent
+//		    h1: {id:'h1', count: 1, curCount: 0, design: 'd_h0', role: 'JobMiner', priority: -10 },  // permanent
+//		    c1: {id:'c1', count: 1, curCount: 0, design: 'd_c1', role: 'JobCarrier', priority: -5 },  // permanent
 		    d1: {id:'d1', count: 0, curCount: 0, design: 'd_def1', role: 'JobDefender', priority: -1 },  // permanent
 		    h2: {id:'h2', count: 0, curCount: 0, design: 'd_h1', role: 'JobMiner' },
 		    c2: {id:'c2', count: 0, curCount: 0, design: 'd_c1', role: 'JobCarrier' },
@@ -219,7 +220,7 @@ module.exports = {
 		    'JobCarrier' : { 'jc1' : { id : 'jc1',
 					       cname: 'JobCarrier',
 					       taken_by_id: null,
-					       priority : -1,
+					       priority : 1,
 					       capacity : 1,
 					       reqQta: 1,
 					       // take_from :  room_mem.harvPoints.hp1, // copy ref
@@ -263,11 +264,6 @@ module.exports = {
 
 		room_mem.creeplist = {};
 		room_mem.recoveryMode = true;
-
-		for(let cr_name in room_mem.creeplist) {
-		    Memory.creeps[cr_name].role.job_id = null
-		    Memory.creeps[cr_name].workStatus = null;
-		}
 	    }
 
 	    if(!room_mem.stats) {
@@ -290,23 +286,6 @@ module.exports = {
 		builderShare: 0.7,
 		creepCostLimit: 550,
 	    };
-
-	    /*
-	      room_mem.strategy_data =[
-	      { role_id : 'h1', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }
-	      ,{ role_id : 'h2', role : 'harvester', count : 1, body : [ WORK, WORK, CARRY, MOVE], props: {goHarvest: 1} }	
-	      , { role_id : 'free', role : 'guard', count : 1, body : [TOUGH, TOUGH, ATTACK, ATTACK, MOVE]
-	      , props : { isMilitary:1 }
-	      , autoExpand: 1}
-	      ,{ role_id : 'h3', role : 'harv', count : 1, body : [ WORK, WORK, MOVE] }
-	      ];
-
-	      room_mem.strategy = 'str_maintain_creeps';
-	      room_mem.str_data = {	curRoleTable : [],
-	      curGoals : {},
-	      specialization : "growth"
-	      };
-	    */
 	}
 
 	function setConfigGame()
@@ -363,9 +342,26 @@ module.exports = {
 		room_mem.scavengePoints = {};
 	    }
 
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskClaim',
+				     id: 'claim1',
+    				     maxCapacity: 1,
+				     // postDelete: true,
+				   },
+				   [
+				       { cname: 'AddrFreeRoom',
+    					 roomName: 'W43S53',
+    					 x: 32,
+    					 y: 25,
+					 full: true
+				       } ]
+				);
+	    
+
 
 	    // TODO - user obj.id and obj.roomName for findObject and deleteObject
 	    // clearDuplicatesFor('scavengep1');
+	    /*
 	    postDeleteObject(
 		room_mem.scavengePoints,
 		{ cname: 'AddrFreeRoom',
@@ -376,6 +372,7 @@ module.exports = {
     		  x: 32,
     		  y: 25,
     		  full: true });
+	    */
 
 	    /*
 	    // ???

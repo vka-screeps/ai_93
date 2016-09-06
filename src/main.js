@@ -24,6 +24,7 @@ var defaultRoom = 'W43S54';
 var jobTypes = []; // populated by the initRoomTables() method
 
 var jobPriorities = {
+    mining: 0,
     jc1: 1,
     tower_refill: 50,
     scavenge : 100,
@@ -69,6 +70,69 @@ class TaskClaim extends task.Task {
     }
 
 };
+
+class TaskMining extends task.Task {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+    
+    static cname() { return 'TaskMining'; }
+
+    get_cur_jobs(rm) {
+	let d = this.d;
+	if(d.job_lst)
+	    return d.job_lst;
+	d.job_lst = [ {job_type: 'JobMiner',
+		       job_id: 'harv_' + d.id,
+		       done: false },
+		      {job_type: 'JobCarrier',
+		       job_id: 'carry_harv_' + d.id,
+		       done: false }
+		    ];
+
+	// console.log( 'get_cur_jobs returns ' + this.job_lst + ', ' + this.job_lst.length);
+	return d.job_lst;
+    }
+
+    maybeUpdateJob(rm) {
+	let d = this.d;
+	let job = this.getJob(rm, this.get_cur_jobs(rm)[0]);
+	if(job) {
+	    job.maxCapacity = d.maxCapacity;
+	    job.priority = d.priority;
+	}
+    }
+
+};
+
+class TaskConstr extends task.Task {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+    
+    static cname() { return 'TaskConstr'; }
+
+    maybeWorkOnTask(rm){
+	let d = this.d;
+	if(d.complete)
+	    return;
+
+	let p = f.make(d.pts[0], null);
+	let rm2 = Game.rooms[p.d.roomName];
+	if(rm2) {
+
+	    
+	    
+	    let status = rm2.createConstructionSite(p.d.x, p.d.y, d.type);
+	    if(status == OK) {
+		u.log( 'Create construction site ' + d.type, u.LOG_INFO );
+		d.complete = true;
+	    }
+	}
+    }
+
+}
+
 
 class Job extends CMemObj {
     constructor(d, parent) {
@@ -1351,6 +1415,25 @@ class JobMiner extends Job {
 
     static cname() { return 'JobMiner'; }
 
+    static createFromTask(rm, new_job_id, task) {
+
+	let job = { id : new_job_id,
+		    cname: 'JobMiner',
+		    taken_by_id: null,
+		    priority : defaultFor(task.d.priority, jobPriorities.mining),
+		    capacity: 1,
+		    curPower: 0,
+		    reqQta: task.d.reqQta || 10,
+		    res_id: null,
+		    res_pos : task.d.pts[0],
+		    maxCapacity: task.d.maxCapacity,
+		    drop_id: null,
+		    drop_name: getRoomSpawnName(rm), //'Spawn1',
+		  };
+	
+	return job
+    }
+
     calcCreepPwr(rm, cr) {
 	return cr ? cr.memory.design[WORK] * 2 : 0;
     }
@@ -1513,7 +1596,7 @@ class JobClaim extends Job {
 	return ret;
     }
 
-    static createFromTask(new_job_id, task) {
+    static createFromTask(rm, new_job_id, task) {
 	let ret = {
 	    cname: 'JobClaim',
 	    id: new_job_id,
@@ -1615,6 +1698,21 @@ class JobCarrier extends Job {
     }
 
     static cname() { return 'JobCarrier'; }
+
+    static createFromTask(rm, new_job_id, task) {
+	let job = { id : new_job_id,
+		    cname: 'JobCarrier',
+		    taken_by_id: null,
+		    priority : defaultFor(task.d.priority, jobPriorities.mining)+1,
+		    capacity: 0, // todo
+		    curPower: 0,
+		    reqQta: 0,
+		    take_from :  task.d.pts[0],
+		    take_to : rm.memory.storagePoint,
+		  }	
+
+	return job
+    }
 
     calcCreepPwr(rm, cr) {
 	return cr.memory.design[CARRY] * 50;
@@ -2487,7 +2585,7 @@ class JobSpawn extends Job {
 
 var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
 		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom, JobClaim,
-		   TaskClaim,
+		   TaskClaim, TaskMining, TaskConstr
 		   /*, AddrHarvPointRef*/ ];
 
 
@@ -2847,9 +2945,14 @@ function sortJobsByPriority( jobs, exclueTaken ) {
 }
 
 function detectRecoveryMode(rm) {
+    /*
     rm.memory.recoveryMode = (rm.memory.balance.c1.curCount + rm.memory.balance.c2.curCount == 0) ||
 	(rm.memory.balance.h1.curCount + rm.memory.balance.h2.curCount == 0) ? 1 : 0;
-
+    */
+    
+    rm.memory.recoveryMode = (rm.memory.balance.c2.curCount<2) ||
+	(rm.memory.balance.h2.curCount == 0) ? 1 : 0;
+    
     if(rm.memory.recoveryMode) {
 	u.log("Roome " + rm.name + " in RECOVERY MODE", u.LOG_WARN);
     }
@@ -2948,6 +3051,7 @@ function planCreepJobs(rm) {
     */
 
     // harvPoints
+    /*
     {
 	let minerJobs = rm.memory.jobs.JobMiner;
 	let carrierJobs = rm.memory.jobs.JobCarrier;
@@ -2981,35 +3085,7 @@ function planCreepJobs(rm) {
 				drop_name: getRoomSpawnName(rm), //'Spawn1',
 			      };
 		    minerJobs[hp_id] = job;
-		} /*else {
-		    let job = minerJobs[hp_id];
-
-		    if(rm.memory.recoveryMode) {
-		    job.capacity = 1;
-		    } else {
-		    let cjob = f.make(job, null);
-		    
-		    if(cjob.getCount() === cjob.getCapacity()) {
-		    if(cjob.d.curPower < 10) {
-		    cjob.d.capacity++;
-		    } else if (cjob.getCount() > 0) {
-		    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
-		    let cr = Game.getObjectById(cr_id);
-		    let cr_pwr = cr.memory.design[WORK] * 2;
-		    
-		    if(cjob.d.curPower - cr_pwr > 10) {
-		    cjob.d.capacity--;
-		    }
-		    }
-		    }
-		    }
-
-		    if(chp.d.maxCapacity && (chp.d.maxCapacity < job.capacity))
-		    job.capacity = chp.d.maxCapacity;
-		    } */
-
-		// let cminerJob = f.make(minerJobs[hp_id], null);
-
+		}
 		let car_job_id = 'carry_'+hp_id;
 		if(!carrierJobs[car_job_id]) {
 		    let job = { id : car_job_id,
@@ -3023,42 +3099,12 @@ function planCreepJobs(rm) {
 				take_to : rm.memory.storagePoint,
 			      };
 		    carrierJobs[car_job_id] = job;
-		} /*else {
-		    let job = carrierJobs[car_job_id];
-		    let cjob = f.make(job, null);
-		    
-		    if(job.avg_trip_time) {
-		    let miningPower = minerJobs[hp_id].curPower;
-		    if(miningPower>10) miningPower = 10;
-		    if(!cjob.d.curPower) cjob.d.curPower = 0;
-		    let curCarrierPower = cjob.d.curPower / job.avg_trip_time / 2;
-		    
-		    if(cjob.getCount() === cjob.getCapacity()) {
-		    if(curCarrierPower < miningPower) {
-		    cjob.d.capacity++;
-		    } else if (cjob.getCount() > 0) {
-		    let cr_id = cjob.getFirstWorkerId(); //Object.keys(cjob.d.taken_by_id)[0];
-		    let cr = Game.getObjectById(cr_id);
-		    let cr_pwr = cr.memory.design[CARRY] * 50 / job.avg_trip_time / 2;
-		    // console.log( "cr_pwr = " + cr_pwr );
-		    
-		    if((curCarrierPower - cr_pwr) > (1.1 * miningPower)) {
-		    cjob.d.capacity--;
-		    }
-		    }
-		    }		
-
-		    // console.log( "carrier calc " + car_job_id +", " + miningPower +", " + curCarrierPower +", " + cjob.d.capacity );
-		    } else {
-		    if(cjob.getCapacity() == 0 && cminerJob.getCount() > 0) {
-		    cjob.d.capacity = 1;
-		    }
-		    }
-		    } */
+		} 
 		pri += 5;
 	    }
 	}
     }
+    */
 
     // tasks
     if(rm.memory.tasks) {
@@ -3075,6 +3121,7 @@ function planCreepJobs(rm) {
     
 
     // scavenge points
+    /*
     {
 	let carrierJobs = rm.memory.jobs.JobCarrier;
 	let scav_id_lst = Object.keys(rm.memory.scavengePoints);
@@ -3122,7 +3169,7 @@ function planCreepJobs(rm) {
 	    }
 	}
     }
-
+    */
 
     if(!rm.memory.jobs.JobBuilder['ctrlr']) {
 	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
