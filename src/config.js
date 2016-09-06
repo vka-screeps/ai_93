@@ -103,17 +103,6 @@ module.exports = {
 	}
 
 
-	function claimARoom(room_mem, rn) {
-	    if(!room_mem.claimRooms) {
-		room_mem.claimRooms = {};
-	    }	
-	    if( !room_mem.claimRooms[rn] ) {
-		room_mem.claimRooms[rn] = 'claim';
-	    }
-	}
-
-
-
 	function setConfigSim() {
 
 	    let room_name = 'sim';
@@ -190,7 +179,6 @@ module.exports = {
 
 				   );
 
-	    // claimARoom(room_mem, 'sim');
 
 	    if(!room_mem.upkeepPoint) {
 		room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
@@ -451,9 +439,6 @@ module.exports = {
 
 	    // room_mem.scavengePoints.scavengep2.maxCapacity=5;
 
-	    // Claim rooms
-	    claimARoom(room_mem, 'W43S55');
-
 	    //room_mem.extraConstructionSites=['57c34574fe945e772e27833f'];
 	    room_mem.extraConstructionSites=[];
 	    room_mem.extraConstructionRooms=[]; //['W43S55'];
@@ -650,9 +635,7 @@ module.exports = {
 	    }
 
 	    // Claim rooms
-	    // claimARoom(room_mem, 'W43S55');
 	    
-
 	    if(!room_mem.upkeepPoint) {
 		room_mem.upkeepPoint = addObject( { cname: 'AddrUpkeep',
 						    roomName: room_name,
