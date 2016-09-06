@@ -61,9 +61,58 @@ module.exports = function (memobj) {
 	    rm.memory.jobs[jb.job_type][jb.job_id] = job;
 	}
 
-	maybeCreateJob(rm) {};
-	maybeCompleteJob(rm) {};
+	getJob(rm, jb) {
+	    if(!this.job_exists(rm, jb))
+		throw ("Job doesn't exists " + jb);
+	    return rm.memory.jobs[jb.job_type][jb.job_id];
+	}
+
+	get_cur_jobs(rm) {
+	    return [];
+	}
+
+	maybeWorkOnTask(rm) {}
 	
+	maybeCreateJob(rm) {
+	    let lst  = this.get_cur_jobs(rm);
+	    let this_ = this;
+	    lst.forEach( (jb)=> {
+		try {
+		    if(!this_.job_exists(rm, jb) && !jb.done) {
+			u.log('creating job ' + jb.job_type + ', ' + jb.job_id, u.LOG_INFO);
+			
+			this_.putJob( rm,
+				      jb,
+				      f.findClass(jb.job_type).createFromTask(jb.job_id, this_) );
+		    }
+
+		}catch(err){
+		    u.log("Error in maybeCreateJob - " + jb + ', ' + err, u.LOG_ERR);
+		}
+	    } );
+
+	}
+    
+	maybeCompleteJob(rm) {
+	    let lst  = this.get_cur_jobs(rm);
+	    let this_ = this;
+	    lst.forEach( (jb)=> {
+		try {
+		    if(!jb.done) {
+			let job = this_.getJob(rm, jb);
+			if(!job || job.done) {
+			    jb.done = true;
+			}
+		    }
+		} catch(err) {
+		    u.log("Error in maybeCreateJob - " + jb + ', ' + err, u.LOG_ERR);
+		}
+	    } );
+	    
+	    //	console.log( 'maybeCompleteJob');
+	}
+
+
 	updateJobs(rm) {
 	    let d = this.d;
 	    if(d.postDelete) {
@@ -89,6 +138,7 @@ module.exports = function (memobj) {
 
 		this.maybeCreateJob(rm);
 		this.maybeCompleteJob(rm);
+		this.maybeWorkOnTask(rm);
 	    }	
 	}
     };

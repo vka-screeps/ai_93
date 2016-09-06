@@ -58,38 +58,16 @@ class TaskClaim extends task.Task {
 
     get_cur_jobs(rm) {
 	let d = this.d;
-	if(this.lst)
-	    return this.lst;
-	this.lst = [ {job_type: 'JobClaim',
-		      job_id: 'claim_task_' + d.id} ];
+	if(d.job_lst)
+	    return d.job_lst;
+	d.job_lst = [ {job_type: 'JobClaim',
+		       job_id: 'claim_task_' + d.id,
+		       done: false } ];
 
-	// console.log( 'get_cur_jobs returns ' + this.lst + ', ' + this.lst.length);
-	return this.lst;
+	// console.log( 'get_cur_jobs returns ' + this.job_lst + ', ' + this.job_lst.length);
+	return d.job_lst;
     }
 
-    maybeCreateJob(rm) {
-	let lst  = this.get_cur_jobs(rm);
-	let this_ = this;
-	lst.forEach( (jb)=> {
-	    try {
-		if(!this_.job_exists(rm, jb)) {
-		    u.log('creating job ' + jb.job_type + ', ' + jb.job_id, u.LOG_INFO);
-		    
-		    this_.putJob( rm,
-				  jb,
-				  f.findClass(jb.job_type).createFromTask(jb.job_id, this_) );
-		}
-
-	    }catch(err){
-		u.log("Error in maybeCreateJob - " + jb + ', ' + err, u.LOG_ERR);
-	    }
-	} );
-
-    }
-    
-    maybeCompleteJob(rm) {
-//	console.log( 'maybeCompleteJob');
-    }
 };
 
 class Job extends CMemObj {

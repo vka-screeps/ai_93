@@ -162,16 +162,11 @@ module.exports = {
 				   { cname: 'TaskClaim',
 				     id: 'scav1',
     				     maxCapacity: 4,
-				     postDelete: true,
+				     // postDelete: true,
 				   },
 				   [
 				   { cname: 'AddrFreeRoom',
     				     roomName: 'sim',
-    				     x: 32,
-    				     y: 25,
-				     full: true
-				   }, { cname: 'AddrFreeRoom',
-    				     roomName: 'sim2',
     				     x: 32,
     				     y: 25,
 				     full: true
