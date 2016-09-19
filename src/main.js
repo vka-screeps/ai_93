@@ -19,7 +19,7 @@ var config = require('config');
 //var stat = require('stat');
 //var r = require('roles');
 
-var defaultRoom = 'W43S54';
+var defaultRoom = 'W4N53';
 
 var jobTypes = []; // populated by the initRoomTables() method
 
@@ -100,6 +100,7 @@ class TaskMining extends task.Task {
 	if(job) {
 	    job.maxCapacity = d.maxCapacity;
 	    job.priority = d.priority;
+	    job.mayDrop = d.mayDrop;
 	}
     }
 
@@ -121,11 +122,9 @@ class TaskConstr extends task.Task {
 	let rm2 = Game.rooms[p.d.roomName];
 	if(rm2) {
 
-	    
-	    
 	    let status = rm2.createConstructionSite(p.d.x, p.d.y, d.type);
 	    if(status == OK) {
-		u.log( 'Create construction site ' + d.type, u.LOG_INFO );
+		u.log( 'Created construction site ' + d.type, u.LOG_INFO );
 		d.complete = true;
 	    }
 	}
@@ -187,6 +186,21 @@ class Job extends CMemObj {
 	return null;
     }
 
+    moveWorkerToEndOfLine(rm, cr) {
+	try {
+	    let d = this.d;
+	    let keys = Object.keys(d.taken_by_id);
+	    if(d.taken_by_id[cr.id]) {
+		d.taken_by_id[cr.id] = _.max( _.map( keys, (k)=>{return d.taken_by_id[k];} ) ) + 1;
+	    } else {
+		throw ("creep not assigned to this job");
+	    }
+	    
+	} catch(err) {
+	    u.log('Error in moveWorkerToEndOfLine - ' + err, u.LOG_ERR );
+	}
+    }
+
     calcCreepPwr(rm, cr) {
 	return 1;
     }
@@ -210,8 +224,14 @@ class Job extends CMemObj {
 	let d = this.d;
 	let this_ = this;	
 	d.curPower = 0;
+	let extraCapacity = defaultFor(d.extraCapacity, 0);
+	
 	this.forEachWorker(rm, function(rm, cr) {
-	    d.curPower += this_.calcCreepPwr(rm, cr);
+	    if(extraCapacity) {
+		--extraCapacity;
+	    } else {
+		d.curPower += this_.calcCreepPwr(rm, cr);
+	    }
 	} );
 
 	let cjob2 = (function(rm) { return this_.getHelperJob(rm); })(rm);
@@ -220,6 +240,10 @@ class Job extends CMemObj {
 	if(d.reqQta && qta2 > d.reqQta)
 	    qta2 = d.reqQta;
 	// console.log('calcPower - ' + d.id + ', ' + cjob2);
+
+	// if(this instanceof JobMiner) {
+	//     qta2 = qta2 * 1.5;
+	// }
 
 	if(cjob2) {
 	    cjob2.setHelperQuota(rm, qta2);
@@ -356,7 +380,12 @@ class Job extends CMemObj {
 	let obj = this;
 	if(!d.taken_by_id)
 	    return;
-	Object.keys(d.taken_by_id).forEach(function(key) {
+	let keys = Object.keys(d.taken_by_id);
+	_.sortBy(keys, function(k) {
+	    return defaultFor( d.taken_by_id[k], 0);
+	} );
+	    
+	keys.forEach(function(key) {
 	    if(d.done) return;
 	    if(d.onhold) return;
 	    let cr = Game.getObjectById(key);
@@ -589,7 +618,7 @@ class AddrFreeRoom extends AddrPos {
 	    });
 
 	    _.sortBy(targets, function(struct) {
-		p.getRangeTo(struct);
+		return p.getRangeTo(struct);
 	    } );
 
 	    d.target_list = _.map(targets, function (struct) {
@@ -1010,7 +1039,7 @@ class AddrHarvPoint extends Addr {
 		let harvesters = p.findInRange(FIND_MY_CREEPS, 1, {
 		    filter: function(cr1) {
 			let mem = cr1.memory;
-			return (mem && mem.role && mem.role.name==='JobMiner' && cr1.carry[RESOURCE_ENERGY]>20);
+			return (mem && mem.role && mem.role.name==='JobMiner' && cr1.carry[RESOURCE_ENERGY]>10);
 		    }
 		});
 		if(harvesters.length>0) {
@@ -1123,6 +1152,12 @@ class AddrUpkeep extends Addr {
 	    } );
 
 	    d.tgt_id_lst = targets;
+	}
+
+	while(d.tgt_id_lst.length>0) {
+	    if(!this.getFirstTgtObj()) {
+		this.removeFirstTgt();
+	    }
 	}
     }
 
@@ -1520,7 +1555,7 @@ class JobMiner extends Job {
 				cr.moveTo(res);
 			    }
 			} else {
-			    // res == null if it is in another room
+			    // res == null when it is in a different room
 			    let pos = f.make(d.res_pos, null);
 			    pos.move_to(cr, 1);
 			}
@@ -1550,8 +1585,10 @@ class JobMiner extends Job {
 	    } else {
 		role.workStatus.step = 0;
 		if(res) {
-		    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
-			cr.moveTo(res);
+		    if(d.mayDrop || !creepIsFull(cr)) {
+			if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+			    cr.moveTo(res);
+			}
 		    }
 		} else {
 		    // res is null if it's in another room
@@ -1700,6 +1737,11 @@ class JobCarrier extends Job {
     static cname() { return 'JobCarrier'; }
 
     static createFromTask(rm, new_job_id, task) {
+	let extraCapacity = 0;
+	if(task instanceof TaskMining) {
+	    extraCapacity = 1;
+	    console.log('Adding extra capacity');
+	}
 	let job = { id : new_job_id,
 		    cname: 'JobCarrier',
 		    taken_by_id: null,
@@ -1707,6 +1749,7 @@ class JobCarrier extends Job {
 		    capacity: 0, // todo
 		    curPower: 0,
 		    reqQta: 0,
+		    extraCapacity: extraCapacity,
 		    take_from :  task.d.pts[0],
 		    take_to : rm.memory.storagePoint,
 		  }	
@@ -1908,6 +1951,7 @@ class JobCarrier extends Job {
 			if(tt.give(cr)) {
 			    break;
 			} else {
+			    this.moveWorkerToEndOfLine(rm, cr);
 			    role.workStatus.step++;
 			}
 		    }
