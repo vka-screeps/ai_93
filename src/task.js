@@ -163,7 +163,8 @@ module.exports = function (memobj) {
 		throw ("Invalid task type");
 	    }
 	    
-	    let hash = Game.rooms[room_name].memory;
+	    // let hash = Game.rooms[room_name].memory;
+	    let hash = Memory.rooms[room_name];
 	    if(!hash.tasks) hash.tasks = {};
 	    hash = hash.tasks;
 

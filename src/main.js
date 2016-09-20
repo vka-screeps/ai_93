@@ -1164,6 +1164,8 @@ class AddrUpkeep extends Addr {
 	while(d.tgt_id_lst.length>0) {
 	    if(!this.getFirstTgtObj()) {
 		this.removeFirstTgt();
+	    } else {
+		break;
 	    }
 	}
     }
@@ -1744,11 +1746,17 @@ class JobCarrier extends Job {
     static cname() { return 'JobCarrier'; }
 
     static createFromTask(rm, new_job_id, task) {
-	let extraCapacity = 0;
+	let extraCapacity = defaultFor(task.d.extraCapacity,
+				       (task instanceof TaskMining ? 1 : 0));
+	/*
 	if(task instanceof TaskMining) {
 	    extraCapacity = 1;
 	    console.log('Adding extra capacity');
 	}
+	*/
+	
+	console.log('extra capacity - ' + extraCapacity);
+	
 	let job = { id : new_job_id,
 		    cname: 'JobCarrier',
 		    taken_by_id: null,
@@ -3732,7 +3740,6 @@ function processRoom(rm) {
 
     calcRoomStats(rm);
     updateUpkeepQueue(rm);
-
     planTowerJobs(rm);
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
@@ -3760,6 +3767,8 @@ function calcCPUUsage()
 //RawMemory.set('{ "rooms": {}, "creeps": {} }' );
 //console.log(RawMemory.get());
 //Memory = JSON.parse(RawMemory.get());
+
+config.maybeResetMemory();
 
 u.initLog();
 if(!Memory.log_level['global'])

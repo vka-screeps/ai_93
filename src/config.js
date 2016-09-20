@@ -1,5 +1,6 @@
 var u = require('utils'); 
 var configver = require('configver');
+var gameRestartCount = 20;
 
 module.exports = {
     updateConfig(memobj) {
@@ -26,7 +27,7 @@ module.exports = {
 		console.log("Sim mode detected!");
 		return setConfigSim();
 	    } else {
-		return setConfig_E38N46();
+		return setConfig_W53N3();
 	    }
 	};
 
@@ -174,6 +175,7 @@ module.exports = {
 				     y: 23, }
 				);
 
+	    /*
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
 				     id: 'constr3',
@@ -185,7 +187,7 @@ module.exports = {
 				     x: 29,
 				     y: 24, }
 				);
-
+	    */
 
 	    if(!room_mem.storagePoint) {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
@@ -301,9 +303,9 @@ module.exports = {
 	    };
 	}
 
-	function setConfig_E38N46() {
+	function setConfig_W53N3() {
 
-	    let room_name = 'E38N46';
+	    let room_name = 'W53N3';
 	    if(!Memory.rooms) {
 		Memory.rooms = {};
 	    }
@@ -334,15 +336,16 @@ module.exports = {
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp1',
-    				     maxCapacity: 3,
+    				     maxCapacity: 1,
 				     priority: 1,
+				     extraCapacity: 0,
 				     // postDelete: true,
 				   },
 				   { cname: 'AddrHarvPoint',
 				     id: 'hp1',
 				     roomName: room_name,
-				     x: 29,
-				     y: 8,
+				     x: 22,
+				     y: 38,
 				     full: true } 
 				);
 
@@ -357,8 +360,8 @@ module.exports = {
 				   { cname: 'AddrHarvPoint',
 				     id: 'hp2',
 				     roomName: room_name,
-				     x: 17,
-				     y: 12,
+				     x: 18,
+				     y: 24,
 				     full: true }
 				);
 
@@ -367,8 +370,8 @@ module.exports = {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
 						     roomName: room_name,
-						     x: 25,
-						     y: 14,
+						     x: 18,
+						     y: 36,
 						     full: true,
 						     storage_id: null,
 						     isActive: false,
@@ -443,8 +446,8 @@ module.exports = {
 
 		room_mem.wait_point = { cname: 'AddrPos',
 					roomName: room_name,
-					x: 12,
-					y: 17,
+					x: 15,
+					y: 35,
 					isWaitPoint: true };
 
 		room_mem.jobs = {
@@ -526,4 +529,16 @@ module.exports = {
 	    setConfig()
 	}
     },
+
+    maybeResetMemory() {
+	if(!Memory.gameRestartCount || Memory.gameRestartCount != gameRestartCount) {
+	    RawMemory.set('{ "rooms": {}, "creeps": {} }' );
+	    Memory = JSON.parse(RawMemory.get());
+	    Memory.gameRestartCount = gameRestartCount;
+	    RawMemory.set(JSON.stringify(Memory));
+	    console.log("Reset Memory - " + JSON.stringify(Memory));
+	    return true;
+	}
+	return false;
+    }
 };
