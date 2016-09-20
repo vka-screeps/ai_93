@@ -381,7 +381,7 @@ class Job extends CMemObj {
 	if(!d.taken_by_id)
 	    return;
 	let keys = Object.keys(d.taken_by_id);
-	_.sortBy(keys, function(k) {
+	keys = _.sortBy(keys, function(k) {
 	    return defaultFor( d.taken_by_id[k], 0);
 	} );
 	    
@@ -415,6 +415,11 @@ function defaultFor(a, val) {
 function creepIsFull(cr) {
     let total = _.sum(cr.carry);
     return total >= cr.carryCapacity;
+}
+
+function creepFullPct(cr) {
+    let total = _.sum(cr.carry);
+    return cr.carryCapacity ? (total/cr.carryCapacity) : 0;
 }
 
 function creepIsFullWith(cr, res) {
@@ -1039,11 +1044,15 @@ class AddrHarvPoint extends Addr {
 		let harvesters = p.findInRange(FIND_MY_CREEPS, 1, {
 		    filter: function(cr1) {
 			let mem = cr1.memory;
-			return (mem && mem.role && mem.role.name==='JobMiner' && cr1.carry[RESOURCE_ENERGY]>10);
+			return (mem && mem.role && mem.role.name==='JobMiner' && (creepFullPct(cr1) > 0)); //cr1.carry[RESOURCE_ENERGY]>10);
 		    }
 		});
+
+		harvesters = _.sortBy(harvesters, function(cr1) {
+		    return -creepFullPct(cr1) + cr.pos.getRangeTo(cr1)/10;
+		} );
 		if(harvesters.length>0) {
-		    let target = cr.pos.findClosestByRange(harvesters);
+		    let target = harvesters[0];// cr.pos.findClosestByRange(harvesters);
 		    let status = target.transfer(cr, RESOURCE_ENERGY);
 		    if(status == ERR_NOT_IN_RANGE) {
 			cr.moveTo(target);
@@ -3716,6 +3725,8 @@ function processRoom(rm) {
 	return;
     }
 
+    rm.controller.activateSafeMode();
+
     initRoomTables(rm);
     
     cleanUpDeadCreeps(rm);
@@ -3748,6 +3759,9 @@ function calcCPUUsage()
     Memory.cpuUsageAvg = 0.9*Memory.cpuUsageAvg + 0.1 * Game.cpu.getUsed();
 }
 
+//RawMemory.set('{ "rooms": {}, "creeps": {} }' );
+//console.log(RawMemory.get());
+//Memory = JSON.parse(RawMemory.get());
 
 u.initLog();
 if(!Memory.log_level['global'])

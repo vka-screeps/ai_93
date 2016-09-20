@@ -26,7 +26,7 @@ module.exports = {
 		console.log("Sim mode detected!");
 		return setConfigSim();
 	    } else {
-		return setConfigW4N53();
+		return setConfig_E38N46();
 	    }
 	};
 
@@ -301,9 +301,12 @@ module.exports = {
 	    };
 	}
 
-	function setConfigW4N53() {
+	function setConfig_E38N46() {
 
-	    let room_name = 'W4N53';
+	    let room_name = 'E38N46';
+	    if(!Memory.rooms) {
+		Memory.rooms = {};
+	    }
 	    if(!Memory.rooms[room_name]) {
 		Memory.rooms[room_name] = {};
 	    }
@@ -338,8 +341,8 @@ module.exports = {
 				   { cname: 'AddrHarvPoint',
 				     id: 'hp1',
 				     roomName: room_name,
-				     x: 37,
-				     y: 34,
+				     x: 29,
+				     y: 8,
 				     full: true } 
 				);
 
@@ -354,8 +357,8 @@ module.exports = {
 				   { cname: 'AddrHarvPoint',
 				     id: 'hp2',
 				     roomName: room_name,
-				     x: 31,
-				     y: 43,
+				     x: 17,
+				     y: 12,
 				     full: true }
 				);
 
@@ -364,8 +367,8 @@ module.exports = {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
 						     roomName: room_name,
-						     x: 30,
-						     y: 31,
+						     x: 25,
+						     y: 14,
 						     full: true,
 						     storage_id: null,
 						     isActive: false,
@@ -380,21 +383,19 @@ module.exports = {
 						  } );
 	    }
 
+	    /*
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
 				     id: 'constr1',
 				     type: STRUCTURE_TOWER,
-				     postDelete: true, 
+				     // postDelete: true, 
 				   },
 				   { cname: 'AddrPos',
 				     roomName: room_name,
 				     x: 28,
 				     y: 27, }
-				);	    
+				);
 
-	    /*
-
-	    
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
 				     id: 'constr2',
@@ -404,8 +405,13 @@ module.exports = {
 				   { cname: 'AddrPos',
 				     roomName: room_name,
 				     x: 29,
-				     y: 23, }
+				     y: 31, }
 				);
+	    */
+
+	    /*
+
+	    
 
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
@@ -437,8 +443,8 @@ module.exports = {
 
 		room_mem.wait_point = { cname: 'AddrPos',
 					roomName: room_name,
-					x: 41,
-					y: 22,
+					x: 12,
+					y: 17,
 					isWaitPoint: true };
 
 		room_mem.jobs = {
@@ -505,12 +511,16 @@ module.exports = {
 		};
 	    }
 
-	}	
+	}
 
-
+	function deleteAll() {
+	    Memory = {
+		rooms: {},
+	    };
+	}
 
 	var newVersion = configver.configVersion;
-	if(Memory.configVer != newVersion) {
+	if(!Memory.configVer || Memory.configVer != newVersion) {
 	    Memory.configVer = newVersion;
 	    console.log('Apply Config - ' + newVersion);
 	    setConfig()
