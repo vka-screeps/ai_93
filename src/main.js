@@ -1039,22 +1039,29 @@ class AddrHarvPoint extends Addr {
 		return true;
 	    } else {
 		// take it from a creep
-		let harvesters = p.findInRange(FIND_MY_CREEPS, 1, {
-		    filter: function(cr1) {
-			let mem = cr1.memory;
-			return (mem && mem.role && mem.role.name==='JobMiner' && (creepFullPct(cr1) > 0)); //cr1.carry[RESOURCE_ENERGY]>10);
-		    }
-		});
-
+		
+		let ts = this.getTS();
+		let harvesters = ts.harvesters;
+		if( !harvesters ) {
+		    harvesters = ts.harvesters = p.findInRange(FIND_MY_CREEPS, 1, {
+			filter: function(cr1) {
+			    let mem = cr1.memory;
+			    return (mem && mem.role && mem.role.name==='JobMiner' && (creepFullPct(cr1) > 0)); 
+			}
+		    });
+		} 
+		
 		harvesters = _.sortBy(harvesters, function(cr1) {
 		    return -creepFullPct(cr1) + cr.pos.getRangeTo(cr1)/10;
 		} );
+		    
 		if(harvesters.length>0) {
 		    let target = harvesters[0];// cr.pos.findClosestByRange(harvesters);
 		    let status = target.transfer(cr, RESOURCE_ENERGY);
 		    if(status == ERR_NOT_IN_RANGE) {
 			cr.moveTo(target);
 		    } else {
+			harvesters.splice(0, 1);
 			// u.log('Transfer energy returns ' + status, u.LOG_INFO);
 		    }
 		}
@@ -3798,6 +3805,7 @@ module.exports = {
 	}
 	*/
 	u.log('new tick:' + Game.time, u.LOG_DBG);
+	f.start_new_tick();
 
 	// try {
 	//     printCPULimits('Start');

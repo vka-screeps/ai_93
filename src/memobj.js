@@ -6,12 +6,17 @@ var _ = require('lodash');
 // Factory
 var F = class {
     constructor() {
-	this.tbl={}
+	this.tbl={};
+	this.dt_stor={}; // transient data storage
     }
 
     reg(c) {
 	u.log("Registering class: " + c.cname(), u.LOG_DBG);
 	this.tbl[c.cname()] = c;
+    }
+
+    start_new_tick() {
+	this.dt_stor={};
     }
 
     make(d, parent) {
@@ -40,34 +45,6 @@ var F = class {
     }
 };
 
-class CMemObj {
-    constructor(d, parent) {
-	this.d = d;
-	this.parent = parent;
-    }
-
-    getObjLogName() {
-	return this.d.cname + "(" + this.d.name + ", " + this.d.id + ")";
-    }
-
-    getObj() {
-	if( this.d && this.d.id )
-	    return Game.getObjectById(this.d.id);
-
-	u.log( "Can't find object - " + this.getObjLogName(), u.LOG_WARN);
-	return null;
-    }
-
-    makeRef() {
-	if(this.d && this.d.obj_id) {
-	    return { cname: 'ObjRef',
-		     obj_id: this.d.obj_id };
-	} else {
-	    u.log( "Can't makeRef for " + this.getObjLogName(), u.LOG_WARN);
-	}
-	return null;
-    }
-};
 
 
 
@@ -106,7 +83,47 @@ module.exports = function() {
 	return { cname: 'ObjRef',
 		 obj_id: next_id };
     }
-    
+
+    class CMemObj {
+	constructor(d, parent) {
+	    this.d = d;
+	    this.parent = parent;
+	}
+
+	getObjLogName() {
+	    return this.d.cname + "(" + this.d.name + ", " + this.d.id + ")";
+	}
+
+	getObj() {
+	    if( this.d && this.d.id )
+		return Game.getObjectById(this.d.id);
+
+	    u.log( "Can't find object - " + this.getObjLogName(), u.LOG_WARN);
+	    return null;
+	}
+
+	makeRef() {
+	    if(this.d && this.d.obj_id) {
+		return { cname: 'ObjRef',
+			 obj_id: this.d.obj_id };
+	    } else {
+		u.log( "Can't makeRef for " + this.getObjLogName(), u.LOG_WARN);
+	    }
+	    return null;
+	}
+
+	getTS() {
+	    if(this.d && this.d.obj_id) {
+		if(!f.dt_stor[this.d.obj_id]) {
+		    f.dt_stor[this.d.obj_id] = {};
+		}
+		return f.dt_stor[this.d.obj_id];
+	    } else {
+		u.log( "Can't getTS for " + this.getObjLogName(), u.LOG_WARN);
+	    }
+	    return null;
+	}
+    };
 
     return {
 	f: f,
