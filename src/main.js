@@ -19,8 +19,6 @@ var config = require('config');
 //var stat = require('stat');
 //var r = require('roles');
 
-var defaultRoom = 'W4N53';
-
 var jobTypes = []; // populated by the initRoomTables() method
 
 var jobPriorities = {
@@ -1978,8 +1976,8 @@ class JobCarrier extends Job {
 }
 
 function getCreepRoom(cr) {
-    let roomName = cr.memory.roomName ? cr.memory.roomName : defaultRoom;
-    return Game.rooms[roomName];
+    // let roomName = cr.memory.roomName ? cr.memory.roomName : defaultRoom;
+    return Game.rooms[cr.memory.roomName];
 }
 
 function getCreepsJob(cr) {
