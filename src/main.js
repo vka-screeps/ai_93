@@ -94,12 +94,23 @@ class TaskMining extends task.Task {
 
     maybeUpdateJob(rm) {
 	let d = this.d;
-	let job = this.getJob(rm, this.get_cur_jobs(rm)[0]);
-	if(job) {
-	    job.maxCapacity = d.maxCapacity;
-	    job.priority = d.priority;
-	    job.mayDrop = d.mayDrop;
-	}
+	try {
+	    let job = this.getJob(rm, this.get_cur_jobs(rm)[0]);
+	    if(job) {
+		job.maxCapacity = d.maxCapacity;
+		job.priority = d.priority;
+		job.mayDrop = d.mayDrop;
+	    }
+	} catch(err) {}
+	
+	try {
+	    let job = this.getJob(rm, this.get_cur_jobs(rm)[1]);
+	    if(job) {
+		job.priority = d.priority;
+		job.extraCapacity = d.extraCapacity;
+	    }
+	} catch(err) {}
+	    
     }
 
 };
@@ -1022,7 +1033,32 @@ class AddrHarvPoint extends Addr {
 
 	let rm = Game.rooms[d.roomName];
 	let p = this.getPos(rm);
+
+	let done = false;
+	// look for containers
+	if(!done)
+	{
+	    let targets = p.findInRange(FIND_STRUCTURES, 2, {
+		filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 } );
+	    
+	    if(targets.length > 0) {
+		let target = cr.pos.findClosestByRange(targets);
+		let status = target.transfer(cr, RESOURCE_ENERGY);
+		if(status == ERR_NOT_IN_RANGE) {
+		    cr.moveTo(target);
+		}
+		/*
+		if(cr.pos.getRangeTo(target)>1){
+		    cr.moveTo(target);
+		} else {
+		    target.transferEnergy(cr);
+		}
+		*/
+		done = true;
+	    }
+	}
 	// look for dropped energy
+	if(!done)
 	{
 	    let targets = p.findInRange(FIND_DROPPED_ENERGY, 2, {
 		filter: function(o) {
@@ -1049,11 +1085,16 @@ class AddrHarvPoint extends Addr {
 			    return (mem && mem.role && mem.role.name==='JobMiner' && (creepFullPct(cr1) > 0)); 
 			}
 		    });
-		} 
+		} /* else {
+		    console.log('reuse');
+		} */
 		
 		harvesters = _.sortBy(harvesters, function(cr1) {
 		    return -creepFullPct(cr1) + cr.pos.getRangeTo(cr1)/10;
 		} );
+
+		// console.log('Creep ' + cr.id + ' - ' + JSON.stringify(
+		//     _.map(harvesters, (h) => {return h.id;}) ) );
 		    
 		if(harvesters.length>0) {
 		    let target = harvesters[0];// cr.pos.findClosestByRange(harvesters);
@@ -1061,25 +1102,18 @@ class AddrHarvPoint extends Addr {
 		    if(status == ERR_NOT_IN_RANGE) {
 			cr.moveTo(target);
 		    } else {
-			harvesters.splice(0, 1);
+			ts.harvesters.splice(0, 1);
 			// u.log('Transfer energy returns ' + status, u.LOG_INFO);
 		    }
+		    done = true;
 		}
+
+		// console.log('Creep ' + cr.id + ' - ' + JSON.stringify(
+		//     _.map(harvesters, (h) => {return h.id;}) ) );
+		
 	    }
 	}
-	// look for containers
-	{
-	    let targets = p.findInRange(FIND_MY_STRUCTURES, 3, { filter: { structureType: STRUCTURE_CONTAINER } });
-	    if(targets.length > 0) {
-		let target = cr.pos.findClosestByRange(targets);
-		if(cr.pos.getRangeTo(target)>1){
-		    cr.moveTo(target);
-		} else {
-		    target.transferEnergy(cr);
-		}
-		return true;
-	    }
-	}
+
 	return true;
     }
     
@@ -1186,7 +1220,7 @@ class AddrUpkeep extends Addr {
 	let limit = 100000;
 	if( (obj.structureType===STRUCTURE_WALL) ||
 	    (obj.structureType===STRUCTURE_RAMPART) ) {
-	    limit = 20000;
+	    limit = 1000;
 	}
 
 	let limit2 = obj.hitsMax;
@@ -1605,6 +1639,18 @@ class JobMiner extends Job {
 			if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
 			    cr.moveTo(res);
 			}
+		    } else {
+			// look for container
+			let targets = res.pos.findInRange(FIND_STRUCTURES, 2, {
+			    filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 } );
+			
+			if(targets.length > 0) {
+			    let target = cr.pos.findClosestByRange(targets);
+			    let status = cr.transfer(target, RESOURCE_ENERGY);
+			    if(status == ERR_NOT_IN_RANGE) {
+				cr.moveTo(target);
+			    }
+			}
 		    }
 		} else {
 		    // res is null if it's in another room
@@ -1876,11 +1922,6 @@ class JobCarrier extends Job {
     }
 
     findTarget(rm, cr) {
-	var targets = rm.find(FIND_MY_SPAWNS, {				       
-	    filter: function(o) { return o.energy < o.energyCapacity; } } );
-
-	if(targets.length)
-	    return targets[0];
 
 	var target = cr.pos.findClosestByRange(FIND_MY_STRUCTURES, {
 	    filter: function(o) { 
@@ -1888,6 +1929,12 @@ class JobCarrier extends Job {
 
 	if(target)
 	    return target;
+
+	var targets = rm.find(FIND_MY_SPAWNS, {				       
+	    filter: function(o) { return o.energy < o.energyCapacity; } } );
+
+	if(targets.length)
+	    return targets[0];
 	
 	return null;
     }
