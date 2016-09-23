@@ -114,6 +114,15 @@ module.exports = {
 	    initMemVars();
 	    initRoomVars(room_name);
 
+	    // quotas
+	    room_mem.config = {
+		ctrlrShare: 0.1,
+		repairShare: 0.1,
+		builderShare: 0.9,
+		creepCostLimit: 550,
+		NZInc: 0,
+	    };
+
 	    // room_mem = {};
 	    // SIM CONFIG
 	    if(!room_mem.harvPoints) {
@@ -125,6 +134,7 @@ module.exports = {
 				     id: 'hp1',
     				     maxCapacity: 3,
 				     priority: 1,
+				     extraCapacity: 0,
 				     // postDelete: true,
 				   },
 				   { cname: 'AddrHarvPoint',
@@ -141,6 +151,7 @@ module.exports = {
     				     maxCapacity: 1,
 				     priority: 5,
 				     mayDrop: 1,
+				     extraCapacity: 0,
 				     // postDelete: true,
 				   },
 				   { cname: 'AddrHarvPoint',
@@ -293,14 +304,6 @@ module.exports = {
 		};
 	    }
 
-	    // quotas
-	    room_mem.config = {
-		ctrlrShare: 0.2,
-		repairShare: 0.1,
-		builderShare: 0.7,
-		creepCostLimit: 550,
-		NZInc: 0,
-	    };
 	}
 
 	function setConfig_W12N52() {

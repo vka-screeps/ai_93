@@ -754,7 +754,7 @@ class AddrStoragePoint extends AddrPos {
 	}
 
 	if(this.getAmount() >= threshold) {
-	    if(d.isActive) {
+	    if(d.isActive && this.getAmount()>0) {
 
 		if(this.move_to(cr, 3)) {
 		    return true;
@@ -1102,7 +1102,8 @@ class AddrHarvPoint extends Addr {
 		    if(status == ERR_NOT_IN_RANGE) {
 			cr.moveTo(target);
 		    } else {
-			ts.harvesters.splice(0, 1);
+			ts.harvesters = [];
+			// ts.harvesters.splice(0, 1);
 			// u.log('Transfer energy returns ' + status, u.LOG_INFO);
 		    }
 		    done = true;
@@ -1650,6 +1651,8 @@ class JobMiner extends Job {
 			    if(status == ERR_NOT_IN_RANGE) {
 				cr.moveTo(target);
 			    }
+			} else {
+			    cr.moveTo(res);
 			}
 		    }
 		} else {
@@ -2523,10 +2526,10 @@ function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
 	if((design == 'd_h0') || (design == 'd_h1')) {
-	    return { work: 1, carry: 1, move: 1, ttb: 3};
+	    return { work: 2, carry: 1, move: 1, ttb: 4};
 	    // return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
-	    return { carry: 2, move: 1, ttb: 3};
+	    return { carry: 2, move: 2, ttb: 4};
 	    // return [CARRY, CARRY, MOVE];
 	} 
     }
@@ -3063,7 +3066,7 @@ function detectRecoveryMode(rm) {
 	(rm.memory.balance.h1.curCount + rm.memory.balance.h2.curCount == 0) ? 1 : 0;
     */
     
-    rm.memory.recoveryMode = (rm.memory.balance.c2.curCount<2) ||
+    rm.memory.recoveryMode = (rm.memory.balance.c2.curCount<1) ||
 	(rm.memory.balance.h2.curCount == 0) ? 1 : 0;
     
     if(rm.memory.recoveryMode) {
