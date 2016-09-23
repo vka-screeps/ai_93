@@ -2351,7 +2351,7 @@ class JobSupplyBulder extends JobCarrier {
 	    }
 
 	    if(role.workStatus.step === 2) {
-		if(tt.move_to(cr, 3)) {
+		if(tt.move_to(cr, 5)) {
 		    break;
 		} else {
 		    if(role.workStatus.trip_start_time) {
@@ -3627,7 +3627,7 @@ function assignCreepJobs(rm) {
 	    continue;
 	}
 
-	let pri = 1000001; // current creep's priority
+	let pri = 100000001; // current creep's priority
 	if(role.job_id) {
 	    // if(role.name === 'JobMiner')
 	    //   continue;
