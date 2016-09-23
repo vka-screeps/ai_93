@@ -1,2 +1,2 @@
-// config.js 6a5f6fa24d6aa30c3bdeea1deafac860
-module.exports = { configVersion : 95 };
+// config.js 7731865bab4326f2e9d301e33ef7228e
+module.exports = { configVersion : 97 };
