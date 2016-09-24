@@ -839,7 +839,7 @@ class AddrStoragePoint extends AddrPos {
 
 	    cr.drop(RESOURCE_ENERGY);
 	    d.isActive = true;
-	    return false; // can move the same turn
+	    return true; // Don't return false. Even though can move the same turn, it must be empty.
 	}
 	
 	return true;
@@ -2033,7 +2033,9 @@ class JobCarrier extends Job {
 
 	let loop_it = 0;
 	try {
+
 	    while( loop_it++ < 2 ) {
+
 		if(role.workStatus.step === 0) {
 		    // let tf = f.make(d.take_from);
 		    // if(tf.move_to(cr)) {
@@ -2087,11 +2089,13 @@ class JobCarrier extends Job {
 		    }
 		} else {
 		    if(role.workStatus.step === 2) {
+
 			if(tt.move_to(cr)) {
 			    break;
 			} else {
 			    if(role.workStatus.trip_start_time) {
 				let trip_time = Game.time - role.workStatus.trip_start_time+1;
+				u.log('trip_time ' + d.id + ', ' + cr.name + ' - '  + trip_time);
 				if(!d.avg_trip_time) {
 				    d.avg_trip_time = trip_time;
 				} else {
@@ -2118,6 +2122,7 @@ class JobCarrier extends Job {
 		    role.workStatus.step = 0;
 		}
 	    }
+	    
 	} catch(err) {
 	    u.log('Error ' + err + ' Creep: ' + cr.name, u.LOG_ERR );
 	}
