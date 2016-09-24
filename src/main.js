@@ -109,6 +109,7 @@ class TaskMining extends task.Task {
 	    if(job) {
 		job.priority = d.priority;
 		job.extraCapacity = d.extraCapacity;
+		f.make(job,null).calcPower();
 	    }
 	} catch(err) {console.log(err);}
     }
@@ -933,7 +934,7 @@ class AddrHarvPoint extends Addr {
 
 	if(d.res_id) {
 	    let res = Game.getObjectById(d.res_id);
-	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 2 }, {
+	    let srez = PathFinder.search( cr.pos, { pos: res.pos, range: 1 }, {
 		// We need to set the defaults costs higher so that we
 		// can set the road cost lower in `roomCallback`
 		plainCost: 2,
