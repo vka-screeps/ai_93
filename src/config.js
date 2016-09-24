@@ -351,11 +351,12 @@ module.exports = {
 				     id: 'hp1',
     				     maxCapacity: 3,
 				     priority: 1,
-				     extraCapacity: 0,
+				     extraCapacity: 1,
 				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 15, 31 )  ]
+				   [ MyAddrHarvPoint( 15, 31 ),
+				     MyAddrPos(16, 30) ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
@@ -363,12 +364,13 @@ module.exports = {
 				     id: 'hp2',
     				     maxCapacity: 1,
 				     priority: 5,
-				     mayDrop: 1,
-				     extraCapacity: 1,
+				     mayDrop: true,
+				     extraCapacity: 0,
 				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 25, 26 ) ]
+				   [ MyAddrHarvPoint( 25, 26 ),
+				     MyAddrPos(26, 25)]
 				);
 
 	    /*

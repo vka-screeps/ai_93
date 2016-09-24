@@ -233,7 +233,7 @@ class Job extends CMemObj {
 	let this_ = this;	
 	d.curPower = 0;
 	let extraCapacity = defaultFor(d.extraCapacity, 0);
-	
+
 	this.forEachWorker(rm, function(rm, cr) {
 	    if(extraCapacity) {
 		--extraCapacity;
