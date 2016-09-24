@@ -352,7 +352,7 @@ module.exports = {
     				     maxCapacity: 3,
 				     priority: 1,
 				     extraCapacity: 1,
-				     // autoContainers: true,
+				     autoContainers: true,
 				     // postDelete: true,
 				   },
 				   [ MyAddrHarvPoint( 15, 31 ),
@@ -372,8 +372,8 @@ module.exports = {
 				   [ MyAddrHarvPoint( 25, 26 ),
 				     MyAddrPos(26, 25)]
 				);
+	    
 
-	    /*
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
 				     id: 'constr1',
@@ -382,9 +382,10 @@ module.exports = {
 				   },
 				   { cname: 'AddrPos',
 				     roomName: room_name,
-				     x: 15,
-				     y: 25, }
+				     x: 26,
+				     y: 30, }
 				);
+	    /*
 	    
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
