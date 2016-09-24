@@ -1,6 +1,6 @@
 var u = require('utils'); 
 var configver = require('configver');
-var gameRestartCount = 21;
+var gameRestartCount = 23;
 
 module.exports = {
     updateConfig(memobj) {
@@ -15,9 +15,16 @@ module.exports = {
 	};
 
 
-	function initRoomVars(name) {
-            if(!Memory.rooms[name].NZ)
-		Memory.rooms[name].NZ = 0;
+	function initRoomVars(room_name) {
+	    if(!Memory.rooms[room_name]) {
+		Memory.rooms[room_name] = {};
+	    }
+	    
+            if(!Memory.rooms[room_name].NZ)
+		Memory.rooms[room_name].NZ = 0;
+
+            if(!Memory.rooms[room_name].ignored_const)
+		Memory.rooms[room_name].ignored_const = {};
 	}
 
 
@@ -27,7 +34,7 @@ module.exports = {
 		console.log("Sim mode detected!");
 		return setConfigSim();
 	    } else {
-		return setConfig_W12N52();
+		return setConfig_W13N57();
 	    }
 	};
 
@@ -106,13 +113,12 @@ module.exports = {
 	function setConfigSim() {
 
 	    let room_name = 'sim';
-	    if(!Memory.rooms[room_name]) {
-		Memory.rooms[room_name] = {};
-	    }
-	    let room_mem = Memory.rooms[room_name];
 
 	    initMemVars();
 	    initRoomVars(room_name);
+
+
+	    let room_mem = Memory.rooms[room_name];
 
 	    // quotas
 	    room_mem.config = {
@@ -122,12 +128,18 @@ module.exports = {
 		creepCostLimit: 550,
 		NZInc: 0,
 	    };
-
-	    // room_mem = {};
+	    
 	    // SIM CONFIG
-	    if(!room_mem.harvPoints) {
-		room_mem.harvPoints = {};
-	    }
+	    function MyAddrHarvPoint(x,y) { return { cname: 'AddrHarvPoint',
+						     roomName: room_name,
+						     x: x,
+						     y: y,
+						     full: true }; };
+	    
+	    function MyAddrPos(x,y) { return { cname: 'AddrPos',
+					       roomName: room_name,
+					       x: x,
+					       y: y }; };
 
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
@@ -135,13 +147,11 @@ module.exports = {
     				     maxCapacity: 3,
 				     priority: 1,
 				     extraCapacity: 0,
+				     autoContainers: true,
 				     // postDelete: true,
 				   },
-				   { cname: 'AddrHarvPoint',
-				     roomName: room_name,
-				     x: 35,
-				     y: 20,
-				     full: true } 
+				   [ MyAddrHarvPoint( 35, 20 ),
+				     MyAddrPos(34, 21)  ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
@@ -151,12 +161,14 @@ module.exports = {
 				     priority: 5,
 				     mayDrop: 1,
 				     extraCapacity: 0,
+				     autoContainers: true,
 				     // postDelete: true,
 				   },
 				   { cname: 'AddrHarvPoint',
 				     roomName: room_name,
 				     x: 35,
 				     y: 2,
+				     test: true,
 				     full: true }
 				);
 
@@ -164,7 +176,7 @@ module.exports = {
 				   { cname: 'TaskConstr',
 				     id: 'constr1',
 				     type: STRUCTURE_TOWER,
-				     postDelete: true, 
+				     // postDelete: true, 
 				   },
 				   { cname: 'AddrPos',
 				     roomName: room_name,
@@ -246,7 +258,6 @@ module.exports = {
 					       priority : 1,
 					       capacity : 1,
 					       reqQta: 1,
-					       // take_from :  room_mem.harvPoints.hp1, // copy ref
 					       take_from :  room_mem.storagePoint,
 					       take_to : { cname: 'AddrBuilding',
 							   roomName: room_name,
@@ -304,50 +315,47 @@ module.exports = {
 
 	}
 
-	function setConfig_W12N52() {
+	function setConfig_W13N57() {
 
-	    let room_name = 'W12N52';
-	    if(!Memory.rooms) {
-		Memory.rooms = {};
-	    }
-	    if(!Memory.rooms[room_name]) {
-		Memory.rooms[room_name] = {};
-	    }
-	    let room_mem = Memory.rooms[room_name];
+	    let room_name = 'W13N57';
 
 	    initMemVars();
 	    initRoomVars(room_name);
 
+
+	    let room_mem = Memory.rooms[room_name];
+
 	    // quotas
 	    room_mem.config = {
 		ctrlrShare: 0.1,
-		repairShare: 0.01,
+		repairShare: 0.1,
 		builderShare: 0.9,
 		creepCostLimit: 550,
 		NZInc: 0,
 	    };
 	    
-
-	    // room_mem = {};
 	    // SIM CONFIG
-	    if(!room_mem.harvPoints) {
-		room_mem.harvPoints = {};
-	    }
+	    function MyAddrHarvPoint(x,y) { return { cname: 'AddrHarvPoint',
+						     roomName: room_name,
+						     x: x,
+						     y: y,
+						     full: true }; };
+	    
+	    function MyAddrPos(x,y) { return { cname: 'AddrPos',
+					       roomName: room_name,
+					       x: x,
+					       y: y }; };
 
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp1',
     				     maxCapacity: 3,
 				     priority: 1,
-				     // extraCapacity: 0,
+				     extraCapacity: 0,
+				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   { cname: 'AddrHarvPoint',
-				     id: 'hp1',
-				     roomName: room_name,
-				     x: 43,
-				     y: 15,
-				     full: true } 
+				   [ MyAddrHarvPoint( 15, 31 )  ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
@@ -355,25 +363,60 @@ module.exports = {
 				     id: 'hp2',
     				     maxCapacity: 1,
 				     priority: 5,
-				     extraCapacity: 0,
-				     // mayDrop: 1,
+				     mayDrop: 1,
+				     extraCapacity: 1,
+				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   { cname: 'AddrHarvPoint',
-				     id: 'hp2',
-				     roomName: room_name,
-				     x: 26,
-				     y: 23,
-				     full: true }
+				   [ MyAddrHarvPoint( 25, 26 ) ]
 				);
 
+	    /*
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskConstr',
+				     id: 'constr1',
+				     type: STRUCTURE_TOWER,
+				     // postDelete: true, 
+				   },
+				   { cname: 'AddrPos',
+				     roomName: room_name,
+				     x: 15,
+				     y: 25, }
+				);
+	    
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskConstr',
+				     id: 'constr2',
+				     type: STRUCTURE_STORAGE,
+				     // postDelete: true, 
+				   },
+				   { cname: 'AddrPos',
+				     roomName: room_name,
+				     x: 29,
+				     y: 23, }
+				);
+	    */
+
+	    /*
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskConstr',
+				     id: 'constr3',
+				     type: STRUCTURE_CONTAINER,
+				     // postDelete: true, 
+				   },
+				   { cname: 'AddrPos',
+				     roomName: room_name,
+				     x: 29,
+				     y: 24, }
+				);
+	    */
 
 	    if(!room_mem.storagePoint) {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
 						     roomName: room_name,
-						     x: 35,
-						     y: 12,
+						     x: 22,
+						     y: 33,
 						     full: true,
 						     storage_id: null,
 						     isActive: false,
@@ -387,50 +430,6 @@ module.exports = {
     						    tgt_id_lst: [],
 						  } );
 	    }
-
-	    /*
-	    task.addOrUpdateTask(  room_name,
-				   { cname: 'TaskConstr',
-				     id: 'constr1',
-				     type: STRUCTURE_TOWER,
-				     // postDelete: true, 
-				   },
-				   { cname: 'AddrPos',
-				     roomName: room_name,
-				     x: 28,
-				     y: 27, }
-				);
-
-	    task.addOrUpdateTask(  room_name,
-				   { cname: 'TaskConstr',
-				     id: 'constr2',
-				     type: STRUCTURE_STORAGE,
-				     // postDelete: true, 
-				   },
-				   { cname: 'AddrPos',
-				     roomName: room_name,
-				     x: 29,
-				     y: 31, }
-				);
-	    */
-
-	    /*
-
-	    
-
-	    task.addOrUpdateTask(  room_name,
-				   { cname: 'TaskConstr',
-				     id: 'constr3',
-				     type: STRUCTURE_CONTAINER,
-				     // postDelete: true, 
-				   },
-				   { cname: 'AddrPos',
-				     roomName: room_name,
-				     x: 29,
-				     y: 24, }
-				);
-				*/
-	    
 	    
 	    
 	    if(!room_mem.balance) {
@@ -448,8 +447,8 @@ module.exports = {
 
 		room_mem.wait_point = { cname: 'AddrPos',
 					roomName: room_name,
-					x: 21,
-					y: 12,
+					x: 17,
+					y: 38,
 					isWaitPoint: true };
 
 		room_mem.jobs = {
@@ -460,7 +459,6 @@ module.exports = {
 					       priority : 1,
 					       capacity : 1,
 					       reqQta: 1,
-					       // take_from :  room_mem.harvPoints.hp1, // copy ref
 					       take_from :  room_mem.storagePoint,
 					       take_to : { cname: 'AddrBuilding',
 							   roomName: room_name,
@@ -516,7 +514,8 @@ module.exports = {
 		};
 	    }
 
-	}
+	}	
+
 
 	function deleteAll() {
 	    Memory = {
@@ -542,6 +541,8 @@ module.exports = {
 	    */
 	    Memory.rooms = {};
 	    Memory.creeps = {};
+	    Memory.spawns = {};
+	    delete Memory.objects;
 	    Memory.gameRestartCount = gameRestartCount;
 	    console.log("Reset Memory");
 	    return true;

@@ -103,10 +103,6 @@ var printWork_ = function() {
 	if(rm.memory.jobs) {
 	    
 	    console.log ('ROOM: ' + rm.name);
-	    for(let hp_id in rm.memory.harvPoints) {
-		let hp = f.make(rm.memory.harvPoints[hp_id], null);
-	    }
-
 	    console.log('energy dropped: ' + esum + ', ' + rm.memory.energyDropped + ', ' + rm.memory.buildersBallance +' / ' +  rm.memory.buildersBallanceOrig
 			+ ' / ' + rm.memory.buildersWaiting);
 

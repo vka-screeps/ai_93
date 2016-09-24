@@ -100,8 +100,9 @@ class TaskMining extends task.Task {
 		job.maxCapacity = d.maxCapacity;
 		job.priority = d.priority;
 		job.mayDrop = d.mayDrop;
+		job.autoContainers = d.autoContainers;
 	    }
-	} catch(err) {}
+	} catch(err) {console.log(err);}
 	
 	try {
 	    let job = this.getJob(rm, this.get_cur_jobs(rm)[1]);
@@ -109,10 +110,8 @@ class TaskMining extends task.Task {
 		job.priority = d.priority;
 		job.extraCapacity = d.extraCapacity;
 	    }
-	} catch(err) {}
-	    
+	} catch(err) {console.log(err);}
     }
-
 };
 
 class TaskConstr extends task.Task {
@@ -248,11 +247,6 @@ class Job extends CMemObj {
 
 	if(d.reqQta && qta2 > d.reqQta)
 	    qta2 = d.reqQta;
-	// console.log('calcPower - ' + d.id + ', ' + cjob2);
-
-	// if(this instanceof JobMiner) {
-	//     qta2 = qta2 * 1.5;
-	// }
 
 	if(cjob2) {
 	    cjob2.setHelperQuota(rm, qta2);
@@ -754,7 +748,7 @@ class AddrStoragePoint extends AddrPos {
 	}
 
 	if(this.getAmount() >= threshold) {
-	    if(d.isActive && this.getAmount()>0) {
+	    if((this.getTotalCapacity() > 0 || d.isActive) && this.getAmount()>0) {
 
 		if(this.move_to(cr, 3)) {
 		    return true;
@@ -871,7 +865,7 @@ class AddrStoragePoint extends AddrPos {
 
 		{
 		    // let targets = p.findInRange(FIND_STRUCTURES, 1 ,{ filter: { structureType: STRUCTURE_CONTAINER }} );
-		    let targets = p.findInRange(FIND_STRUCTURES, 1, {filter: function(o) {
+		    let targets = p.findInRange(FIND_STRUCTURES, 2, {filter: function(o) {
 			return (o.structureType===STRUCTURE_CONTAINER) || (o.structureType===STRUCTURE_STORAGE);
 		    }} );
 		    if(targets.length > 0) {
@@ -1312,58 +1306,6 @@ class AddrUpkeep extends Addr {
     }
 }
 
-
-// class AddrHarvPointRef extends AddrHarvPoint {
-//     constructor(d, parent) {
-// 	super(Memory.rooms[d.roomName].harvPoints[d.id], parent);
-// 	this.ref_d = d;
-//     }
-
-//     static cname() { return 'AddrHarvPointRef'; }
-// }
-
-// class AddrHarvester extends Addr {
-//     constructor(d, parent) {
-// 	super(d, parent);
-//     }
-
-//     static cname() { return 'AddrHarvester'; }
-
-//     init() { };
-
-//     move_to(cr) {
-// 	let d = this.d;
-// 	if(cr.pos.getRangeTo(d.x, d.y) > 1) {
-// 	    cr.moveTo(d.x, d.y);
-// 	    return true;
-// 	}
-// 	return false;
-//     }
-    
-//     take(cr) {
-// 	let d = this.d;		
-// 	if(d.full) {
-// 	    if(creepIsFull(cr))
-// 		return false;
-// 	} else {
-// 	    if(creepIsFilledWithAny(cr))
-// 		return false;
-// 	}
-
-// 	let target = cr.pos.findClosestByRange(FIND_DROPPED_ENERGY, { filter: function(o) { return cr.pos.getRangeTo(o.pos)<=2; } });
-// 	if(target) {
-// 	    cr.pickup(target);
-
-// 	} 
-// 	return true;
-//     }
-    
-//     give(cr) {
-// 	u.log("AddrHarvester - cannot give " + cr.name, u.LOG_WARN);
-// 	return false;
-//     }
-// }
-
 class AddrBuilding extends Addr {
     constructor(d, parent) {
 	super(d, parent);
@@ -1515,6 +1457,7 @@ class JobMiner extends Job {
 		    maxCapacity: task.d.maxCapacity,
 		    drop_id: null,
 		    drop_name: getRoomSpawnName(rm), //'Spawn1',
+		    task_id: task.d.id,
 		  };
 	
 	return job
@@ -1532,6 +1475,9 @@ class JobMiner extends Job {
     }
 
     getLimitedCurPower(qta) {
+	if(this.buildingInProgress()) {
+	    return 0;
+	}
 	let d = this.d;
 	let res = this.findRes();
 	let maxQta = res ? (res.energyCapacity/300) : 5;
@@ -1572,6 +1518,129 @@ class JobMiner extends Job {
     }
 
     finish_work(rm) {
+    }
+
+    /*
+    maybeStartBuildingContainer(rm, cr) {
+	let d = this.d;
+
+	if(!d.autoContainers)
+	    return false;
+
+	let res = this.findRes(rm)
+	if(!res)
+	    return false;
+	
+    }
+    */
+
+    buildingInProgress(rm) {
+	let d = this.d;
+	if(!d.building)
+	    return false;
+	let o = Game.getObjectById(d.building);
+	return o && (o instanceof ConstructionSite);
+    }
+
+    maybeBuildContainer(rm, cr) {
+	let d = this.d;
+
+	if(!d.autoContainers)
+	    return false;
+
+	let res = this.findRes(rm)
+	if(!res)
+	    return false;
+
+	let keepBuilding = false;
+
+	if( d.building ) {
+	    let o = Game.getObjectById(d.building);
+	    if(!o) {
+		d.building = null;
+	    } else {
+		if (o instanceof StructureContainer) {
+		    // already have it
+		    return false;
+		} else if(o instanceof ConstructionSite) {
+		    // looks good - keep building
+		    keepBuilding = true;
+		} else {
+		    d.building = null;
+		}
+	    }
+	}
+
+	// look for container
+	if(!d.building) {
+	    
+	    let new_pos = null;
+	    try {
+		if(d.task_id) {
+		    let tsk = rm.memory.tasks[d.task_id];
+		    new_pos = f.make(tsk.pts[1],null).getPos(rm);
+		}
+	    } catch(err) { console.log('maybeBuilderContainer - ' + err); }
+
+
+	    if(new_pos) {
+		let targets = new_pos.lookFor(FIND_STRUCTURES);
+		if(targets.length>0 && targets[0].structureType == STRUCTURE_CONTAINER) {
+		    d.building = targets[0].id;
+		    return false;
+		}
+		targets = new_pos.lookFor(LOOK_CONSTRUCTION_SITES);
+		if(targets.length>0 && targets[0].structureType == STRUCTURE_CONTAINER) {
+		    d.building = targets[0].id;
+		    return true;
+		}
+	    } else {
+		let targets = res.pos.findInRange(FIND_STRUCTURES, 2, {
+		    filter: (i) => i.structureType == STRUCTURE_CONTAINER } );
+		if(targets.length>0 && targets[0].structureType == STRUCTURE_CONTAINER) {
+		    d.building = targets[0].id;
+		    return false;
+		}
+
+		targets = res.pos.findInRange(FIND_CONSTRUCTION_SITES, 2, {
+		    filter: (i) => i.structureType == STRUCTURE_CONTAINER } );
+		if(targets.length>0 && targets[0].structureType == STRUCTURE_CONTAINER) {
+		    d.building = targets[0].id;
+		    return true;
+		}
+	    }
+
+	    // create it
+	    if(!new_pos && cr.pos.getRangeTo(res.pos)<2) {
+		new_pos = cr.pos;
+	    }
+
+	    if(new_pos) {
+		let rm2 = Game.rooms[new_pos.roomName];
+		let status = rm2.createConstructionSite(new_pos.x, new_pos.y, STRUCTURE_CONTAINER);
+		if(status == OK) {
+		    u.log( 'Created construction site ' + STRUCTURE_CONTAINER, u.LOG_INFO );
+		    return true;
+		}
+	    }
+	}
+
+	if(d.building) {
+	    if(creepFullPct(cr)<0.7) {
+		if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+		    cr.moveTo(res);
+		}
+	    } else { 
+		let tgt = Game.getObjectById(d.building);
+		if(cr.build(tgt) == ERR_NOT_IN_RANGE) {
+		    cr.moveTo(tgt);
+		}
+	    }
+
+	    return true;
+	}
+
+	return false;
     }
 
     do_work(rm, cr) {
@@ -1636,25 +1705,38 @@ class JobMiner extends Job {
 	    } else {
 		role.workStatus.step = 0;
 		if(res) {
-		    if(d.mayDrop || !creepIsFull(cr)) {
-			if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
-			    cr.moveTo(res);
-			}
+		    if(this.maybeBuildContainer(rm, cr)) {
 		    } else {
-			// look for container
-			let targets = res.pos.findInRange(FIND_STRUCTURES, 2, {
-			    filter: (i) => i.structureType == STRUCTURE_CONTAINER && i.store[RESOURCE_ENERGY] > 0 } );
-			
-			if(targets.length > 0) {
-			    let target = cr.pos.findClosestByRange(targets);
-			    let status = cr.transfer(target, RESOURCE_ENERGY);
-			    if(status == ERR_NOT_IN_RANGE) {
-				cr.moveTo(target);
+			if(!creepIsFull(cr)) {
+			    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+				cr.moveTo(res);
 			    }
 			} else {
-			    cr.moveTo(res);
+			    // look for a container
+			    let targets = res.pos.findInRange(FIND_STRUCTURES, 2, {
+				filter: (i) => i.structureType == STRUCTURE_CONTAINER } );
+			    
+			    if(targets.length > 0) {
+				let target = cr.pos.findClosestByRange(targets);
+				let status = cr.transfer(target, RESOURCE_ENERGY);
+				if(status == ERR_NOT_IN_RANGE) {
+				    cr.moveTo(target);
+				}
+			    } else {
+				// the creep is full, and there is no container
+				if(d.mayDrop) {
+				    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+					cr.moveTo(res);
+				    }				
+				} else {
+				    cr.moveTo(res);
+				}
+
+			    }
+			    
 			}
 		    }
+		    
 		} else {
 		    // res is null if it's in another room
 		    let pos = f.make(d.res_pos, null);
@@ -1707,6 +1789,7 @@ class JobClaim extends Job {
 	    reqQta: 1,
 	    priority : jobPriorities.claim,
 	    res_pos: f.make(task.d.pts[0], null).makeRef(),
+	    task_id: task.d.id,
 	};
 	
 	return ret;
@@ -1731,7 +1814,7 @@ class JobClaim extends Job {
 	    }
 
 	    return Game.getObjectById(d.res_id);
-	}catch (err) {
+	} catch (err) {
 	    console.log(err);
 	}
 	return null;
@@ -1823,7 +1906,8 @@ class JobCarrier extends Job {
 		    extraCapacity: extraCapacity,
 		    take_from :  task.d.pts[0],
 		    take_to : rm.memory.storagePoint,
-		  }	
+		    task_id: task.d.id,
+		  }
 
 	return job
     }
@@ -2526,7 +2610,7 @@ function getDesign( design, sp, rm ) {
 
     if(rm.memory.recoveryMode) {
 	if((design == 'd_h0') || (design == 'd_h1')) {
-	    return { work: 2, carry: 1, move: 1, ttb: 4};
+	    return { work: 2, carry: 1, move: 1, ttb: 3};
 	    // return [WORK, CARRY, MOVE];
 	} else if (design == 'd_c1') {
 	    return { carry: 2, move: 2, ttb: 4};
@@ -3150,77 +3234,6 @@ function getConstrBuildingCapacity(rm, con) {
 
 // Put the JobMinerBasic on hold, after leaving the recovery mode
 function planCreepJobs(rm) {
-    // Enable/disable the 'j1' job - JobMinerBasic
-    //	if(rm.memory.balance.c1.curCount > 0) {
-    /*
-    if(!rm.memory.recoveryMode) {
-	if(!rm.memory.jobs.JobMiner.j1.onhold) {
-	    rm.memory.jobs.JobMiner.j1.onhold = {};
-	    let cjob = f.make(rm.memory.jobs.JobMiner.j1);
-	    cjob.unassign(rm);
-	}
-    } else {
-	if(rm.memory.jobs.JobMiner.j1.onhold) {
-	    delete rm.memory.jobs.JobMiner.j1.onhold;
-	}
-    }
-    */
-
-    // harvPoints
-    /*
-    {
-	let minerJobs = rm.memory.jobs.JobMiner;
-	let carrierJobs = rm.memory.jobs.JobCarrier;
-	let curMinerWorkCnt = getDesign('d_h1', null, rm)[WORK];
-	let pri = 0;
-	for(let hp_id in rm.memory.harvPoints) {
-
-	    if(rm.memory.harvPoints[hp_id] === 'delete') {
-		if(minerJobs[hp_id]) {
-		    minerJobs[hp_id].done = true;
-		}
-		let car_job_id = 'carry_'+hp_id;
-		if(carrierJobs[car_job_id]) {
-		    carrierJobs[car_job_id].done = true;
-		}
-	    } else {
-		//let hp = rm.memory.harvPoints;
-		let chp = f.make(rm.memory.harvPoints[hp_id], null);
-		if(!minerJobs[hp_id]) {
-		    let job = { id : hp_id,
-				cname: 'JobMiner',
-				taken_by_id: null,
-				priority : pri,
-				capacity: 1,
-				curPower: 0,
-				reqQta: 10,
-				res_id: null,
-				res_pos : chp.makeRef(),
-				maxCapacity: chp.d.maxCapacity,
-				drop_id: null,
-				drop_name: getRoomSpawnName(rm), //'Spawn1',
-			      };
-		    minerJobs[hp_id] = job;
-		}
-		let car_job_id = 'carry_'+hp_id;
-		if(!carrierJobs[car_job_id]) {
-		    let job = { id : car_job_id,
-				cname: 'JobCarrier',
-				taken_by_id: null,
-				priority : pri,
-				capacity: 0, // todo
-				curPower: 0,
-				reqQta: 0,
-				take_from :  chp.makeRef(),
-				take_to : rm.memory.storagePoint,
-			      };
-		    carrierJobs[car_job_id] = job;
-		} 
-		pri += 5;
-	    }
-	}
-    }
-    */
 
     // tasks
     if(rm.memory.tasks) {
@@ -3235,58 +3248,6 @@ function planCreepJobs(rm) {
 	}
     }
     
-
-    // scavenge points
-    /*
-    {
-	let carrierJobs = rm.memory.jobs.JobCarrier;
-	let scav_id_lst = Object.keys(rm.memory.scavengePoints);
-	for(let scav_id of scav_id_lst) {
-	    let chp = f.make(rm.memory.scavengePoints[scav_id], null);
-	    
-	    if(chp.d.postDelete) {
-		// todo - find all related jobs
-		let car_job_id = 'carry_'+scav_id;
-		if(carrierJobs[car_job_id]) {
-		    carrierJobs[car_job_id].done = true;
-		} else {
-		    // remove the point
-		    memobj.deleteObject(chp);
-		    delete rm.memory.scavengePoints[scav_id];
-		    u.log( "Deleting object " + scav_id, u.LOG_INFO );
-		}
-	    } else {
-		//let hp = rm.memory.scavengePoints;
-		let car_job_id = 'carry_'+scav_id;
-
-		if(chp.d.maxCapacity>0 && chp.exists()) {
-		    if(!carrierJobs[car_job_id]) {
-			let job = { id : car_job_id,
-				    cname: 'JobCarrier',
-				    taken_by_id: null,
-				    priority : jobPriorities.scavenge,
-				    capacity: 0, // todo
-				    maxCapacity: chp.d.maxCapacity,
-				    curPower: 0,
-				    reqQta: 10,
-				    take_from :  chp.makeRef(),
-				    take_to : rm.memory.storagePoint,
-				  };
-			carrierJobs[car_job_id] = job;
-			f.make(job, null).estimateTripTime();
-		    } else {
-			carrierJobs[car_job_id].maxCapacity = chp.d.maxCapacity;
-		    }
-		} else {
-		    if(carrierJobs[car_job_id]) {
-			carrierJobs[car_job_id].done = true;
-		    }		    
-		}
-	    }
-	}
-    }
-    */
-
     if(!rm.memory.jobs.JobBuilder['ctrlr']) {
 	let ctrlrs = rm.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_CONTROLLER } });
 	if(ctrlrs.length > 0) {
@@ -3299,7 +3260,7 @@ function planCreepJobs(rm) {
 			    capacity: 0,
 			    maxCapacity: 5,
 			    priority : jobPriorities.ctrlr,
-			    take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
+			    take_from: rm.memory.storagePoint,
 			    take_to: { cname: 'AddrBuilding',
 				       roomName: rm.name,
 				       tgt_id: con.id },
@@ -3356,7 +3317,7 @@ function planCreepJobs(rm) {
 			taken_by_id: null,
 			capacity: 0,
 			priority : jobPriorities.build,
-			take_from: rm.memory.storagePoint, //rm.memory.harvPoints.hp1,
+			take_from: rm.memory.storagePoint,
 			take_to: { cname: 'AddrBuilding',
 				   roomName: con.pos.roomName, //rm.name,
 				   tgt_id: con.id },

@@ -77,6 +77,7 @@ module.exports = function (memobj) {
 	maybeCreateJob(rm) {
 	    let lst  = this.get_cur_jobs(rm);
 	    let this_ = this;
+	    let createdSomeJobs = false;
 	    lst.forEach( (jb)=> {
 		try {
 		    if(!this_.job_exists(rm, jb) && !jb.done) {
@@ -85,6 +86,7 @@ module.exports = function (memobj) {
 			this_.putJob( rm,
 				      jb,
 				      f.findClass(jb.job_type).createFromTask(rm, jb.job_id, this_) );
+			createdSomeJobs = true;
 		    }
 
 		}catch(err){
@@ -92,8 +94,9 @@ module.exports = function (memobj) {
 		}
 	    } );
 
+	    return createdSomeJobs;
 	}
-    
+	
 	maybeCompleteJob(rm) {
 	    let lst  = this.get_cur_jobs(rm);
 	    let this_ = this;
@@ -106,7 +109,7 @@ module.exports = function (memobj) {
 			}
 		    }
 		} catch(err) {
-		    u.log("Error in maybeCreateJob - " + jb + ', ' + err, u.LOG_ERR);
+		    u.log("Error in maybeCompleteJob - " + jb + ', ' + err, u.LOG_ERR);
 		}
 	    } );
 	    
@@ -141,7 +144,10 @@ module.exports = function (memobj) {
 		    delete d.postUpdate;
 		}
 
-		this.maybeCreateJob(rm);
+		if( this.maybeCreateJob(rm) ) {
+		    this.maybeUpdateJob(rm);
+		}
+		
 		this.maybeCompleteJob(rm);
 		try {
 		    this.maybeWorkOnTask(rm);
@@ -154,6 +160,19 @@ module.exports = function (memobj) {
 
     memobj.regClasses([Task]);
 
+    function maybeUpdateObject( src, dst, id_name ) {
+	let postUpdate = false;
+	for(let k of Object.keys(src)) {
+	    if(typeof dst[k] === 'undefined' || dst[k] !== src[k]) {
+		console.log("Change property of " + id_name + "." +k+"=" +src[k]);
+		dst[k] = src[k];
+		postUpdate = true;
+	    }
+	}
+
+	return postUpdate;
+    }
+
     function addOrUpdateTask( room_name, tsk, pts ) {
 	let tsk_id = 'unknown';
 	try {
@@ -162,7 +181,15 @@ module.exports = function (memobj) {
 	    if(!ctsk) {
 		throw ("Invalid task type");
 	    }
-	    
+
+	    if(pts) {
+		if(! _.isArray(pts) ) {
+		    pts = [pts];
+		}
+	    } else {
+		pts = [];
+	    }
+
 	    // let hash = Game.rooms[room_name].memory;
 	    let hash = Memory.rooms[room_name];
 	    if(!hash.tasks) hash.tasks = {};
@@ -174,23 +201,28 @@ module.exports = function (memobj) {
 		if(!tsk.postDelete) {
 		    // create new task
 		    hash[tsk_id] = tsk;
-		    if(pts) {
-			if( _.isArray(pts) ) {
-			    hash[tsk_id].pts = _.map(pts, memobj.addObject);
-			} else {
-			    hash[tsk_id].pts=[ memobj.addObject(pts) ];
-			}
-		    }
+		    hash[tsk_id].pts = _.map(pts, memobj.addObject);
 		}
 	    } else {
 		// update
-		let obj = tsk;
-		let postUpdate = false;
-		for(let k of Object.keys(tsk)) {
-		    if(typeof o2[k] === 'undefined' || o2[k] !== obj[k]) {
-			console.log("Change property of " + obj.id + "." +k+"=" +obj[k]);
-			o2[k] = obj[k];
+		let postUpdate = maybeUpdateObject( tsk, o2, tsk.id );
+
+		let i_len = _.max( [ o2.pts.length, pts.length ] );
+		for( let i=0; i<i_len; ++i )
+		{
+		    if(!pts[i]) {
+			break; // don't delete points 
+		    } else if( !o2.pts[i] ) {
+			// append point
+			console.log("Adding new point " + tsk.id + "[" +i+"]");
+			o2.pts.push( memobj.addObject( pts[i] ) );
 			postUpdate = true;
+		    } else {
+			// may be update
+			let obj_id = o2.pts[i].obj_id;
+			let pt2 = memobj.f.make(o2.pts[i], null);
+			
+			postUpdate = maybeUpdateObject(pts[i], pt2.d, tsk.id+'['+i + ' ' + obj_id+']' ) || postUpdate;
 		    }
 		}
 
