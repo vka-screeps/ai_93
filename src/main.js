@@ -1089,7 +1089,7 @@ class AddrHarvPoint extends Addr {
 		    return -creepFullPct(cr1) + cr.pos.getRangeTo(cr1)/10;
 		} );
 
-		// console.log('Creep ' + cr.id + ' - ' + JSON.stringify(
+		// console.log('Creep ' + cr.name + ' - ' + JSON.stringify(
 		//     _.map(harvesters, (h) => {return h.id;}) ) );
 		    
 		if(harvesters.length>0) {
@@ -1934,6 +1934,8 @@ class JobCarrier extends Job {
 		    task_id: task.d.id,
 		  }
 
+	f.make(job, null).estimateTripTime();	
+
 	return job
     }
 
@@ -1994,6 +1996,8 @@ class JobCarrier extends Job {
 
     estimateTripTime() {
 	let d = this.d;
+	if(d.avg_trip_time) // don't override
+	    return;
 	try
 	{
 	    let tf = f.make(d.take_from);
@@ -2028,8 +2032,6 @@ class JobCarrier extends Job {
 	    let tt = f.make(d.take_to);
 	    tt.init();
 	}
-
-
     }
 
     finish_work(rm) {
@@ -2390,6 +2392,8 @@ class JobSupplyBulder extends JobCarrier {
 	};
 
 	// calculate average trip time
+	f.make(ret, null).estimateTripTime();
+	/*
 	try
 	{
 	    let tf = f.make(ret.take_from);		
@@ -2404,6 +2408,7 @@ class JobSupplyBulder extends JobCarrier {
 	} catch (err) {
 	    u.log('Error estimating distance for ' + new_job_id + ' - ' + err, u.LOG_ERR);
 	}
+	*/
 	return ret;
     }
 
