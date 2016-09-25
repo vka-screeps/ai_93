@@ -1,6 +1,6 @@
 var u = require('utils'); 
 var configver = require('configver');
-var gameRestartCount = 23;
+var gameRestartCount = 24;
 
 module.exports = {
     updateConfig(memobj) {
@@ -34,7 +34,7 @@ module.exports = {
 		console.log("Sim mode detected!");
 		return setConfigSim();
 	    } else {
-		return setConfig_W13N57();
+		return setConfig_W59N9();
 	    }
 	};
 
@@ -315,9 +315,9 @@ module.exports = {
 
 	}
 
-	function setConfig_W13N57() {
+	function setConfig_W59N9() {
 
-	    let room_name = 'W13N57';
+	    let room_name = 'W59N9';
 
 	    initMemVars();
 	    initRoomVars(room_name);
@@ -351,12 +351,12 @@ module.exports = {
 				     id: 'hp1',
     				     maxCapacity: 3,
 				     priority: 1,
-				     extraCapacity: 1,
+				     extraCapacity: 0,
 				     autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 15, 31 ),
-				     MyAddrPos(16, 30) ]
+				   [ MyAddrHarvPoint( 12, 23 ),
+				     MyAddrPos(11, 24) ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
@@ -366,14 +366,84 @@ module.exports = {
 				     priority: 5,
 				     mayDrop: true,
 				     extraCapacity: 0,
-				     // autoContainers: true,
+				     autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 25, 26 ),
-				     MyAddrPos(26, 25)]
+				   [ MyAddrHarvPoint( 20, 25 ),
+				     MyAddrPos(20, 27)]
 				);
-	    
 
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskMining',
+				     id: 'hp3',
+    				     maxCapacity: 1,
+				     priority: 20,
+				     mayDrop: true,
+				     extraCapacity: 0,
+				     autoContainers: false,
+				     postDelete: true,
+				   },
+				   [{ cname: 'AddrHarvPoint',
+				      roomName: 'W58N9',
+				      x: 3,
+				      y: 37,
+				      full: true },
+				    { cname: 'AddrPos',
+				      roomName: 'W58N9',
+				      x: 4,
+				      y: 36 }				    
+				   ]
+
+				);
+
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskMining',
+				     id: 'hp4',
+    				     maxCapacity: 3,
+				     priority: 25,
+				     mayDrop: true,
+				     extraCapacity: 0,
+				     autoContainers: false,
+				     postDelete: true,
+				   },
+				   [{ cname: 'AddrHarvPoint',
+				      roomName: 'W58N9',
+				      x: 28,
+				      y: 25,
+				      full: true },
+				    { cname: 'AddrPos',
+				      roomName: 'W58N9',
+				      x: 27,
+				      y: 24 }				    
+				   ]
+				);
+
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskMining',
+				     id: 'hp5',
+    				     maxCapacity: 3,
+				     priority: 25,
+				     mayDrop: true,
+				     extraCapacity: 0,
+				     autoContainers: false,
+				     // postDelete: true,
+				   },
+				   [{ cname: 'AddrHarvPoint',
+				      roomName: 'W59N8',
+				      x: 18,
+				      y: 15,
+				      full: true },
+				    { cname: 'AddrPos',
+				      roomName: 'W59N8',
+				      x: 17,
+				      y: 14 }				    
+				   ]
+				);
+
+	    room_mem.extraConstructionRooms = ['W59N8'];
+
+	    
+	    /*
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskConstr',
 				     id: 'constr1',
@@ -385,6 +455,7 @@ module.exports = {
 				     x: 26,
 				     y: 30, }
 				);
+	    */
 	    /*
 	    
 	    task.addOrUpdateTask(  room_name,
@@ -418,7 +489,7 @@ module.exports = {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
 						     roomName: room_name,
-						     x: 22,
+						     x: 20,
 						     y: 33,
 						     full: true,
 						     storage_id: null,
@@ -450,8 +521,8 @@ module.exports = {
 
 		room_mem.wait_point = { cname: 'AddrPos',
 					roomName: room_name,
-					x: 17,
-					y: 38,
+					x: 28,
+					y: 41,
 					isWaitPoint: true };
 
 		room_mem.jobs = {
