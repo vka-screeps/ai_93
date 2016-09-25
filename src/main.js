@@ -25,6 +25,7 @@ var jobPriorities = {
     mining: 0,
     jc1: 1,
     tower_refill: 50,
+    ctrlr_urgent: 55,
     scavenge : 100,
     upkeep: 110,
     build: 210,
@@ -1182,6 +1183,7 @@ class AddrUpkeep extends Addr {
 //	    console.log('targets3=' + targets3);
 //	    console.log('targets4=' + targets4);
 
+	    targets4 = _.filter(targets4, (i) => Game.getObjectById(i) );
 	    targets = _.sortBy(targets4, function (tgt_id) {
 		let object = Game.getObjectById(tgt_id);
 		// console.log('id='+ tgt_id);
@@ -1540,7 +1542,12 @@ class JobMiner extends Job {
 	if(!d.building)
 	    return false;
 	let o = Game.getObjectById(d.building);
-	return o && (o instanceof ConstructionSite);
+	if( o && (o instanceof ConstructionSite) )
+	    return true;
+ 
+	if( o && o instanceof StructureContainer && (o.hits < 0.3*o.hitsMax) )
+	    return true;
+	return false;
     }
 
     maybeBuildContainer(rm, cr) {
@@ -1562,6 +1569,19 @@ class JobMiner extends Job {
 	    } else {
 		if (o instanceof StructureContainer) {
 		    // already have it
+		    // maybe repair it
+		    if(o.hits < 0.4*o.hitsMax) {
+			if(creepFullPct(cr)<0.7) {
+			    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+				cr.moveTo(res);
+			    }
+			} else {
+			    if(cr.repair(o) == ERR_NOT_IN_RANGE) {
+				cr.moveTo(o);
+			    }
+			}
+			return true;
+		    }
 		    return false;
 		} else if(o instanceof ConstructionSite) {
 		    // looks good - keep building
@@ -1585,8 +1605,10 @@ class JobMiner extends Job {
 
 
 	    if(new_pos) {
-		let targets = new_pos.lookFor(FIND_STRUCTURES);
+		let targets = new_pos.lookFor(LOOK_STRUCTURES);
+		targets = _.filter( targets, (i) => i.structureType == STRUCTURE_CONTAINER );
 		if(targets.length>0 && targets[0].structureType == STRUCTURE_CONTAINER) {
+		    console.log('2');
 		    d.building = targets[0].id;
 		    return false;
 		}
@@ -1709,7 +1731,9 @@ class JobMiner extends Job {
 		    if(this.maybeBuildContainer(rm, cr)) {
 		    } else {
 			if(!creepIsFull(cr)) {
-			    if(cr.harvest(res) == ERR_NOT_IN_RANGE) {
+			    let status = cr.harvest(res);
+			    
+			    if(status == ERR_NOT_IN_RANGE) {
 				cr.moveTo(res);
 			    }
 			} else {
@@ -1991,6 +2015,11 @@ class JobCarrier extends Job {
 	let d = this.d;
 	let role = cr.memory.role;
 
+	role.workStatus = {
+	    step: 0,
+	    trip_start_time: 0
+	}	
+
 	{
 	    let tf = f.make(d.take_from);
 	    tf.init();
@@ -2000,10 +2029,7 @@ class JobCarrier extends Job {
 	    tt.init();
 	}
 
-	role.workStatus = {
-	    step: 0,
-	    trip_start_time: 0
-	}
+
     }
 
     finish_work(rm) {
@@ -2589,8 +2615,8 @@ var designRegistry = {
     // 'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     // 'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     
-    'd_h0' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
-    'd_h1' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
+    'd_h0' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
+    'd_h1' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
     
     'd_c1' : [ MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE ],
     // builder
@@ -2873,6 +2899,10 @@ function calcRoomStats(rm) {
     if(stats.enTotalQta<0) stats.enTotalQta = 0;
     stats.enCtrlQta = config.ctrlrShare * stats.enTotalQta;
     if(stats.enCtrlQta>20) stats.enCtrlQta = 20;
+
+    if(rm.controller.ticksToDowngrade < 2000 && stats.enCtrlQta < 2)
+	stats.enCtrlQta = 2;
+    
     stats.enBldQta = config.builderShare * stats.enTotalQta;
     stats.enRepairQta = config.repairShare * stats.enTotalQta;
 }
@@ -3275,6 +3305,12 @@ function planCreepJobs(rm) {
 		rm.memory.jobs.JobBuilder[con_job_id] = job;
 	    }
 	}
+    }
+
+    if(rm.controller.ticksToDowngrade < 2000) {
+	rm.memory.jobs.JobBuilder['ctrlr'].priority = jobPriorities.ctrlr_urgent;
+    } else {
+	rm.memory.jobs.JobBuilder['ctrlr'].priority = jobPriorities.ctrlr;
     }
 
     if(!rm.memory.jobs.JobBuilder['upkeep']) {
