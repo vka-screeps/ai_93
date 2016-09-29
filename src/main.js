@@ -1601,7 +1601,7 @@ class JobMiner extends Job {
 		    let tsk = rm.memory.tasks[d.task_id];
 		    new_pos = f.make(tsk.pts[1],null).getPos(rm);
 		}
-	    } catch(err) { console.log('maybeBuilderContainer - ' + err); }
+	    } catch(err) { /*console.log('maybeBuildContainer - ' + err); */ }
 
 
 	    if(new_pos) {
@@ -1779,6 +1779,30 @@ class JobMiner extends Job {
     }
 
 }
+
+/*
+class JobMelee extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobMelee'; }
+
+    static createFromTask(rm, new_job_id, task) {
+	let ret = {
+	    cname: 'JobMelee',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: defaultFor(task.capacity, 1),
+	    reqQta: 0,
+	    priority : task.priority,
+	    task_id: task.d.id,
+	};
+	
+	return ret;
+    }    
+}
+*/
 
 
 class JobClaim extends Job {
@@ -2986,6 +3010,9 @@ function planTowerJobs(rm) {
 
     let done = false;
     let target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+
+    // ?????
+    /*
     if(target) {
 	if(target.owner.username == 'Source Keeper' || (distanceFromBorder(target.pos) > 5)) {
 	    // actions
@@ -2996,6 +3023,7 @@ function planTowerJobs(rm) {
 	    done = true;
 	}
     }
+    */
     
     if(!done) {
 	target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_MY_CREEPS, {

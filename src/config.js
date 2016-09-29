@@ -110,6 +110,13 @@ module.exports = {
 	}
 
 
+	function MaybeAddBalanceLine( hash, obj ) {
+	    if(!hash[obj.id]) {
+		hash[obj.id] = obj;
+	    }
+	}
+
+
 	function setConfigSim() {
 
 	    let room_name = 'sim';
@@ -299,6 +306,9 @@ module.exports = {
 		room_mem.creeplist = {};
 		room_mem.recoveryMode = true;
 	    }
+
+	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_melee', count: 0, curCount: 0, design: 'd_melee', role: 'JobMelee' } );
+	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_archer', count: 0, curCount: 0, design: 'd_archer', role: 'JobArcher' } );
 
 	    if(!room_mem.stats) {
 		room_mem.stats = {
