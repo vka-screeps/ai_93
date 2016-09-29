@@ -142,7 +142,6 @@ class TaskConstr extends task.Task {
 	    }
 	}
     }
-
 }
 
 
@@ -157,8 +156,8 @@ class TaskFightKeeper extends task.Task {
 	let d = this.d;
 	if(d.job_lst)
 	    return d.job_lst;
-	d.job_lst = [ {job_type: 'JobMelee',
-		       job_id: 'melee_' + d.id,
+	d.job_lst = [{job_type: 'JobArcher',
+		       job_id: 'archer_' + d.id,
 		       done: false },
 		      {job_type: 'JobHealer',
 		       job_id: 'healer_' + d.id,
@@ -200,6 +199,16 @@ class TaskFightKeeper extends task.Task {
 	    d.leaderId = null;
 	}
 
+	// order
+	let wks = this.getWorkers(rm);
+	let leadId = d.leaderId;
+	for(let i in wks) {
+	    let cr = wks[i];
+	    if(cr.id == d.leaderId) continue;
+	    cr.myLeadId = leadId;
+	    leadId = cr.id;
+	}
+
 	if( !d.isReady && this.isFull(rm) ) {
 	    d.isReady = true;
 	}
@@ -229,7 +238,55 @@ class TaskFightKeeper extends task.Task {
 	    
 	}
 	*/
-    }    
+    }
+
+    getHealerCostMatrix(rm2_name) {
+	let d = this.d;
+	let tgt_rm_name = f.make(d.pts[0], null).d.roomName;
+	if(rm2_name !== tgt_rm_name) {
+	    console.log('getHealerCostMatrix ' + rm2_name + '!==' + tgt_rm_name);
+	    return undefined;
+	}
+	let ts = this.getMyTS();
+
+	if(ts.healerCostMatrix)
+	    return ts.healerCostMatrix;
+	
+	if(d.tgt_id) {
+	    let room = Game.rooms[tgt_rm_name];
+	    let tgt_pos = Game.getObjectById(d.tgt_id).pos;
+	    let costs = new PathFinder.CostMatrix;
+	    
+            room.find(FIND_STRUCTURES).forEach(function(structure) {
+		if (structure.structureType === STRUCTURE_ROAD) {
+		    // Favor roads over plain tiles
+		    costs.set(structure.pos.x, structure.pos.y, 1);
+		} else if (structure.structureType !== STRUCTURE_CONTAINER && 
+			   (structure.structureType !== STRUCTURE_RAMPART ||
+			    !structure.my)) {
+		    // Can't walk through non-walkable buildings
+		    costs.set(structure.pos.x, structure.pos.y, 0xff);
+		}
+            });
+
+            // Avoid creeps in the room
+            room.find(FIND_CREEPS).forEach(function(creep) {
+		costs.set(creep.pos.x, creep.pos.y, 0xff);
+            });
+
+	    for(let x = -3; x<=3; ++x) {
+		for(let y = -3; y<=3; ++y) {
+		    let xx = tgt_pos.x+x;
+		    let yy = tgt_pos.y+y;
+		    if(xx<0 || xx>49 || yy<0 || yy>49) continue;
+		    costs.set(xx, yy, 0xff);
+		}
+	    }
+
+	    ts.healerCostMatrix = costs;
+	}
+	return ts.healerCostMatrix;
+    }
 
     getLeaderId() {
 	return this.d.leaderId;
@@ -259,8 +316,11 @@ class TaskFightKeeper extends task.Task {
 	    if(!leader)
 		return false;
 
-	    if(_.findIndex(this.getWorkers(rm), (cr) => (cr.pos.getRangeTo(leader) > 3)) >= 0)
+	    if(_.findIndex(this.getWorkers(rm), (cr) => {
+		let lead = cr.myLeadId ? Game.getObjectById(cr.myLeadId) : leader;
+		return (cr.pos.getRangeTo(lead) > 2); }) >= 0) {
 		ret = false;
+	    }
 	}
 
 	return ret;
@@ -286,6 +346,10 @@ class TaskFightKeeper extends task.Task {
     }
     
     getWorkers(rm) {
+	let ts = this.getMyTS();
+	if(ts && ts.workers) {
+	    return ts.workers;
+	}
 	let lst  = this.get_cur_jobs(rm);
 	let this_ = this;
 	
@@ -298,7 +362,14 @@ class TaskFightKeeper extends task.Task {
 	    return [];
 	} );
 
-	return _.flatten(arr);
+	let rez = _.flatten(arr);
+	ts.workers = rez;
+
+	return rez;
+    }
+
+    getMyTS() {
+	return f.make( this.d.pts[0], null ).getTS();
     }
 };
 
@@ -1949,6 +2020,9 @@ class JobMilBase extends Job {
 
     start_work(rm, cr) {
 	let d = this.d;
+	let role = cr.memory.role;
+
+	role.workStatus = {};
     }
 
     finish_work(rm) {
@@ -1972,21 +2046,29 @@ class JobMilBase extends Job {
 	} catch(err) { /*console.log('maybeBuildContainer - ' + err); */ }
 
 	let leader_id = ctsk.getLeaderId();
-	if(cr.id !== leader_id) {
-	    let cr2 = Game.getObjectById(leader_id);
-	    cr.moveTo(cr2);
-	} else {
-	    {
-		if(new_pos) {
-		    cr.moveTo( new_pos );
-		}
-	    }
-	}
 
 	if(ctsk && ctsk.d.tgt_id) {
 	    let tgt = Game.getObjectById(ctsk.d.tgt_id);
 	    if(tgt){
 		this.do_attack(ctsk, rm, cr, tgt, (cr.id === leader_id));
+	    }
+	} else {
+	    if(cr.id !== leader_id) {
+		let cr2;
+		if(cr.myLeadId) {
+		    cr2 = Game.getObjectById(cr.myLeadId);
+		    // console.log('following a lead id');
+		} else  {
+		    cr2 = Game.getObjectById(leader_id);
+		}
+
+		cr.moveTo(cr2);
+	    } else {
+		{
+		    if(new_pos) {
+			cr.moveTo( new_pos );
+		    }
+		}
 	    }
 	}
     }
@@ -2004,9 +2086,9 @@ class JobMelee extends JobMilBase {
 	    cname: 'JobMelee',
 	    id: new_job_id,
 	    taken_by_id: null,
-	    capacity: defaultFor(task.capacity, 1),
+	    capacity: defaultFor(task.d.capacity, 1),
 	    reqQta: 0,
-	    priority : task.priority,
+	    priority : task.d.priority,
 	    task_id: task.d.id,
 	};
 	
@@ -2022,6 +2104,92 @@ class JobMelee extends JobMilBase {
 allClasses.push(JobMelee);
 
 
+class JobArcher extends JobMilBase {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobArcher'; }
+
+    static createFromTask(rm, new_job_id, task) {
+	let ret = {
+	    cname: 'JobArcher',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: defaultFor(task.d.capacity, 1),
+	    reqQta: 0,
+	    priority : task.d.priority,
+	    task_id: task.d.id,
+	};
+	
+	return ret;
+    }
+
+    do_attack(ctask, rm, cr, tgt, isLeader) {
+	if(!cr.memory.role.workStatus)
+	    cr.memory.role.workStatus = {};
+	if(cr.memory.role.workStatus.retreat || cr.getActiveBodyparts(RANGED_ATTACK) == 0) {
+	    cr.memory.role.workStatus.retreat = true;
+
+	    if(cr.hits >= cr.hitsMax)
+		cr.memory.role.workStatus.retreat = false;
+	}
+
+	if(cr.memory.role.workStatus.retreat) {
+	    if(cr.pos.getRangeTo(tgt)<5) {
+		console.log('Retreat ' + cr.id);
+		cr.moveTo( f.make(ctask.d.pts[0],null).getPos(rm), {
+		    costCallback: function(roomName, costMatrix) {
+			let costs = ctask.getHealerCostMatrix(roomName);
+			if(costs){
+			    console.log('using costs matrix');
+			    return costs;
+			}
+		    }
+		} );
+	    }
+	} else  {
+	    if( cr.rangedAttack(tgt) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(tgt);
+	    }
+	}
+    }
+};
+allClasses.push(JobArcher);
+
+
+class JobRam extends JobMilBase {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobRam'; }
+
+    static createFromTask(rm, new_job_id, task) {
+	let ret = {
+	    cname: 'JobRam',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: 1, //defaultFor(task.d.capacity, 1),
+	    reqQta: 0,
+	    priority : task.d.priority,
+	    task_id: task.d.id,
+	};
+	
+	return ret;
+    }
+
+    do_attack(ctask, rm, cr, tgt, isLeader) {
+	if( cr.rangedAttack(tgt) == ERR_NOT_IN_RANGE ) {
+	    cr.moveTo(tgt);
+	} else if(cr.pos.getRangeTo(tgt) > 2) {
+	    cr.moveTo(tgt);
+	}
+    }
+};
+allClasses.push(JobRam);
+
+
 class JobHealer extends JobMilBase {
     constructor(d, parent) {
 	super(d, parent);
@@ -2034,9 +2202,10 @@ class JobHealer extends JobMilBase {
 	    cname: 'JobHealer',
 	    id: new_job_id,
 	    taken_by_id: null,
-	    capacity: 1, //defaultFor(task.capacity, 1),
+	    capacity: 2, //defaultFor(task.d.capacity, 1),
+	    maxCapacity: 3,
 	    reqQta: 0,
-	    priority : task.priority,
+	    priority : task.d.priority,
 	    task_id: task.d.id,
 	};
 	
@@ -2047,14 +2216,35 @@ class JobHealer extends JobMilBase {
 	let targets = ctask.getWorkers(rm);
 
 	targets = _.filter( targets, (cr1) => (cr1.hits < cr1.hitsMax) );
-	targets = _.sortBy( targets, (cr1) => (cr1.hits) );
+	targets = _.sortBy( targets, (cr1) => ((cr1.memory.role.workStatus.retreat? 3000 : 0) + cr1.hits + cr.pos.getRangeTo(cr1) * 100) );
 
 	if(targets.length > 0) {
 	    let target = targets[0];
-	    u.log('Healing ' + target.id);
 	    if( cr.heal(target) == ERR_NOT_IN_RANGE ) {
-		cr.moveTo(target);
+		cr.moveTo(target, {
+		    costCallback: function(roomName, costMatrix) {
+			let costs = ctask.getHealerCostMatrix(roomName);
+			if(costs){
+			    console.log('using costs matrix');
+			    return costs;
+			}
+		    }
+		});
 	    }
+	} else {
+	    let leader = Game.getObjectById(ctask.getLeaderId());
+	    if(leader && cr.pos.getRangeTo(leader) > 2) {
+		cr.moveTo(leader, {
+		    costCallback: function(roomName, costMatrix) {
+			let costs = ctask.getHealerCostMatrix(roomName);
+			if(costs){
+			    console.log('using costs matrix');
+			    return costs;
+			}
+		    }
+		});
+	    }
+
 	}
     }
     
@@ -2924,7 +3114,9 @@ var designRegistry = {
     'd_claim' : [ CLAIM, MOVE, CLAIM, MOVE ],
     'd_melee' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ],
     'd_healer' : [ HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, ],
-
+    'd_archer' : [ TOUGH, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, ],
+    'd_ram' : [ MOVE, RANGED_ATTACK, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH,
+		MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, ],
 };
 
 var costRegistry = {

@@ -156,7 +156,7 @@ module.exports = {
 				     priority: 50,
 				     // postDelete: true,
 				   },
-				  [ MyAddrPos(10,31)  ]
+				  [ MyAddrPos(3, 33) ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
@@ -321,6 +321,7 @@ module.exports = {
 	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_melee', count: 0, curCount: 0, design: 'd_melee', role: 'JobMelee' } );
 	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_archer', count: 0, curCount: 0, design: 'd_archer', role: 'JobArcher' } );
 	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_healer', count: 0, curCount: 0, design: 'd_healer', role: 'JobHealer' } );
+	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_ram', count: 0, curCount: 0, design: 'd_ram', role: 'JobRam' } );
 
 	    if(!room_mem.stats) {
 		room_mem.stats = {
