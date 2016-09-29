@@ -218,6 +218,8 @@ class TaskFightKeeper extends task.Task {
 		    u.log('Task: ' + d.id + ' New target: ' + target.id);
 		}
 	    }
+	} else {
+	    d.tgt_id = null;
 	}
 
 	/*
@@ -234,9 +236,11 @@ class TaskFightKeeper extends task.Task {
     }
 
     isFull(rm) {
+	let d = this.d;
 	let ret = true;
 	let lst  = this.get_cur_jobs(rm);
 	let this_ = this;
+	
 	lst.forEach( (jb)=> {
 	    try {
 		let cj = f.make( this_.getJob(rm, jb), null );
@@ -249,6 +253,15 @@ class TaskFightKeeper extends task.Task {
 		ret = false;
 	    }
 	} );
+
+	if(ret) {
+	    let leader = Game.getObjectById(d.leaderId);
+	    if(!leader)
+		return false;
+
+	    if(_.findIndex(this.getWorkers(rm), (cr) => (cr.pos.getRangeTo(leader) > 3)) >= 0)
+		ret = false;
+	}
 
 	return ret;
     }
@@ -270,7 +283,23 @@ class TaskFightKeeper extends task.Task {
 	}
 
 	return ret;
-    }    
+    }
+    
+    getWorkers(rm) {
+	let lst  = this.get_cur_jobs(rm);
+	let this_ = this;
+	
+	let arr =  _.map( lst, (jb) => {
+	    try {
+		return f.make( this_.getJob(rm, jb), null ).getWorkers();
+	    }catch(err){
+		u.log("Error in getWorkers - " + jb + ', ' + err, u.LOG_ERR);
+	    }
+	    return [];
+	} );
+
+	return _.flatten(arr);
+    }
 };
 
 allClasses.push( TaskFightKeeper );
@@ -1923,7 +1952,11 @@ class JobMilBase extends Job {
     }
 
     finish_work(rm) {
-    }    
+    }
+
+    do_attack(ctask, rm, cr, tgt, isLeader) {
+	u.log('default do_attack', u.LOG_WARN);
+    }
     
     do_work(rm, cr) {
 	let d = this.d;
@@ -1943,11 +1976,20 @@ class JobMilBase extends Job {
 	    let cr2 = Game.getObjectById(leader_id);
 	    cr.moveTo(cr2);
 	} else {
-	    if(new_pos) {
-		cr.moveTo( new_pos );
+	    {
+		if(new_pos) {
+		    cr.moveTo( new_pos );
+		}
 	    }
 	}
-    }    
+
+	if(ctsk && ctsk.d.tgt_id) {
+	    let tgt = Game.getObjectById(ctsk.d.tgt_id);
+	    if(tgt){
+		this.do_attack(ctsk, rm, cr, tgt, (cr.id === leader_id));
+	    }
+	}
+    }
 };
 
 class JobMelee extends JobMilBase {
@@ -1969,6 +2011,12 @@ class JobMelee extends JobMilBase {
 	};
 	
 	return ret;
+    }
+
+    do_attack(ctask, rm, cr, tgt, isLeader) {
+	if( cr.attack(tgt) == ERR_NOT_IN_RANGE ) {
+	    cr.moveTo(tgt);
+	}
     }
 };
 allClasses.push(JobMelee);
@@ -1994,6 +2042,22 @@ class JobHealer extends JobMilBase {
 	
 	return ret;
     }
+
+    do_attack(ctask, rm, cr, tgt, isLeader) {
+	let targets = ctask.getWorkers(rm);
+
+	targets = _.filter( targets, (cr1) => (cr1.hits < cr1.hitsMax) );
+	targets = _.sortBy( targets, (cr1) => (cr1.hits) );
+
+	if(targets.length > 0) {
+	    let target = targets[0];
+	    u.log('Healing ' + target.id);
+	    if( cr.heal(target) == ERR_NOT_IN_RANGE ) {
+		cr.moveTo(target);
+	    }
+	}
+    }
+    
 };
 allClasses.push(JobHealer);
 

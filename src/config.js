@@ -156,7 +156,7 @@ module.exports = {
 				     priority: 50,
 				     // postDelete: true,
 				   },
-				   [ MyAddrPos(3, 38)  ]
+				  [ MyAddrPos(10,31)  ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
