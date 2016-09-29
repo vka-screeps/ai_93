@@ -132,7 +132,7 @@ module.exports = {
 		ctrlrShare: 0.1,
 		repairShare: 0.1,
 		builderShare: 0.9,
-		creepCostLimit: 550,
+		creepCostLimit: 650,
 		NZInc: 0,
 	    };
 	    
@@ -147,6 +147,17 @@ module.exports = {
 					       roomName: room_name,
 					       x: x,
 					       y: y }; };
+
+ 	    task.addOrUpdateTask( room_name,
+				   { cname: 'TaskFightKeeper',
+				     id: 'fk1',
+    				     maxCapacity: 3,
+				     capacity: 3,
+				     priority: 50,
+				     // postDelete: true,
+				   },
+				   [ MyAddrPos(3, 38)  ]
+				);
 
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
@@ -309,6 +320,7 @@ module.exports = {
 
 	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_melee', count: 0, curCount: 0, design: 'd_melee', role: 'JobMelee' } );
 	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_archer', count: 0, curCount: 0, design: 'd_archer', role: 'JobArcher' } );
+	    MaybeAddBalanceLine( room_mem.balance, {id:'bal_healer', count: 0, curCount: 0, design: 'd_healer', role: 'JobHealer' } );
 
 	    if(!room_mem.stats) {
 		room_mem.stats = {

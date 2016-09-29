@@ -32,7 +32,9 @@ var jobPriorities = {
     ctrlr: 310,
     claim : 1000,
     waiting: 1000000,
-}
+};
+
+var allClasses = [];
 
 var r = {
     init: function() { m_init() },
@@ -116,6 +118,7 @@ class TaskMining extends task.Task {
     }
 };
 
+
 class TaskConstr extends task.Task {
     constructor(d, parent) {
 	super(d, parent);
@@ -141,6 +144,136 @@ class TaskConstr extends task.Task {
     }
 
 }
+
+
+class TaskFightKeeper extends task.Task {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+    
+    static cname() { return 'TaskFightKeeper'; }
+
+    get_cur_jobs(rm) {
+	let d = this.d;
+	if(d.job_lst)
+	    return d.job_lst;
+	d.job_lst = [ {job_type: 'JobMelee',
+		       job_id: 'melee_' + d.id,
+		       done: false },
+		      {job_type: 'JobHealer',
+		       job_id: 'healer_' + d.id,
+		       done: false },
+		    ];
+
+	// console.log( 'get_cur_jobs returns ' + this.job_lst + ', ' + this.job_lst.length);
+	return d.job_lst;
+    }
+
+    maybeUpdateJob(rm) {
+	let d = this.d;
+	try {
+	    let job = this.getJob(rm, this.get_cur_jobs(rm)[0]);
+	    if(job) {
+		job.maxCapacity = d.maxCapacity;
+		job.priority = d.priority;
+		job.capacity = d.capacity;
+		// f.make(job,null).calcPower();
+	    }
+	} catch(err) {console.log(err);}
+    }
+
+
+    maybeWorkOnTask(rm){
+	let d = this.d;
+	if(d.complete)
+	    return;
+
+	// assign leader
+	if(!d.leaderId || !Game.getObjectById(d.leaderId)) {
+	    try {
+		let job = this.getJob(rm, this.get_cur_jobs(rm)[0]);
+		d.leaderId = f.make(job, null).getFirstWorkerId();
+	    } catch(err) {console.log(err);}
+	}
+
+	if(d.leaderId && !Game.getObjectById(d.leaderId)) {
+	    d.leaderId = null;
+	}
+
+	if( !d.isReady && this.isFull(rm) ) {
+	    d.isReady = true;
+	}
+
+	if(d.isReady && this.isDefeated(rm)) {
+	    d.isReady = false;
+	}
+
+	// find a target
+	if(d.isReady) {
+	    if(!d.tgt_id || !Game.getObjectById(d.tgt_id)) {
+		d.tgt_id = null;
+		let target = f.make(d.pts[0], null).getPos().findClosestByRange(FIND_HOSTILE_CREEPS);
+		if(target) {
+		    d.tgt_id = target.id;
+		    u.log('Task: ' + d.id + ' New target: ' + target.id);
+		}
+	    }
+	}
+
+	/*
+	let p = f.make(d.pts[0], null);
+	let rm2 = Game.rooms[p.d.roomName];
+	if(rm2) {
+	    
+	}
+	*/
+    }    
+
+    getLeaderId() {
+	return this.d.leaderId;
+    }
+
+    isFull(rm) {
+	let ret = true;
+	let lst  = this.get_cur_jobs(rm);
+	let this_ = this;
+	lst.forEach( (jb)=> {
+	    try {
+		let cj = f.make( this_.getJob(rm, jb), null );
+		if( cj.getCapacity() > cj.getCount() ) {
+		    ret = false;
+		}
+
+	    }catch(err){
+		u.log("Error in isFull - " + jb + ', ' + err, u.LOG_ERR);
+		ret = false;
+	    }
+	} );
+
+	return ret;
+    }
+
+    isDefeated(rm) {
+	let ret = false;
+	let lst  = this.get_cur_jobs(rm);
+	let this_ = this;
+	let jb = lst[0];
+	try {
+	    let cj = f.make( this_.getJob(rm, jb), null );
+	    if( cj.getCount() == 0 ) {
+		ret = true;
+	    }
+
+	}catch(err){
+	    u.log("Error in isDefeated - " + jb + ', ' + err, u.LOG_ERR);
+	    ret = true;
+	}
+
+	return ret;
+    }    
+};
+
+allClasses.push( TaskFightKeeper );
 
 
 class Job extends CMemObj {
@@ -1780,8 +1913,44 @@ class JobMiner extends Job {
 
 }
 
-/*
-class JobMelee extends Job {
+class JobMilBase extends Job {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    start_work(rm, cr) {
+	let d = this.d;
+    }
+
+    finish_work(rm) {
+    }    
+    
+    do_work(rm, cr) {
+	let d = this.d;
+
+	let new_pos = null;
+	let ctsk = null;
+	try {
+	    if(d.task_id) {
+		let tsk = rm.memory.tasks[d.task_id];
+		ctsk = f.make(tsk, null);
+		new_pos = f.make(tsk.pts[0],null).getPos(rm);
+	    }
+	} catch(err) { /*console.log('maybeBuildContainer - ' + err); */ }
+
+	let leader_id = ctsk.getLeaderId();
+	if(cr.id !== leader_id) {
+	    let cr2 = Game.getObjectById(leader_id);
+	    cr.moveTo(cr2);
+	} else {
+	    if(new_pos) {
+		cr.moveTo( new_pos );
+	    }
+	}
+    }    
+};
+
+class JobMelee extends JobMilBase {
     constructor(d, parent) {
 	super(d, parent);
     }
@@ -1800,9 +1969,33 @@ class JobMelee extends Job {
 	};
 	
 	return ret;
-    }    
-}
-*/
+    }
+};
+allClasses.push(JobMelee);
+
+
+class JobHealer extends JobMilBase {
+    constructor(d, parent) {
+	super(d, parent);
+    }
+
+    static cname() { return 'JobHealer'; }
+
+    static createFromTask(rm, new_job_id, task) {
+	let ret = {
+	    cname: 'JobHealer',
+	    id: new_job_id,
+	    taken_by_id: null,
+	    capacity: 1, //defaultFor(task.capacity, 1),
+	    reqQta: 0,
+	    priority : task.priority,
+	    task_id: task.d.id,
+	};
+	
+	return ret;
+    }
+};
+allClasses.push(JobHealer);
 
 
 class JobClaim extends Job {
@@ -2665,6 +2858,9 @@ var designRegistry = {
     // 'd_b2' : [ WORK, CARRY, MOVE, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, CARRY, MOVE, WORK, WORK, WORK ],    
     'd_def1' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ],
     'd_claim' : [ CLAIM, MOVE, CLAIM, MOVE ],
+    'd_melee' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ],
+    'd_healer' : [ HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, ],
+
 };
 
 var costRegistry = {
@@ -2855,10 +3051,11 @@ class JobSpawn extends Job {
 //     }
 // }
 
-var allClasses = [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender, Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
-		   AddrStoragePoint, AddrUpkeep, AddrFreeRoom, JobClaim,
-		   TaskClaim, TaskMining, TaskConstr
-		   /*, AddrHarvPointRef*/ ];
+allClasses = allClasses.concat( [ Job, JobMiner, JobCarrier, JobSpawn, /*JobMinerBasic, */JobDefender,
+				  Addr, AddrBuilding, AddrPos, JobBuilder, AddrHarvPoint, JobSupplyBulder,
+				  AddrStoragePoint, AddrUpkeep, AddrFreeRoom, JobClaim,
+				  TaskClaim, TaskMining, TaskConstr
+				  /*, AddrHarvPointRef*/ ] );
 
 
 function makeUnique(list) {
@@ -3023,7 +3220,7 @@ function planTowerJobs(rm) {
 	    done = true;
 	}
     }
-    */
+
     
     if(!done) {
 	target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_MY_CREEPS, {
@@ -3040,6 +3237,7 @@ function planTowerJobs(rm) {
 	    done = true;
 	}
     }
+    */
     if(!done) {
 	// upkeep
 	let c_upkeep = f.make(rm.memory.upkeepPoint, null);
