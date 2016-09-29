@@ -132,7 +132,7 @@ module.exports = {
 		ctrlrShare: 0.1,
 		repairShare: 0.1,
 		builderShare: 0.9,
-		creepCostLimit: 650,
+		creepCostLimit: 1000,
 		NZInc: 0,
 	    };
 	    

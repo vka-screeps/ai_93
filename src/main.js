@@ -2031,6 +2031,9 @@ class JobMilBase extends Job {
     do_attack(ctask, rm, cr, tgt, isLeader) {
 	u.log('default do_attack', u.LOG_WARN);
     }
+
+    do_prepare(ctask, rm, cr, isLeader) {
+    }
     
     do_work(rm, cr) {
 	let d = this.d;
@@ -2070,6 +2073,8 @@ class JobMilBase extends Job {
 		    }
 		}
 	    }
+
+	    this.do_prepare(ctsk, rm, cr, (cr.id === leader_id));
 	}
     }
 };
@@ -2212,6 +2217,25 @@ class JobHealer extends JobMilBase {
 	return ret;
     }
 
+    do_prepare(ctask, rm, cr, isLeader) {
+	let targets = ctask.getWorkers(rm);
+
+	targets = _.filter( targets, (cr1) => (cr1.hits < cr1.hitsMax) );
+	targets = _.sortBy( targets, (cr1) => ((cr1.memory.role.workStatus.retreat? 3000 : 0) + cr1.hits + cr.pos.getRangeTo(cr1) * 100) );
+
+	if(targets.length > 0) {
+	    for(let i=0; i<targets.length; ++i) {
+		let target = targets[i];
+		if( cr.heal(target) == ERR_NOT_IN_RANGE ) {
+		    if( cr.rangedHeal(target) != ERR_NOT_IN_RANGE ) {
+			break;
+		    }
+		} else
+		    break;
+	    }
+	}	
+    }
+
     do_attack(ctask, rm, cr, tgt, isLeader) {
 	let targets = ctask.getWorkers(rm);
 
@@ -2219,17 +2243,22 @@ class JobHealer extends JobMilBase {
 	targets = _.sortBy( targets, (cr1) => ((cr1.memory.role.workStatus.retreat? 3000 : 0) + cr1.hits + cr.pos.getRangeTo(cr1) * 100) );
 
 	if(targets.length > 0) {
-	    let target = targets[0];
-	    if( cr.heal(target) == ERR_NOT_IN_RANGE ) {
-		cr.moveTo(target, {
-		    costCallback: function(roomName, costMatrix) {
-			let costs = ctask.getHealerCostMatrix(roomName);
-			if(costs){
-			    console.log('using costs matrix');
-			    return costs;
+	    for(let i=0; i<targets.length; ++i) {
+		let target = targets[i];
+		if( cr.heal(target) == ERR_NOT_IN_RANGE ) {
+		    if( cr.moveTo(target, {
+			costCallback: function(roomName, costMatrix) {
+			    let costs = ctask.getHealerCostMatrix(roomName);
+			    if(costs){
+				console.log('using costs matrix');
+				return costs;
+			    }
 			}
+		    }) != ERR_NO_PATH ) {
+			break;
 		    }
-		});
+		} else
+		    break;
 	    }
 	} else {
 	    let leader = Game.getObjectById(ctask.getLeaderId());
@@ -3114,7 +3143,7 @@ var designRegistry = {
     'd_claim' : [ CLAIM, MOVE, CLAIM, MOVE ],
     'd_melee' : [ TOUGH, ATTACK, MOVE, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, TOUGH, ATTACK, MOVE, ],
     'd_healer' : [ HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, HEAL, MOVE, ],
-    'd_archer' : [ TOUGH, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, ],
+    'd_archer' : [ MOVE, TOUGH, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, TOUGH, RANGED_ATTACK, MOVE, ],
     'd_ram' : [ MOVE, RANGED_ATTACK, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH,
 		MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, MOVE, TOUGH, ],
 };
@@ -3477,6 +3506,7 @@ function planTowerJobs(rm) {
 	}
     }
 
+/*
     
     if(!done) {
 	target = Game.spawns[getRoomSpawnName(rm)].pos.findClosestByRange(FIND_MY_CREEPS, {
