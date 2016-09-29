@@ -2004,6 +2004,7 @@ class JobCarrier extends Job {
 	    let tt = f.make(d.take_to);
 	    
 	    let dist = tf.getPos().getRangeTo(tt.getPos());
+	    // console.log( 'dist ' + JSON.stringify(tf.getPos()) + ' - ' + JSON.stringify(tt.getPos()) + ' = ' + dist );
 
 	    if(!dist || dist<3)  dist = 3;
 	    if(dist>100) dist = 100;
@@ -2058,6 +2059,16 @@ class JobCarrier extends Job {
     do_work(rm, cr) {
 	let d = this.d;
 	let role = cr.memory.role;
+
+	/*
+	{
+	    let tf = f.make(d.take_from);
+	    let tt = f.make(d.take_to);
+
+	    let dist = tf.getPos().getRangeTo(tt.getPos());
+	    console.log( 'dist ' + JSON.stringify(tf.getPos()) + ' - ' + JSON.stringify(tt.getPos()) + ' = ' + dist );
+	}
+	*/
 
 	let loop_it = 0;
 	try {
@@ -2620,8 +2631,8 @@ var designRegistry = {
     // 'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     // 'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, MOVE, WORK, WORK, WORK, ],
     
-    'd_h0' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
-    'd_h1' : [ WORK, WORK, CARRY, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
+    'd_h0' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
+    'd_h1' : [ WORK, WORK, CARRY, MOVE, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, CARRY, WORK, MOVE, /*CARRY, */WORK, MOVE, CARRY, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE, MOVE, CARRY, MOVE],
     
     'd_c1' : [ MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE ],
     // builder
@@ -2897,7 +2908,7 @@ function calcRoomStats(rm) {
     }
 
     let extraQta = (stats.enTotal-2000 - stats.NZ);
-    if(extraQta>0) extraQta = extraQta / 500;
+    if(extraQta>0) extraQta = extraQta / 250;
     else extraQta = extraQta / 100;
 
     stats.enTotalQta = stats.enProd + extraQta;

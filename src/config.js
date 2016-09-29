@@ -373,30 +373,30 @@ module.exports = {
 				     MyAddrPos(41, 26)]
 				);
 
-	    /*
+
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp3',
-    				     maxCapacity: 1,
+    				     maxCapacity: 2,
 				     priority: 20,
 				     mayDrop: true,
 				     extraCapacity: 0,
 				     autoContainers: false,
-				     postDelete: true,
+				     // postDelete: true,
 				   },
 				   [{ cname: 'AddrHarvPoint',
-				      roomName: 'W58N9',
-				      x: 3,
-				      y: 37,
+				      roomName: 'W16N28',
+				      x: 4,
+				      y: 45,
 				      full: true },
 				    { cname: 'AddrPos',
-				      roomName: 'W58N9',
-				      x: 4,
-				      y: 36 }				    
+				      roomName: 'W16N28',
+				      x: 5,
+				      y: 45 }				    
 				   ]
 
 				);
-
+	    /*
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp4',
