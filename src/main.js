@@ -1240,9 +1240,10 @@ class AddrHarvPoint extends Addr {
 		return false;
 	}
 
-	if(this.move_to(cr, 3)) {
+	// parameter
+	if(this.move_to(cr, 5)) {
 	    return true;
-	}	
+	}
 
 	let rm = Game.rooms[d.roomName];
 	let p = this.getPos(rm);
@@ -3038,8 +3039,9 @@ class JobSupplyBulder extends JobCarrier {
 			break;
 		    
 		    // console.log('Select - ' + tgt.name + ', ' + tgt.carry[RESOURCE_ENERGY] + ', ' + tgt.carryCapacity);
-		    
-		    if(cr.pos.getRangeTo(tgt) > 7) {
+
+		    // parameter
+		    if(cr.pos.getRangeTo(tgt) > 9) {
 			break; // too far
 		    }
 		    if( cr.transfer(tgt, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE ) {
