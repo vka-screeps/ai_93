@@ -1,6 +1,6 @@
 var u = require('utils'); 
 var configver = require('configver');
-var gameRestartCount = 29;
+var gameRestartCount = 31;
 
 module.exports = {
     updateConfig(memobj) {
@@ -9,7 +9,8 @@ module.exports = {
 
 	function setConfig_game() 
 	{
-	    let room_name = 'W72N57';
+
+	    let room_name = 'E46N73';
 
 	    initMemVars();
 	    initRoomVars(room_name);
@@ -47,22 +48,22 @@ module.exports = {
 				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 4, 42 ),
-				     MyAddrPos(5, 41) ]
+				   [ MyAddrHarvPoint( 38, 16 ),
+				     MyAddrPos(37, 17) ]
 				);
 
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp2',
-    				     maxCapacity: 3,
+    				     maxCapacity: 2,
 				     priority: 5,
 				     mayDrop: true,
 				     extraCapacity: 0,
 				     // autoContainers: true,
 				     // postDelete: true,
 				   },
-				   [ MyAddrHarvPoint( 5, 20 ),
-				     MyAddrPos(5, 21)]
+				   [ MyAddrHarvPoint( 42, 19 ),
+				     MyAddrPos(42, 20)]
 				);
 
 
@@ -70,8 +71,8 @@ module.exports = {
 		room_mem.storagePoint = addObject( { cname: 'AddrStoragePoint',
 						     id: 'sp1',
 						     roomName: room_name,
-						     x: 8,
-						     y: 37,
+						     x: 37,
+						     y: 21,
 						     full: true,
 						     storage_id: null,
 						     isActive: false,
@@ -99,8 +100,8 @@ module.exports = {
 
 		room_mem.wait_point = { cname: 'AddrPos',
 					roomName: room_name,
-					x: 11,
-					y: 29,
+					x: 28,
+					y: 23,
 					isWaitPoint: true };
 
 		room_mem.jobs = {
