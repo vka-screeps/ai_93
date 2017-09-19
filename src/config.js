@@ -55,15 +55,33 @@ module.exports = {
 	    task.addOrUpdateTask(  room_name,
 				   { cname: 'TaskMining',
 				     id: 'hp2',
-    				     maxCapacity: 2,
+    				     maxCapacity: 3,
 				     priority: 5,
-				     mayDrop: true,
+				     mayDrop: false,
 				     extraCapacity: 0,
 				     // autoContainers: true,
 				     // postDelete: true,
 				   },
 				   [ MyAddrHarvPoint( 42, 19 ),
 				     MyAddrPos(42, 20)]
+				);
+
+	    task.addOrUpdateTask(  room_name,
+				   { cname: 'TaskMining',
+				     id: 'hp3',
+    				     maxCapacity: 2,
+				     priority: 10,
+				     mayDrop: true,
+				     extraCapacity: 0,
+				     // autoContainers: true,
+				     // postDelete: true,
+				   },
+				   [ { cname: 'AddrHarvPoint',
+				       roomName: 'E45N73',
+				       x: 10,
+				       y: 6,
+				       full: true }
+				   ]
 				);
 
 

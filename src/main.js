@@ -1771,8 +1771,9 @@ class JobMiner extends Job {
     maybeBuildContainer(rm, cr) {
 	let d = this.d;
 
-	if(!d.autoContainers)
+	if(!d.autoContainers) {
 	    return false;
+	}
 
 	let res = this.findRes(rm)
 	if(!res)
@@ -1885,6 +1886,7 @@ class JobMiner extends Job {
     }
 
     do_work(rm, cr) {
+
 	let d = this.d;
 	let role = cr.memory.role;
 	let res = this.findRes(rm); //Game.getObjectById(d.res_id);
@@ -1906,8 +1908,9 @@ class JobMiner extends Job {
 	*/
 
 	let loop_it = 0;
-	while( loop_it++ < 2 ) {
 
+	while( loop_it++ < 2 ) {
+	    
 	    if(needToCarry) {
 		if(role.workStatus.step === 0) {
 		    if( cr.carry[RESOURCE_ENERGY] < cr.carryCapacity ) {
@@ -1948,12 +1951,14 @@ class JobMiner extends Job {
 		if(res) {
 		    if(this.maybeBuildContainer(rm, cr)) {
 		    } else {
+	    
 			if(!creepIsFull(cr)) {
 			    let status = cr.harvest(res);
 			    
 			    if(status == ERR_NOT_IN_RANGE) {
 				cr.moveTo(res);
 			    }
+			    
 			} else {
 			    // look for a container
 			    let targets = res.pos.findInRange(FIND_STRUCTURES, 2, {
@@ -1978,6 +1983,7 @@ class JobMiner extends Job {
 			    }
 			    
 			}
+
 		    }
 		    
 		} else {
@@ -1991,11 +1997,11 @@ class JobMiner extends Job {
 		   } */
 		break;
 	    }
-	    
+
+
 	    role.workStatus.step = 0;
 	}
     }
-
 }
 
 class JobMilBase extends Job {
@@ -4288,6 +4294,7 @@ function assignCreepJobsOld(rm) {
 
 
 function doAllJobs(rm) {
+    let cpu0 = Game.cpu.getUsed();    
     for(let role_name in rm.memory.jobs) {
 	let jobs = rm.memory.jobs[role_name];
 	for(let job_id in jobs) {
@@ -4295,10 +4302,15 @@ function doAllJobs(rm) {
 	    let cjob = f.make(job, null);
 	    cjob.do_work_all(rm);
 	}
+
+//	console.log('cpu ' + role_name + ' - ' + cpu0 + ' - ' + (Game.cpu.getUsed() - cpu0));
+	cpu0 = Game.cpu.getUsed();
     }
 }
 
 function processRoom(rm) {
+    // let cpu0 = Game.cpu.getUsed();
+
     if(!rm || !rm.memory || !rm.memory.creeplist)
     {
 	// u.log( 'Empty rm.memory.creeplist in toom  ' + rm.name, u.LOG_INFO );
@@ -4315,6 +4327,9 @@ function processRoom(rm) {
     calcRoomStats(rm);
     updateUpkeepQueue(rm);
     planTowerJobs(rm);
+
+    // console.log('cpu1 - ' + Game.cpu.getUsed() + ' - ' + (Game.cpu.getUsed() - cpu0));
+
     
     planCreepJobs(rm); // schedule new jobs for builders and carriers
     assignJobQuotas(rm); // assign quotas to jobs
@@ -4336,6 +4351,7 @@ function calcCPUUsage()
     if(!Memory.cpuUsageAvg)
 	Memory.cpuUsageAvg = 10;
     Memory.cpuUsageAvg = 0.9*Memory.cpuUsageAvg + 0.1 * Game.cpu.getUsed();
+    Memory.cpuBucket = Game.cpu.bucket;
 }
 
 //RawMemory.set('{ "rooms": {}, "creeps": {} }' );
